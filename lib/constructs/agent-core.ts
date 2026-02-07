@@ -23,6 +23,14 @@ export class AgentCoreConstruct extends Construct {
       },
     )
 
+        // CrossRegionInferenceProfileの作成(Amazon Nova Pro APACリージョン)
+    const inferenceProfileNovaUs = bedrock.CrossRegionInferenceProfile.fromConfig(
+      {
+        geoRegion: bedrock.CrossRegionInferenceProfileRegion.US,
+        model: bedrock.BedrockFoundationModel.AMAZON_NOVA_PRO_V1,
+      },
+    )
+
     // Secrets Managerの作成(Tavily API Key)
     const tavilySecret = new aws_secretsmanager.Secret(this, "TavilySecret", {
       secretName: "TavilySecret",
@@ -38,6 +46,7 @@ export class AgentCoreConstruct extends Construct {
         AWS_DEFAULT_REGION: cdk.Stack.of(this).region,
         // MODEL_ID: "jp.anthropic.claude-sonnet-4-5-20250929-v1:0",
         MODEL_ID: "apac.amazon.nova-pro-v1:0",
+        // MODEL_ID: "us.amazon.nova-pro-v1:0",
         TAVILY_SECRET_NAME: tavilySecret.secretName,
       },
     })
@@ -45,6 +54,7 @@ export class AgentCoreConstruct extends Construct {
     // Runtimeへの権限付与
     inferenceProfileSonnet.grantInvoke(runtime)
     inferenceProfileNova.grantInvoke(runtime)
+    inferenceProfileNovaUs.grantInvoke(runtime)
     tavilySecret.grantRead(runtime)
   }
 }
