@@ -2,9 +2,9 @@
 Simple Strands Agent for AgentCore Runtime
 Uses BedrockAgentCoreApp for simplified deployment
 """
+from bedrock_agentcore.runtime import BedrockAgentCoreApp
 from strands import Agent, tool
 from strands.models import BedrockModel
-from bedrock_agentcore.runtime import BedrockAgentCoreApp
 
 # Initialize the AgentCore app
 app = BedrockAgentCoreApp()
@@ -15,7 +15,9 @@ model_id = "apac.amazon.nova-pro-v1:0"
 
 model = BedrockModel(
         model_id=model_id,
-        params={"max_tokens": 4096, "temperature": 0.7},
+        max_tokens=2048,
+        temperature=0.7,
+        top_p=0.9,
 )
 
 
@@ -61,7 +63,6 @@ async def entrypoint(payload):
     # model_config = payload.get("model", {})
     # model_id = model_config.get("modelId", "jp.anthropic.claude-sonnet-4-5-20250929-v1:0")
 
-
     # Create agent with the weather tool
     agent = Agent(
         model=model,
@@ -76,6 +77,9 @@ async def entrypoint(payload):
     async for msg in stream_messages:
         if "event" in msg:
             yield msg
+
+
+
 
 
 if __name__ == "__main__":
