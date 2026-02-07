@@ -2,23 +2,49 @@
 
 Uses BedrockAgentCoreApp for simplified deployment
 """
+import json
+
+from aws_lambda_powertools import Logger
+from aws_lambda_powertools.utilities import parameters
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
+from pydantic import Field
+from pydantic_settings import BaseSettings
 from strands import Agent, tool
 from strands.models import BedrockModel
+from tavily import TavilyClient
+
+
+class TavilySettings(BaseSettings):
+    tavily_secret_name: str = Field(env="TAVILY_SECRET_NAME")
+    tavily_secret_key: str| None = Field(default=None)
+
+    def get_tavily_api_key(self):
+        if self.tavily_secret_key:
+            return self.tavily_secret_key
+        secret = json.loads(parameters.get_secret(self.tavily_secret_name, max_age=300))
+        api_key = secret.get("TAVILY_API_KEY")
+        self.tavily_secret_key = api_key
+        return self.tavily_secret_key
+
+
+
+class ModelSettings(BaseSettings):
+    model_id: str = Field(env="MODEL_ID")
+    max_tokens: int = Field(default=2048, env="MAX_TOKENS")
+    temperature: float = Field(default=0.7, env="TEMPERATURE")
+    top_p: float = Field(default=0.9, env="TOP_P")
+
+    def get_model(self):
+        return BedrockModel(
+            model_id=self.model_id,
+        )
 
 # Initialize the AgentCore app
 app = BedrockAgentCoreApp()
 
-
-# model_id = "jp.anthropic.claude-sonnet-4-5-20250929-v1:0"
-model_id = "apac.amazon.nova-pro-v1:0"
-
-model = BedrockModel(
-        model_id=model_id,
-        max_tokens=2048,
-        temperature=0.7,
-        top_p=0.9,
-)
+model_settings = ModelSettings()
+model = model_settings.get_model()
+logger = Logger()
 
 
 @tool
@@ -32,8 +58,6 @@ def get_weather(city: str) -> str:
         A string describing the weather
 
     """
-    # This is a dummy implementation for demonstration
-    # In a real application, you would call a weather API
     weather_data = {
         "Tokyo": "晴れ、気温25度",
         "東京": "晴れ、気温25度",
@@ -44,6 +68,22 @@ def get_weather(city: str) -> str:
     }
 
     return weather_data.get(city, f"{city}の天気情報は現在利用できません")
+
+
+@tool
+def web_search(query):
+    """Perform a web search using the Tavily API.
+
+    Args:
+        query: The search query string
+
+    Returns:
+        The search results as a string
+
+    """
+    settings = TavilySettings()
+    tavily = TavilyClient(api_key=settings.get_tavily_api_key())
+    return tavily.search(query)
 
 
 @app.entrypoint
@@ -65,10 +105,14 @@ async def entrypoint(payload):
     # Create agent with the weather tool
     agent = Agent(
         model=model,
-        tools=[get_weather],
-        system_prompt="""あなたは親切なAIアシスタントです。
-ユーザーの質問に丁寧に答えてください。
-天気情報が必要な場合は、get_weatherツールを使用してください。"""
+        tools=[get_weather, web_search],
+        system_prompt="""
+            You are a kind AI assistant.
+            Please answer user questions politely.
+            If weather information is needed, please use the get_weather tool.
+            If web search is needed, please use the web_search tool.
+            Answer in the language used by the user.
+        """
     )
 
     # Stream responses back to the caller
@@ -79,5 +123,4 @@ async def entrypoint(payload):
 
 
 if __name__ == "__main__":
-    # Run the app when executed directly
     app.run()
