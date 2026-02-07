@@ -1,5 +1,5 @@
-"""
-Simple Strands Agent for AgentCore Runtime
+"""Simple Strands Agent for AgentCore Runtime.
+
 Uses BedrockAgentCoreApp for simplified deployment
 """
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
@@ -23,14 +23,14 @@ model = BedrockModel(
 
 @tool
 def get_weather(city: str) -> str:
-    """
-    Get the current weather for a specified city.
+    """Get the current weather for a specified city.
 
     Args:
         city: The name of the city
 
     Returns:
         A string describing the weather
+
     """
     # This is a dummy implementation for demonstration
     # In a real application, you would call a weather API
@@ -48,8 +48,8 @@ def get_weather(city: str) -> str:
 
 @app.entrypoint
 async def entrypoint(payload):
-    """
-    Main entrypoint for the agent.
+    """Handle the agent invocation.
+
     This function is called when the agent is invoked.
 
     Args:
@@ -57,11 +57,10 @@ async def entrypoint(payload):
 
     Yields:
         Streaming messages from the agent
+
     """
     # Extract message and model configuration from payload
     message = payload.get("prompt", "")
-    # model_config = payload.get("model", {})
-    # model_id = model_config.get("modelId", "jp.anthropic.claude-sonnet-4-5-20250929-v1:0")
 
     # Create agent with the weather tool
     agent = Agent(
@@ -77,9 +76,6 @@ async def entrypoint(payload):
     async for msg in stream_messages:
         if "event" in msg:
             yield msg
-
-
-
 
 
 if __name__ == "__main__":

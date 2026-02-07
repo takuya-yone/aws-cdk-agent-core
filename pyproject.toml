@@ -14,14 +14,18 @@ dev = [
     "ruff>=0.15.0",
 ]
 
+[tool.ruff]
+target-version = "py314"
 
-[lint]
-ignore = [
-  "E501",  # line too long
+lint.ignore = [
+    "E501",  # line too long
 ]
 
-select = [
-  "E",   # pycodestyle
-  "F",   # pyflakes
-  "I",   # isort
+lint.select = [
+    "F",  # pyflakes
+    "E",  # pycodestyle
+    "W",  # pycodestyle warnings
+    "I",  # isort
+    "UP", # pyupgrade
+    "N",  # pep8-naming
 ]
