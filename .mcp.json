@@ -1,0 +1,31 @@
+{
+  "mcpServers": {
+    "awslabs.aws-documentation-mcp-server": {
+      "command": "uvx",
+      "args": ["awslabs.aws-documentation-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR",
+        "AWS_DOCUMENTATION_PARTITION": "aws"
+      }
+    },
+    "awslabs.aws-api-mcp-server": {
+      "command": "uvx",
+      "args": ["awslabs.aws-api-mcp-server@latest"],
+      "env": {
+        "AWS_REGION": "ap-northeast-1",
+        "FASTMCP_LOG_LEVEL": "ERROR",
+        "READ_OPERATIONS_ONLY": "true"
+      }
+    },
+    "awslabs.aws-iac-mcp-server": {
+      "command": "uvx",
+      "args": ["awslabs.aws-iac-mcp-server@latest"],
+      "env": {
+        "AWS_PROFILE": "< YOUR_AWS_PROFILE_NAME >",
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

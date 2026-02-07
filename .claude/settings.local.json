@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /Users/takuya.yonezawa/AWS/aws-cdk-agent-core log --oneline -10)"
+    ]
+  }
+}
