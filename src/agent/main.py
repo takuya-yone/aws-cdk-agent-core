@@ -3,29 +3,27 @@
 Uses BedrockAgentCoreApp for simplified deployment
 """
 import json
+from functools import cached_property
 
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities import parameters
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from strands import Agent, tool
 from strands.models import BedrockModel
 from tavily import TavilyClient
 
 
 class TavilySettings(BaseSettings):
+    model_config = SettingsConfigDict(frozen=False)
+
     tavily_secret_name: str = Field(env="TAVILY_SECRET_NAME")
-    tavily_secret_key: str| None = Field(default=None)
 
-    def get_tavily_api_key(self):
-        if self.tavily_secret_key:
-            return self.tavily_secret_key
+    @cached_property
+    def tavily_api_key(self) -> str:
         secret = json.loads(parameters.get_secret(self.tavily_secret_name, max_age=300))
-        api_key = secret.get("TAVILY_API_KEY")
-        self.tavily_secret_key = api_key
-        return self.tavily_secret_key
-
+        return secret.get("TAVILY_API_KEY")
 
 
 class ModelSettings(BaseSettings):
@@ -34,7 +32,7 @@ class ModelSettings(BaseSettings):
     temperature: float = Field(default=0.7, env="TEMPERATURE")
     top_p: float = Field(default=0.9, env="TOP_P")
 
-    def get_model(self):
+    def get_model(self) -> BedrockModel:
         return BedrockModel(
             model_id=self.model_id,
         )
@@ -42,6 +40,8 @@ class ModelSettings(BaseSettings):
 # Initialize the AgentCore app
 app = BedrockAgentCoreApp()
 
+
+tavily_settings = TavilySettings()
 model_settings = ModelSettings()
 model = model_settings.get_model()
 logger = Logger()
@@ -58,6 +58,7 @@ def get_weather(city: str) -> str:
         A string describing the weather
 
     """
+    logger.info(f"Fetching weather for city: {city}", extra={"city": city, "tool": "get_weather"})
     weather_data = {
         "Tokyo": "晴れ、気温25度",
         "東京": "晴れ、気温25度",
@@ -71,7 +72,7 @@ def get_weather(city: str) -> str:
 
 
 @tool
-def web_search(query):
+def web_search(query: str) -> str:
     """Perform a web search using the Tavily API.
 
     Args:
@@ -81,13 +82,13 @@ def web_search(query):
         The search results as a string
 
     """
-    settings = TavilySettings()
-    tavily = TavilyClient(api_key=settings.get_tavily_api_key())
+    logger.info(f"Performing web search for query: {query}", extra={"query": query, "tool": "web_search"})
+    tavily = TavilyClient(api_key=tavily_settings.tavily_api_key)
     return tavily.search(query)
 
 
 @app.entrypoint
-async def entrypoint(payload):
+async def entrypoint(payload: dict):
     """Handle the agent invocation.
 
     This function is called when the agent is invoked.

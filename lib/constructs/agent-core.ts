@@ -23,13 +23,12 @@ export class AgentCoreConstruct extends Construct {
       },
     )
 
-        // CrossRegionInferenceProfileの作成(Amazon Nova Pro APACリージョン)
-    const inferenceProfileNovaUs = bedrock.CrossRegionInferenceProfile.fromConfig(
-      {
+    // CrossRegionInferenceProfileの作成(Amazon Nova Pro APACリージョン)
+    const inferenceProfileNovaUs =
+      bedrock.CrossRegionInferenceProfile.fromConfig({
         geoRegion: bedrock.CrossRegionInferenceProfileRegion.US,
         model: bedrock.BedrockFoundationModel.AMAZON_NOVA_PRO_V1,
-      },
-    )
+      })
 
     // Secrets Managerの作成(Tavily API Key)
     const tavilySecret = new aws_secretsmanager.Secret(this, "TavilySecret", {
