@@ -13,7 +13,6 @@ export class AgentCoreConstruct extends Construct {
       runtimeName: "StrandsAgentRuntime",
       agentRuntimeArtifact: agentRuntimeArtifact,
       description: "Simple Strands Agent with weather tool",
-      
     })
 
     // CrossRegionInferenceProfileを使った権限付与
