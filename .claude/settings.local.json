@@ -3,5 +3,10 @@
     "allow": [
       "Bash(git -C /Users/takuya.yonezawa/AWS/aws-cdk-agent-core log --oneline -10)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "awslabs.aws-documentation-mcp-server",
+    "awslabs.aws-api-mcp-server",
+    "awslabs.aws-iac-mcp-server"
+  ]
 }
