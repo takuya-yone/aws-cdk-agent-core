@@ -17,6 +17,19 @@ export class PipelineStack extends cdk.Stack {
 
     const pipeline = new CodePipeline(this, "AwsCdkAgentCorePipeline", {
       pipelineName: "AwsCdkAgentCorePipeline",
+      pipelineType: cdk.aws_codepipeline.PipelineType.V2,
+      codeBuildDefaults: {
+        buildEnvironment: {
+          computeType: cdk.aws_codebuild.ComputeType.SMALL,
+          buildImage: cdk.aws_codebuild.LinuxBuildImage.AMAZON_LINUX_2_ARM_3,
+        },
+      },
+      synthCodeBuildDefaults: {
+        buildEnvironment: {
+          computeType: cdk.aws_codebuild.ComputeType.SMALL,
+          buildImage: cdk.aws_codebuild.LinuxBuildImage.AMAZON_LINUX_2_ARM_3,
+        },
+      },
       synth: new ShellStep("Synth", {
         input: CodePipelineSource.gitHub(
           `${repoOwner}/${repoName}`,
