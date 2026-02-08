@@ -43,7 +43,7 @@ export class AgentCoreConstruct extends Construct {
       description: "Simple Strands Agent",
       environmentVariables: {
         AWS_DEFAULT_REGION: cdk.Stack.of(this).region,
-        POWERTOOLS_SERVICE_NAME: 'StrandsAgentRuntime',
+        POWERTOOLS_SERVICE_NAME: "StrandsAgentRuntime",
         // MODEL_ID: "jp.anthropic.claude-sonnet-4-5-20250929-v1:0",
         MODEL_ID: "apac.amazon.nova-pro-v1:0",
         // MODEL_ID: "us.amazon.nova-pro-v1:0",
@@ -56,5 +56,17 @@ export class AgentCoreConstruct extends Construct {
     inferenceProfileNova.grantInvoke(runtime)
     inferenceProfileNovaUs.grantInvoke(runtime)
     tavilySecret.grantRead(runtime)
+    //     runtime.addToRolePolicy(
+    //   new iam.PolicyStatement({
+    //     effect: iam.Effect.ALLOW,
+    //     actions: [
+    //       "bedrock:InvokeModel",
+    //       "bedrock:InvokeModelWithResponseStream",
+    //     ],
+    //     resources: [
+    //       `arn:aws:bedrock:${cdk.Stack.of(this).region}::foundation-model/*`,
+    //     ],
+    //   }),
+    // );
   }
 }

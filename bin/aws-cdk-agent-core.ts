@@ -1,7 +1,9 @@
 #!/usr/bin/env node
-import * as cdk from 'aws-cdk-lib/core';
-import { AwsCdkAgentCoreStack } from '../lib/aws-cdk-agent-core-stack';
+import * as cdk from "aws-cdk-lib/core"
+// import { AgentCoreStack } from "../lib/agent-core-stack"
+import { PipelineStack } from "../lib/pipeline-stack"
 
-const app = new cdk.App();
-const _awsCdkAgentCoreStack = new AwsCdkAgentCoreStack(app, 'AwsCdkAgentCoreStack', {
-});
+const app = new cdk.App()
+// const _agentCoreStack = new AgentCoreStack(app, "AgentCoreStack", {})
+
+const _pipelineStack = new PipelineStack(app, "PipelineStack", {})

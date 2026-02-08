@@ -9,7 +9,7 @@
     "watch": "tsc -w",
     "test": "vitest",
     "cdk": "cdk",
-    "biome:fix": "biome check --write lib tests",
+    "biome:fix": "biome check --write bin lib tests",
     "ruff:fix": "uv run ruff check src --fix"
   },
   "devDependencies": {
