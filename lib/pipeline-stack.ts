@@ -32,7 +32,7 @@ export class PipelineStack extends cdk.Stack {
     })
 
     pipeline.addStage(
-      new StackStage(this, "AppStack", {
+      new StackStage(this, "AwsCdkAgentCore", {
         env: {
           account: cdk.Stack.of(this).account,
           region: cdk.Stack.of(this).region,
