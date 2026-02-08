@@ -5,7 +5,7 @@ import {
   ShellStep,
 } from "aws-cdk-lib/pipelines"
 import type { Construct } from "constructs"
-import { AgentCoreStackStage } from "./pipeline-app-stage"
+import { StackStage } from "./pipeline-app-stage"
 
 export class PipelineStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -16,7 +16,7 @@ export class PipelineStack extends cdk.Stack {
     const repoBranch = "main"
 
     const pipeline = new CodePipeline(this, "Pipeline", {
-      pipelineName: "Pipeline",
+      // pipelineName: "Pipeline",
       synth: new ShellStep("Synth", {
         input: CodePipelineSource.gitHub(
           `${repoOwner}/${repoName}`,
@@ -32,7 +32,7 @@ export class PipelineStack extends cdk.Stack {
     })
 
     pipeline.addStage(
-      new AgentCoreStackStage(this, "AgentCoreStack", {
+      new StackStage(this, "AppStack", {
         env: {
           account: cdk.Stack.of(this).account,
           region: cdk.Stack.of(this).region,
