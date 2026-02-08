@@ -35,20 +35,32 @@ pnpm run test                # Run Vitest tests
 
 ### Infrastructure Layer (TypeScript CDK)
 
-`bin/aws-cdk-agent-core.ts` -> `lib/aws-cdk-agent-core-stack.ts` -> `lib/constructs/agent-core.ts`
+```
+bin/aws-cdk-agent-core.ts
+  -> lib/pipeline-stack.ts (PipelineStack - CDK Pipelines V2)
+       -> lib/pipeline-app-stage.ts (StackStage)
+            -> lib/stack/agent-core-stack.ts (AgentCoreStack)
+                 -> lib/constructs/agent-core.ts (AgentCoreConstruct)
+            -> lib/stack/sample-stack.ts (SampleStack x3)
+```
 
-`AgentCoreConstruct` (`lib/constructs/agent-core.ts`) is the core construct. It:
+**PipelineStack** (`lib/pipeline-stack.ts`) implements CDK Pipelines V2 with GitHub source (`takuya-yone/aws-cdk-agent-core`, `main` branch). Uses ARM64 CodeBuild environment (`AMAZON_LINUX_2_ARM_3`). Adds `StackStage` as a deployment stage.
+
+**StackStage** (`lib/pipeline-app-stage.ts`) is a `cdk.Stage` that instantiates `AgentCoreStack` and three `SampleStack` instances.
+
+**AgentCoreConstruct** (`lib/constructs/agent-core.ts`) is the core construct. It:
 1. Packages the Python agent from `src/agent/` as an `AgentRuntimeArtifact`
 2. Creates a Bedrock Agent Core `Runtime` resource
-3. Sets up `CrossRegionInferenceProfile` entries for JP (Claude Sonnet 4.5) and APAC (Amazon Nova Pro) regions and grants invoke permissions
+3. Sets up `CrossRegionInferenceProfile` entries for JP (Claude Sonnet 4.5), APAC (Amazon Nova Pro), and US (Amazon Nova Pro) regions and grants invoke permissions
+4. Creates a Secrets Manager secret for Tavily API key
 
 ### Agent Runtime Layer (Python)
 
-`src/agent/main.py` implements the agent using Strands framework with `BedrockAgentCoreApp`. It defines tools via the `@tool` decorator and an async entrypoint via `@app.entrypoint` that streams responses. The agent is containerized via `src/agent/Dockerfile` (Alpine + uv + OpenTelemetry instrumentation).
+`src/agent/main.py` implements the agent using Strands framework with `BedrockAgentCoreApp`. It defines tools (`get_weather`, `web_search`) via the `@tool` decorator and an async entrypoint via `@app.entrypoint` that streams responses. The agent is containerized via `src/agent/Dockerfile` (Alpine + uv + OpenTelemetry instrumentation).
 
 ### Key Dependencies
-- **CDK**: `@aws-cdk/aws-bedrock-agentcore-alpha`, `@aws-cdk/aws-bedrock-alpha`
-- **Agent**: `strands-agents`, `bedrock-agentcore`, `aws-opentelemetry-distro`
+- **CDK**: `@aws-cdk/aws-bedrock-agentcore-alpha`, `@aws-cdk/aws-bedrock-alpha`, `cdk-ecr-deployment`
+- **Agent**: `strands-agents`, `bedrock-agentcore`, `tavily`, `aws-opentelemetry-distro`
 
 ## Code Style
 
