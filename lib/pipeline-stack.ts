@@ -15,8 +15,8 @@ export class PipelineStack extends cdk.Stack {
     const repoOwner = "takuya-yone"
     const repoBranch = "main"
 
-    const pipeline = new CodePipeline(this, "Pipeline", {
-      // pipelineName: "Pipeline",
+    const pipeline = new CodePipeline(this, "AwsCdkAgentCorePipeline", {
+      pipelineName: "AwsCdkAgentCorePipeline",
       synth: new ShellStep("Synth", {
         input: CodePipelineSource.gitHub(
           `${repoOwner}/${repoName}`,
