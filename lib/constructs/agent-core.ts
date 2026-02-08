@@ -23,7 +23,7 @@ export class AgentCoreConstruct extends Construct {
       },
     )
 
-    // CrossRegionInferenceProfileの作成(Amazon Nova Pro APACリージョン)
+    // CrossRegionInferenceProfileの作成(Amazon Nova Pro USリージョン)
     const inferenceProfileNovaUs =
       bedrock.CrossRegionInferenceProfile.fromConfig({
         geoRegion: bedrock.CrossRegionInferenceProfileRegion.US,
@@ -56,7 +56,7 @@ export class AgentCoreConstruct extends Construct {
     inferenceProfileNova.grantInvoke(runtime)
     inferenceProfileNovaUs.grantInvoke(runtime)
     tavilySecret.grantRead(runtime)
-    //     runtime.addToRolePolicy(
+    // runtime.addToRolePolicy(
     //   new iam.PolicyStatement({
     //     effect: iam.Effect.ALLOW,
     //     actions: [
@@ -67,6 +67,6 @@ export class AgentCoreConstruct extends Construct {
     //       `arn:aws:bedrock:${cdk.Stack.of(this).region}::foundation-model/*`,
     //     ],
     //   }),
-    // );
+    // )
   }
 }

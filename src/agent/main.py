@@ -83,19 +83,19 @@ def get_weather(city: str) -> str:
 
 
 @tool
-def web_search(query: str) -> str:
+def web_search(query: str) -> dict:
     """Perform a web search using the Tavily API.
 
     Args:
         query: The search query string
 
     Returns:
-        The search results as a string
+        The search results as a dictionary
 
     """
     logger.info(f"Performing web search for query: {query}", extra={"query": query, "tool": "web_search"})
     tavily = TavilyClient(api_key=tavily_settings.tavily_api_key)
-    result  = tavily.search(query)
+    result = tavily.search(query)
     return result
 
 
