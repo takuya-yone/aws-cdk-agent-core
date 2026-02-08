@@ -9,6 +9,8 @@ export class StackStage extends cdk.Stage {
 
     const _agentCoreStack = new AgentCoreStack(this, "AgentCoreStack")
 
-    const _sampleStack = new SampleStack(this, "SampleStack")
+    const _sampleStack1 = new SampleStack(this, "SampleStack1")
+    const _sampleStack2 = new SampleStack(this, "SampleStack2")
+    const _sampleStack3 = new SampleStack(this, "SampleStack3")
   }
 }
