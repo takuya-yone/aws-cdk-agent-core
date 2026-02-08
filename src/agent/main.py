@@ -31,7 +31,7 @@ class TavilySettings(BaseSettings):
 
     @cached_property
     def tavily_api_key(self) -> str:
-        if is_local() and os.getenv("TAVILY_SECRET_KEY"):
+        if is_local():
             return os.getenv("TAVILY_SECRET_KEY")
         secret = json.loads(parameters.get_secret(self.tavily_secret_name, max_age=300))
         return secret.get("TAVILY_API_KEY")
