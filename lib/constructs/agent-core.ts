@@ -43,6 +43,7 @@ export class AgentCoreConstruct extends Construct {
       description: "Simple Strands Agent",
       environmentVariables: {
         AWS_DEFAULT_REGION: cdk.Stack.of(this).region,
+        POWERTOOLS_SERVICE_NAME: 'StrandsAgentRuntime',
         // MODEL_ID: "jp.anthropic.claude-sonnet-4-5-20250929-v1:0",
         MODEL_ID: "apac.amazon.nova-pro-v1:0",
         // MODEL_ID: "us.amazon.nova-pro-v1:0",

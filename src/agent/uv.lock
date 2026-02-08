@@ -12,6 +12,7 @@ dependencies = [
     { name = "bedrock-agentcore" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
+    { name = "python-dotenv" },
     { name = "strands-agents" },
     { name = "tavily" },
 ]
@@ -23,6 +24,7 @@ requires-dist = [
     { name = "bedrock-agentcore", specifier = ">=1.2.1" },
     { name = "pydantic", specifier = ">=2.12.5" },
     { name = "pydantic-settings", specifier = ">=2.12.0" },
+    { name = "python-dotenv", specifier = ">=1.2.1" },
     { name = "strands-agents", specifier = ">=1.25.0" },
     { name = "tavily", specifier = ">=1.1.0" },
 ]

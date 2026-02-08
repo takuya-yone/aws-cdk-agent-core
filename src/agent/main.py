@@ -3,16 +3,25 @@
 Uses BedrockAgentCoreApp for simplified deployment
 """
 import json
+import os
 from functools import cached_property
 
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities import parameters
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
+from dotenv import load_dotenv
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from strands import Agent, tool
 from strands.models import BedrockModel
 from tavily import TavilyClient
+
+# .envファイルの内容を読み込む
+load_dotenv('.env')
+
+
+def is_local() -> bool:
+    return os.getenv("IS_LOCAL") == "True"
 
 
 class TavilySettings(BaseSettings):
@@ -22,6 +31,8 @@ class TavilySettings(BaseSettings):
 
     @cached_property
     def tavily_api_key(self) -> str:
+        if is_local():
+            return os.getenv("TAVILY_SECRET_KEY")
         secret = json.loads(parameters.get_secret(self.tavily_secret_name, max_age=300))
         return secret.get("TAVILY_API_KEY")
 
@@ -122,6 +133,9 @@ async def entrypoint(payload: dict):
         if "event" in msg:
             yield msg
 
+    # invoke_message = await agent.invoke_async(message)
+    # yield invoke_message
+
 
 if __name__ == "__main__":
-    app.run()
+    app.run(port=8080)

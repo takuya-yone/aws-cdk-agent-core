@@ -9,3 +9,7 @@ cdk.out
 
 # claude
 settings.local.json
+
+# env files
+.env
+.env.*.local
