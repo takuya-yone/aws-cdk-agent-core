@@ -16,7 +16,7 @@ from strands import Agent, tool
 from strands.models import BedrockModel
 from tavily import TavilyClient
 
-# .envファイルの内容を読み込見込む
+# .envファイルの内容を読み込む
 load_dotenv('.env')
 
 
@@ -138,4 +138,4 @@ async def entrypoint(payload: dict):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+    app.run(port=8080)
