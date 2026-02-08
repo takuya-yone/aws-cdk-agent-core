@@ -95,7 +95,8 @@ def web_search(query: str) -> str:
     """
     logger.info(f"Performing web search for query: {query}", extra={"query": query, "tool": "web_search"})
     tavily = TavilyClient(api_key=tavily_settings.tavily_api_key)
-    return tavily.search(query)
+    result  = tavily.search(query)
+    return result
 
 
 @app.entrypoint
