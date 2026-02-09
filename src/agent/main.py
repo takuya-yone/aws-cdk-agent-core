@@ -49,6 +49,21 @@ def call_search_agent(query: str) -> dict:
     return result
 
 
+# Create agent with the sub-agents as tools
+main_agent = Agent(
+    name="main_agent",
+    model=model,
+    tools=[call_weather_agent, call_search_agent],
+    system_prompt="""
+        You are a kind AI assistant.
+        Please answer user questions politely.
+        If weather information is needed, please use the call_weather_agent.
+        If search is needed, please use the call_search_agent.
+        Answer in the language used by the user.
+    """
+)
+
+
 @app.entrypoint
 async def entrypoint(payload: dict):
     """Handle the agent invocation.
@@ -64,20 +79,6 @@ async def entrypoint(payload: dict):
     """
     # Extract message and model configuration from payload
     message = payload.get("prompt", "")
-
-    # Create agent with the weather tool
-    main_agent = Agent(
-        name="main_agent",
-        model=model,
-        tools=[call_weather_agent, call_search_agent],
-        system_prompt="""
-            You are a kind AI assistant.
-            Please answer user questions politely.
-            If weather information is needed, please use the call_weather_agent.
-            If search is needed, please use the call_search_agent.
-            Answer in the language used by the user.
-        """
-    )
 
     # Stream responses back to the caller
     # stream_messages = agent.stream_async(message)

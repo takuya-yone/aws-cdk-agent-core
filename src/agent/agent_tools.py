@@ -4,6 +4,7 @@ from strands import tool
 from tavily import TavilyClient
 
 tavily_settings = TavilySettings()
+tavily_client = TavilyClient(api_key=tavily_settings.tavily_api_key)
 logger = Logger()
 
 
@@ -19,8 +20,7 @@ def web_search(query: str) -> dict:
 
     """
     logger.info(f"Performing web search for query: {query}", extra={"query": query, "tool": "web_search"})
-    tavily = TavilyClient(api_key=tavily_settings.tavily_api_key)
-    result = tavily.search(query)
+    result = tavily_client.search(query)
     return result
 
 

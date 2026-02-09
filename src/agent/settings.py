@@ -5,7 +5,6 @@ from functools import cached_property
 
 from aws_lambda_powertools.utilities import parameters
 from dotenv import load_dotenv
-from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from strands.models import BedrockModel
 
@@ -16,10 +15,10 @@ def is_local() -> bool:
     return os.getenv("IS_LOCAL") == "True"
 
 class ModelSettings(BaseSettings):
-    model_id: str = Field(env="MODEL_ID")
-    max_tokens: int = Field(default=2048, env="MAX_TOKENS")
-    temperature: float = Field(default=0.7, env="TEMPERATURE")
-    top_p: float = Field(default=0.9, env="TOP_P")
+    model_id: str
+    max_tokens: int = 2048
+    temperature: float = 0.7
+    top_p: float = 0.9
 
     def get_model(self) -> BedrockModel:
         return BedrockModel(
@@ -29,7 +28,7 @@ class ModelSettings(BaseSettings):
 class TavilySettings(BaseSettings):
     model_config = SettingsConfigDict(frozen=False)
 
-    tavily_secret_name: str = Field(env="TAVILY_SECRET_NAME")
+    tavily_secret_name: str
 
     @cached_property
     def tavily_api_key(self) -> str:
