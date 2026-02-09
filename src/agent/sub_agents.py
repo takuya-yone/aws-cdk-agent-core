@@ -10,7 +10,7 @@ model = model_settings.get_model()
 weather_agent = Agent(
     name="weather_agent",
     model=model,
-    system_prompt=('You are an agent that provides weather information. You will also tell the current time along with the weather. Use the get_weather tool to get the current weather for a specified city, and the current_time tool to get the current time.'),
+    system_prompt=('You are an agent that provides weather information. You will also tell the current time along with the weather. Use the get_weather tool to get the current weather for a specified city, and the current_time tool to get the current time. Timezone is Asia/Tokyo.'),
     tools = [get_weather,current_time]
 )
 
