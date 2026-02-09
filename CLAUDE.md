@@ -11,6 +11,7 @@ AWS CDK TypeScript project that deploys a Bedrock Agent Core Runtime running a S
 ### Build & Deploy
 ```bash
 pnpm run build              # Compile TypeScript
+pnpm run watch              # Compile TypeScript in watch mode
 pnpm cdk synth              # Generate CloudFormation template
 pnpm cdk deploy             # Deploy stack to AWS
 pnpm cdk diff               # Compare deployed vs current state
@@ -18,18 +19,19 @@ pnpm cdk diff               # Compare deployed vs current state
 
 ### Lint & Format
 ```bash
-pnpm run biome:fix           # Fix TypeScript with Biome (lib/)
+pnpm run biome:fix           # Fix TypeScript with Biome (bin/ lib/ tests/)
 pnpm run ruff:fix            # Fix Python with Ruff (src/)
 ```
 
 ### Test
 ```bash
 pnpm run test                # Run Vitest tests
+pnpm run test -- tests/aws-cdk-agent-core.test.ts  # Run a single test file
 ```
 
 ### Package Managers
-- **TypeScript**: pnpm (Node 24.13.0)
-- **Python**: uv (Python 3.14)
+- **TypeScript**: pnpm (Node 24.13.0 via `.node-version`)
+- **Python**: uv (Python 3.14 via `.python-version`)
 
 ## Architecture
 
@@ -44,9 +46,9 @@ bin/aws-cdk-agent-core.ts
             -> lib/stack/sample-stack.ts (SampleStack x3)
 ```
 
-**PipelineStack** (`lib/pipeline-stack.ts`) implements CDK Pipelines V2 with GitHub source (`takuya-yone/aws-cdk-agent-core`, `main` branch). Uses ARM64 CodeBuild environment (`AMAZON_LINUX_2_ARM_3`). Adds `StackStage` as a deployment stage.
+**CI/CD is entirely CDK Pipelines V2** — no GitHub Actions workflows. The pipeline self-mutates on push to `main`.
 
-**StackStage** (`lib/pipeline-app-stage.ts`) is a `cdk.Stage` that instantiates `AgentCoreStack` and three `SampleStack` instances.
+**PipelineStack** (`lib/pipeline-stack.ts`) uses GitHub source (`takuya-yone/aws-cdk-agent-core`, `main` branch) with ARM64 CodeBuild (`AMAZON_LINUX_2_ARM_3`). Includes SNS + Slack notifications for pipeline success/failure.
 
 **AgentCoreConstruct** (`lib/constructs/agent-core.ts`) is the core construct. It:
 1. Packages the Python agent from `src/agent/` as an `AgentRuntimeArtifact`
@@ -56,11 +58,18 @@ bin/aws-cdk-agent-core.ts
 
 ### Agent Runtime Layer (Python)
 
-`src/agent/main.py` implements the agent using Strands framework with `BedrockAgentCoreApp`. It defines tools (`get_weather`, `web_search`) via the `@tool` decorator and an async entrypoint via `@app.entrypoint` that streams responses. The agent is containerized via `src/agent/Dockerfile` (Alpine + uv + OpenTelemetry instrumentation).
+The agent uses a **main-agent → sub-agent delegation** pattern:
+
+- `main.py`: `BedrockAgentCoreApp` entrypoint. Defines a main agent with two `@tool`-wrapped functions (`call_weather_agent`, `call_search_agent`) that delegate to sub-agents. Streams responses asynchronously via `agent.stream_async()`.
+- `sub_agents.py`: Defines `weather_agent` (uses `get_weather` + `current_time` tools) and `search_agent` (uses Tavily MCP client for web search).
+- `agent_tools.py`: Implements `get_weather` (hardcoded city data) and creates an `MCPClient` for Tavily web search via streamable HTTP.
+- `settings.py`: Pydantic `BaseSettings` for model config (`ModelSettings`) and Tavily API key (`TavilySettings`). In production, reads the API key from Secrets Manager; locally uses `.env` when `IS_LOCAL=True`.
+
+The agent container (`src/agent/Dockerfile`) runs on Alpine + uv, instrumented with OpenTelemetry, exposed on port 8080. **Must be ARM64** for Agent Core Runtime compatibility.
 
 ### Key Dependencies
 - **CDK**: `@aws-cdk/aws-bedrock-agentcore-alpha`, `@aws-cdk/aws-bedrock-alpha`, `cdk-ecr-deployment`
-- **Agent**: `strands-agents`, `bedrock-agentcore`, `tavily`, `aws-opentelemetry-distro`
+- **Agent**: `strands-agents`, `bedrock-agentcore`, `tavily`, `aws-opentelemetry-distro`, `pydantic-settings`
 
 ## Code Style
 
