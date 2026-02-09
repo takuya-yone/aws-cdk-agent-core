@@ -1,5 +1,9 @@
 import * as cdk from "aws-cdk-lib"
 import {
+  aws_codestarnotifications as notifications,
+  aws_sns as sns,
+} from "aws-cdk-lib"
+import {
   CodePipeline,
   CodePipelineSource,
   ShellStep,
@@ -52,5 +56,36 @@ export class PipelineStack extends cdk.Stack {
         },
       }),
     )
+
+    const infoSnsTopic = new sns.Topic(this, "AwsCDKAgentCoreInfoSnsTopic", {
+      displayName: "AwsCDKAgentCoreInfoSnsTopic",
+      topicName: "AwsCDKAgentCoreInfoSnsTopic",
+    })
+
+    const alertSnsTopic = new sns.Topic(this, "AwsCDKAgentCoreAlertSnsTopic", {
+      displayName: "AwsCDKAgentCoreAlertSnsTopic",
+      topicName: "AwsCDKAgentCoreAlertSnsTopic",
+    })
+
+    new notifications.NotificationRule(
+      this,
+      "pipeline-notification-succeeded",
+      {
+        notificationRuleName: `pipeline-notification-succeeded`,
+        source: pipeline.pipeline,
+        events: [
+          "codepipeline-pipeline-pipeline-execution-succeeded",
+          "codepipeline-pipeline-manual-approval-succeeded",
+        ],
+        targets: [infoSnsTopic],
+      },
+    )
+
+    new notifications.NotificationRule(this, "pipeline-notification-failed", {
+      notificationRuleName: "pipeline-notification-failed",
+      source: pipeline.pipeline,
+      events: ["codepipeline-pipeline-pipeline-execution-failed"],
+      targets: [alertSnsTopic],
+    })
   }
 }
