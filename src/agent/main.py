@@ -2,65 +2,24 @@
 
 Uses BedrockAgentCoreApp for simplified deployment
 """
-import json
-import os
-from functools import cached_property
 
 from aws_lambda_powertools import Logger
-from aws_lambda_powertools.utilities import parameters
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
-from dotenv import load_dotenv
-from pydantic import Field
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from settings import ModelSettings
 from strands import Agent, tool
-from strands.models import BedrockModel
-from tavily import TavilyClient
-
-# .envファイルの内容を読み込む
-load_dotenv('.env')
-
-
-def is_local() -> bool:
-    return os.getenv("IS_LOCAL") == "True"
-
-
-class TavilySettings(BaseSettings):
-    model_config = SettingsConfigDict(frozen=False)
-
-    tavily_secret_name: str = Field(env="TAVILY_SECRET_NAME")
-
-    @cached_property
-    def tavily_api_key(self) -> str:
-        if is_local():
-            return os.getenv("TAVILY_SECRET_KEY")
-        secret = json.loads(parameters.get_secret(self.tavily_secret_name, max_age=300))
-        return secret.get("TAVILY_API_KEY")
-
-
-class ModelSettings(BaseSettings):
-    model_id: str = Field(env="MODEL_ID")
-    max_tokens: int = Field(default=2048, env="MAX_TOKENS")
-    temperature: float = Field(default=0.7, env="TEMPERATURE")
-    top_p: float = Field(default=0.9, env="TOP_P")
-
-    def get_model(self) -> BedrockModel:
-        return BedrockModel(
-            model_id=self.model_id,
-        )
+from sub_agents import search_agent, weather_agent
 
 # Initialize the AgentCore app
 app = BedrockAgentCoreApp()
 
-
-tavily_settings = TavilySettings()
 model_settings = ModelSettings()
 model = model_settings.get_model()
 logger = Logger()
 
 
 @tool
-def get_weather(city: str) -> str:
-    """Get the current weather for a specified city.
+def call_weather_agent(city: str) -> str:
+    """Agent to get weather information using the get_weather tool.
 
     Args:
         city: The name of the city
@@ -69,22 +28,14 @@ def get_weather(city: str) -> str:
         A string describing the weather
 
     """
-    logger.info(f"Fetching weather for city: {city}", extra={"city": city, "tool": "get_weather"})
-    weather_data = {
-        "Tokyo": "晴れ、気温25度",
-        "東京": "晴れ、気温25度",
-        "Osaka": "曇り、気温22度",
-        "大阪": "曇り、気温22度",
-        "New York": "Rainy, 18°C",
-        "London": "Foggy, 15°C",
-    }
 
-    return weather_data.get(city, f"{city}の天気情報は現在利用できません")
+    result = weather_agent(f"Get the weather for {city} and current time.")
+    return result
 
 
 @tool
-def web_search(query: str) -> dict:
-    """Perform a web search using the Tavily API.
+def call_search_agent(query: str) -> dict:
+    """Agent to perform web search using the web_search tool.
 
     Args:
         query: The search query string
@@ -93,9 +44,8 @@ def web_search(query: str) -> dict:
         The search results as a dictionary
 
     """
-    logger.info(f"Performing web search for query: {query}", extra={"query": query, "tool": "web_search"})
-    tavily = TavilyClient(api_key=tavily_settings.tavily_api_key)
-    result = tavily.search(query)
+
+    result = search_agent(f"Search the web for {query}")
     return result
 
 
@@ -106,7 +56,7 @@ async def entrypoint(payload: dict):
     This function is called when the agent is invoked.
 
     Args:
-        payload: The input payload containing prompt and optional model config
+        payload: The input payload containing prompt.
 
     Yields:
         Streaming messages from the agent
@@ -116,24 +66,27 @@ async def entrypoint(payload: dict):
     message = payload.get("prompt", "")
 
     # Create agent with the weather tool
-    agent = Agent(
+    main_agent = Agent(
+        name="main_agent",
         model=model,
-        tools=[get_weather, web_search],
+        tools=[call_weather_agent, call_search_agent],
         system_prompt="""
             You are a kind AI assistant.
             Please answer user questions politely.
-            If weather information is needed, please use the get_weather tool.
-            If web search is needed, please use the web_search tool.
+            If weather information is needed, please use the call_weather_agent.
+            If search is needed, please use the call_search_agent.
             Answer in the language used by the user.
         """
     )
 
     # Stream responses back to the caller
-    stream_messages = agent.stream_async(message)
-    async for msg in stream_messages:
-        if "event" in msg:
-            yield msg
+    # stream_messages = agent.stream_async(message)
+    # async for msg in stream_messages:
+    #     if "event" in msg:
+    #         yield msg
 
+    result = await main_agent.invoke_async(message)
+    yield result
     # invoke_message = await agent.invoke_async(message)
     # yield invoke_message
 

@@ -13,3 +13,6 @@ settings.local.json
 # env files
 .env
 .env.*.local
+
+# python cache
+__pycache__/
