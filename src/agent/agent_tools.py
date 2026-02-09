@@ -1,9 +1,8 @@
 from aws_lambda_powertools import Logger
-from settings import TavilySettings
+from settings import tavily_settings
 from strands import tool
 from tavily import TavilyClient
 
-tavily_settings = TavilySettings()
 tavily_client = TavilyClient(api_key=tavily_settings.tavily_api_key)
 logger = Logger()
 

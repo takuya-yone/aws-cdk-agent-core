@@ -5,13 +5,13 @@ Uses BedrockAgentCoreApp for simplified deployment
 
 from aws_lambda_powertools import Logger
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
-from settings import model
+from settings import model_settings
 from strands import Agent, tool
 from sub_agents import search_agent, weather_agent
 
 # Initialize the AgentCore app
 app = BedrockAgentCoreApp()
-
+model = model_settings.get_model()
 logger = Logger()
 
 

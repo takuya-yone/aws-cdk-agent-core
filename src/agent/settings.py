@@ -38,5 +38,6 @@ class TavilySettings(BaseSettings):
         secret = json.loads(parameters.get_secret(self.tavily_secret_name, max_age=300))
         return secret.get("TAVILY_API_KEY")
 
+
 model_settings = ModelSettings()
-model = model_settings.get_model()
+tavily_settings = TavilySettings()
