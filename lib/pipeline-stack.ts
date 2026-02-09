@@ -36,7 +36,7 @@ export class PipelineStack extends cdk.Stack {
           repoBranch,
         ),
         commands: [
-          "npm -g install pnpm",
+          "corepack enable",
           "pnpm install --frozen-lockfile",
           "pnpm run build",
           "pnpm cdk synth",
