@@ -1,20 +1,22 @@
 import * as cdk from "aws-cdk-lib"
-import { aws_codepipeline as codepipeline, aws_sns as sns } from "aws-cdk-lib"
+import {
+  aws_chatbot as chatbot,
+  aws_codepipeline as codepipeline,
+  aws_logs as logs,
+  aws_sns as sns,
+} from "aws-cdk-lib"
 import {
   CodePipeline,
   CodePipelineSource,
   ShellStep,
 } from "aws-cdk-lib/pipelines"
 import type { Construct } from "constructs"
+import type { StackParameters } from "../bin/parameter"
 import { StackStage } from "./pipeline-app-stage"
 
 export class PipelineStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: StackParameters) {
     super(scope, id, props)
-
-    const repoName = "aws-cdk-agent-core"
-    const repoOwner = "takuya-yone"
-    const repoBranch = "main"
 
     const pipeline = new CodePipeline(this, "AwsCdkAgentCorePipeline", {
       pipelineName: "AwsCdkAgentCorePipeline",
@@ -33,8 +35,8 @@ export class PipelineStack extends cdk.Stack {
       },
       synth: new ShellStep("Synth", {
         input: CodePipelineSource.gitHub(
-          `${repoOwner}/${repoName}`,
-          repoBranch,
+          `${props.githubRepo.repoOwner}/${props.githubRepo.repoName}`,
+          props.githubRepo.repoBranch,
         ),
         commands: [
           "corepack enable",
@@ -67,13 +69,28 @@ export class PipelineStack extends cdk.Stack {
       topicName: "AwsCDKAgentCoreAlertSnsTopic",
     })
 
-    pipeline.pipeline.notifyOn("success", infoSnsTopic, {
+    // Chatbot
+    const slackChatbot = new chatbot.SlackChannelConfiguration(
+      this,
+      "Chatbot",
+      {
+        slackChannelConfigurationName: "PipelineNotification",
+        slackWorkspaceId: props.slackChannel.workspaceId,
+        slackChannelId: props.slackChannel.channelId,
+        logRetention: logs.RetentionDays.ONE_MONTH, // CloudWatch Logs の保持期間をお好みで
+        userRoleRequired: true,
+      },
+    )
+    slackChatbot.addNotificationTopic(infoSnsTopic)
+    slackChatbot.addNotificationTopic(alertSnsTopic)
+
+    pipeline.pipeline.notifyOn("NotifyOnSuccess", infoSnsTopic, {
       events: [
         codepipeline.PipelineNotificationEvents.PIPELINE_EXECUTION_SUCCEEDED,
         codepipeline.PipelineNotificationEvents.MANUAL_APPROVAL_SUCCEEDED,
       ],
     })
-    pipeline.pipeline.notifyOn("failure", alertSnsTopic, {
+    pipeline.pipeline.notifyOn("NotifyOnFailure", alertSnsTopic, {
       events: [
         codepipeline.PipelineNotificationEvents.PIPELINE_EXECUTION_FAILED,
       ],
