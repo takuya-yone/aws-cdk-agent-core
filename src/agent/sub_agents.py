@@ -1,11 +1,9 @@
 
-from agent_tools import get_weather, web_search
-from settings import ModelSettings
 from strands import Agent
 from strands_tools.current_time import current_time
 
-model_settings = ModelSettings()
-model = model_settings.get_model()
+from agent_tools import get_weather, web_search
+from settings import model
 
 
 weather_agent = Agent(
