@@ -79,15 +79,13 @@ async def entrypoint(payload: dict):
     message = payload.get("prompt", "")
 
     # Stream responses back to the caller
-    # stream_messages = agent.stream_async(message)
-    # async for msg in stream_messages:
-    #     if "event" in msg:
-    #         yield msg
+    stream_messages = main_agent.stream_async(message)
+    async for msg in stream_messages:
+        if "event" in msg:
+            yield msg
 
-    result = await main_agent.invoke_async(message)
-    yield result
-    # invoke_message = await agent.invoke_async(message)
-    # yield invoke_message
+    # result = await main_agent.invoke_async(message)
+    # yield result
 
 
 if __name__ == "__main__":
