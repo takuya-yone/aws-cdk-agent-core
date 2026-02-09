@@ -17,7 +17,7 @@ logger = Logger()
 
 @tool
 def call_weather_agent(city: str) -> str:
-    """Agent to get weather information using the get_weather tool.
+    """Call agent to get weather information using the weather_agent.
 
     Args:
         city: The name of the city
@@ -33,7 +33,7 @@ def call_weather_agent(city: str) -> str:
 
 @tool
 def call_search_agent(query: str) -> dict:
-    """Agent to perform web search using the web_search tool.
+    """Call agent to perform web search using the search_agent.
 
     Args:
         query: The search query string
@@ -56,7 +56,7 @@ main_agent = Agent(
         You are a kind AI assistant.
         Please answer user questions politely.
         If weather information is needed, please use the call_weather_agent.
-        If search is needed, please use the call_search_agent.
+        If information is unknown, use call_search_agent to search.
         Answer in the language used by the user.
     """
 )
