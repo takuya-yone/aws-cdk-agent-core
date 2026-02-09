@@ -1,5 +1,5 @@
 
-from agent_tools import get_weather, web_search
+from agent_tools import get_weather, tavily_mcp_client
 from settings import model_settings
 from strands import Agent
 from strands_tools.current_time import current_time
@@ -18,7 +18,7 @@ weather_agent = Agent(
 search_agent = Agent(
     name="search_agent",
     model=model,
-    system_prompt=('You are a web search agent. Use the web_search tool to perform searches on the web.'),
-    tools = [web_search]
+    system_prompt=('You are a web search agent. Use the tavily_mcp_client tool to perform searches on the web.'),
+    tools = [tavily_mcp_client]
 )
 

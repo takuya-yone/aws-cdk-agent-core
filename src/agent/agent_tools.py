@@ -1,26 +1,34 @@
 from aws_lambda_powertools import Logger
+from mcp.client.streamable_http import streamable_http_client
 from settings import tavily_settings
 from strands import tool
+from strands.tools.mcp import MCPClient
+
+# from strands_tools.tavily import tavily_search
 from tavily import TavilyClient
 
 tavily_client = TavilyClient(api_key=tavily_settings.tavily_api_key)
+tavily_mcp_client = MCPClient(lambda: streamable_http_client(f'https://mcp.tavily.com/mcp/?tavilyApiKey={tavily_settings.tavily_api_key}'))
+
 logger = Logger()
 
 
-@tool
-def web_search(query: str) -> dict:
-    """Perform a web search using the Tavily API.
 
-    Args:
-        query: The search query string
+# @tool
+# def web_search(query: str) -> dict:
+#     """Perform a web search using the Tavily API.
 
-    Returns:
-        The search results as a dictionary
+#     Args:
+#         query: The search query string
 
-    """
-    logger.info(f"Performing web search for query: {query}", extra={"query": query, "tool": "web_search"})
-    result = tavily_client.search(query)
-    return result
+#     Returns:
+#         The search results as a dictionary
+
+#     """
+#     logger.info(f"Performing web search for query: {query}", extra={"query": query, "tool": "web_search"})
+#     # result = tavily_search(query,search_depth='advanced',topic='news',max_results=10)
+#     result = tavily_client.search(query)
+#     return result
 
 
 @tool
