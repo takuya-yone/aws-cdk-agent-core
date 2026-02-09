@@ -6,11 +6,13 @@ export class AgentCoreStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 
-    const _agentCoreConstruct = new AgentCoreConstruct(
+    const agentCoreConstruct = new AgentCoreConstruct(
       this,
       "AgentCoreConstruct",
     )
 
-    const _apiGwConstruct = new ApiGwConstruct(this, "ApiGwConstruct")
+    const _apiGwConstruct = new ApiGwConstruct(this, "ApiGwConstruct", {
+      runtime: agentCoreConstruct.runtime,
+    })
   }
 }

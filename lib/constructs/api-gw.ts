@@ -1,3 +1,4 @@
+import type * as agentcore from "@aws-cdk/aws-bedrock-agentcore-alpha"
 import {
   aws_apigateway as apigw,
   Duration,
@@ -8,8 +9,12 @@ import {
 } from "aws-cdk-lib"
 import { Construct } from "constructs"
 
+type ApiGwConstructProps = {
+  runtime: agentcore.Runtime
+}
+
 export class ApiGwConstruct extends Construct {
-  constructor(scope: Construct, id: string) {
+  constructor(scope: Construct, id: string, props: ApiGwConstructProps) {
     super(scope, id)
 
     const agentCoreProxyLambdaName = "AgentCoreProxyLambda"
@@ -29,9 +34,11 @@ export class ApiGwConstruct extends Construct {
         }),
         environment: {
           POWERTOOLS_SERVICE_NAME: agentCoreProxyLambdaName,
+          AGENT_RUNTIME_ARN: props.runtime.agentRuntimeArn,
         },
       },
     )
+    props.runtime.grantInvoke(agentCoreProxyLambda)
 
     const restApi = new apigw.RestApi(this, "AgentCoreApi", {
       restApiName: `RestApiForAgentCore`,

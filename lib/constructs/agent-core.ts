@@ -5,6 +5,7 @@ import { aws_secretsmanager } from "aws-cdk-lib"
 import { Construct } from "constructs"
 
 export class AgentCoreConstruct extends Construct {
+  public readonly runtime: agentcore.Runtime
   constructor(scope: Construct, id: string) {
     super(scope, id)
 
@@ -36,7 +37,7 @@ export class AgentCoreConstruct extends Construct {
     })
 
     // Runtimeの作成
-    const runtime = new agentcore.Runtime(this, "StrandsAgentRuntime", {
+    this.runtime = new agentcore.Runtime(this, "StrandsAgentRuntime", {
       runtimeName: "StrandsAgentRuntime",
       agentRuntimeArtifact:
         agentcore.AgentRuntimeArtifact.fromAsset("src/agent"),
@@ -52,10 +53,10 @@ export class AgentCoreConstruct extends Construct {
     })
 
     // Runtimeへの権限付与
-    inferenceProfileSonnet.grantInvoke(runtime)
-    inferenceProfileNova.grantInvoke(runtime)
-    inferenceProfileNovaUs.grantInvoke(runtime)
-    tavilySecret.grantRead(runtime)
+    inferenceProfileSonnet.grantInvoke(this.runtime)
+    inferenceProfileNova.grantInvoke(this.runtime)
+    inferenceProfileNovaUs.grantInvoke(this.runtime)
+    tavilySecret.grantRead(this.runtime)
     // runtime.addToRolePolicy(
     //   new iam.PolicyStatement({
     //     effect: iam.Effect.ALLOW,
