@@ -32,6 +32,9 @@ export class ApiGwConstruct extends Construct {
           retention: logs.RetentionDays.ONE_WEEK,
           removalPolicy: RemovalPolicy.DESTROY,
         }),
+        bundling: {
+          bundleAwsSDK: true,
+        },
         environment: {
           POWERTOOLS_SERVICE_NAME: agentCoreProxyLambdaName,
           AGENT_RUNTIME_ARN: props.runtime.agentRuntimeArn,
@@ -40,11 +43,22 @@ export class ApiGwConstruct extends Construct {
     )
     props.runtime.grantInvoke(agentCoreProxyLambda)
 
-    const restApi = new apigw.RestApi(this, "AgentCoreApi", {
-      restApiName: `RestApiForAgentCore`,
+    const restApiName = "AgentCoreRestApi"
+    const restApi = new apigw.RestApi(this, restApiName, {
+      restApiName: restApiName,
       deployOptions: {
         stageName: "v1",
         tracingEnabled: true,
+        metricsEnabled: true,
+        dataTraceEnabled: true,
+        accessLogDestination: new apigw.LogGroupLogDestination(
+          new logs.LogGroup(this, "ApiGwAccessLogGroup", {
+            logGroupName: `/aws/apigateway/${restApiName}-AccessLogs`,
+            retention: logs.RetentionDays.ONE_WEEK,
+            removalPolicy: RemovalPolicy.DESTROY,
+          }),
+        ),
+        accessLogFormat: apigw.AccessLogFormat.jsonWithStandardFields(),
       },
     })
 
