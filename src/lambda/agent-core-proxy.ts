@@ -44,12 +44,9 @@ const streamHandler = async (
   responseStream: awslambda.HttpResponseStream,
   _context: Context,
 ) => {
-
-
   const payload = EventBodySchema.parse(JSON.parse(event.body || "{}"))
 
   logger.info("Received event", { payload })
-
 
   const invokeCommand = invokeCommandFactory(payload.prompt)
 
