@@ -36,6 +36,12 @@ export class AgentCoreConstruct extends Construct {
       secretName: "TavilySecret",
     })
 
+    // AgentCore Memoryの作成
+    const memory = new agentcore.Memory(this, "StrandsAgentMemory", {
+      memoryName: "StrandsAgentMemory",
+      description: "Memory for Strands Agent",
+    })
+
     // Runtimeの作成
     this.runtime = new agentcore.Runtime(this, "StrandsAgentRuntime", {
       runtimeName: "StrandsAgentRuntime",
@@ -49,6 +55,7 @@ export class AgentCoreConstruct extends Construct {
         MODEL_ID: "apac.amazon.nova-pro-v1:0",
         // MODEL_ID: "us.amazon.nova-pro-v1:0",
         TAVILY_SECRET_NAME: tavilySecret.secretName,
+        MEMORY_ID: memory.memoryId,
       },
     })
 
@@ -57,7 +64,8 @@ export class AgentCoreConstruct extends Construct {
     inferenceProfileNova.grantInvoke(this.runtime)
     inferenceProfileNovaUs.grantInvoke(this.runtime)
     tavilySecret.grantRead(this.runtime)
-    // runtime.addToRolePolicy(
+    memory.grantWrite(this.runtime)
+    memory.grantRead(this.runtime)
     //   new iam.PolicyStatement({
     //     effect: iam.Effect.ALLOW,
     //     actions: [
