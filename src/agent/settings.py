@@ -33,11 +33,17 @@ class TavilySettings(BaseSettings):
 
     @cached_property
     def tavily_api_key(self) -> str:
-        if is_local():
-            return os.getenv("TAVILY_SECRET_KEY")
         secret = json.loads(parameters.get_secret(self.tavily_secret_name, max_age=300))
         return secret.get("TAVILY_API_KEY")
 
 
+class AwsRssSettings(BaseSettings):
+    model_config = SettingsConfigDict(frozen=False)
+
+    rss_max_items: int = 10
+    rss_url: str = "https://aws.amazon.com/about-aws/whats-new/recent/feed/"
+
+
 model_settings = ModelSettings()
 tavily_settings = TavilySettings()
+aws_rss_settings = AwsRssSettings()
