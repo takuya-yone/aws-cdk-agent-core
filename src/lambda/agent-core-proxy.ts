@@ -6,20 +6,32 @@ import {
 import { promisify } from "node:util"
 import { Logger } from "@aws-lambda-powertools/logger"
 import { Tracer } from "@aws-lambda-powertools/tracer"
-// import { captureLambdaHandler } from "@aws-lambda-powertools/tracer/middleware"
 import {
   BedrockAgentCoreClient,
   InvokeAgentRuntimeCommand,
 } from "@aws-sdk/client-bedrock-agentcore"
-// import middy from "@middy/core"
+
 import type { APIGatewayProxyEvent, Context } from "aws-lambda"
 import { z } from "zod"
+
+// import middy from "@middy/core"
+// import { captureLambdaHandler } from "@aws-lambda-powertools/tracer/middleware"
+
+// SSE (Server-Sent Events) で応答する
+const HTTP_RESPONSE_META_DATA = {
+  statusCode: 200,
+  headers: {
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache",
+  },
+}
 
 const _tracer = new Tracer({})
 const logger = new Logger({})
 
-const EventBodySchema = z.object({
+const eventBodySchema = z.object({
   prompt: z.string().min(1, "Prompt is required"),
+  sessionId: z.string().optional(),
 })
 
 const AGENT_RUNTIME_ARN = process.env.AGENT_RUNTIME_ARN
@@ -29,11 +41,13 @@ if (!AGENT_RUNTIME_ARN) {
 
 const agentCoreClient = new BedrockAgentCoreClient({})
 
-const invokeCommandFactory = (prompt: string) =>
+const invokeCommandFactory = (commandInput: z.infer<typeof eventBodySchema>) =>
   new InvokeAgentRuntimeCommand({
     agentRuntimeArn: AGENT_RUNTIME_ARN,
-    // runtimeSessionId: requestParams.sessionId,
-    payload: new TextEncoder().encode(JSON.stringify({ prompt: prompt })),
+    runtimeSessionId: commandInput.sessionId,
+    payload: new TextEncoder().encode(
+      JSON.stringify({ prompt: commandInput.prompt }),
+    ),
     qualifier: "DEFAULT",
   })
 
@@ -44,23 +58,15 @@ const streamHandler = async (
   responseStream: awslambda.HttpResponseStream,
   _context: Context,
 ) => {
-  const payload = EventBodySchema.parse(JSON.parse(event.body || "{}"))
+  const commandInput = eventBodySchema.parse(JSON.parse(event.body || "{}"))
 
-  logger.info("Received event", { payload })
+  logger.info("Received event", { commandInput })
 
-  const invokeCommand = invokeCommandFactory(payload.prompt)
+  const invokeCommand = invokeCommandFactory(commandInput)
 
-  // SSE (Server-Sent Events) で応答する
-  const httpResponseMetadata = {
-    statusCode: 200,
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-    },
-  }
   responseStream = awslambda.HttpResponseStream.from(
     responseStream as Writable,
-    httpResponseMetadata,
+    HTTP_RESPONSE_META_DATA,
   )
 
   try {
@@ -77,5 +83,4 @@ const streamHandler = async (
 }
 
 // const lambdaHandler = middy(streamHandler).use(captureLambdaHandler(tracer))
-
 export const handler = awslambda.streamifyResponse(streamHandler)
