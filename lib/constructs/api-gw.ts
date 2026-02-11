@@ -64,9 +64,28 @@ export class ApiGwConstruct extends Construct {
 
     const restApiInvoke = restApi.root.addResource("invoke")
 
+    const invokeModel: apigw.Model = restApi.addModel("InvokeModel", {
+      schema: {
+        type: apigw.JsonSchemaType.OBJECT,
+        properties: {
+          prompt: {
+            type: apigw.JsonSchemaType.STRING,
+          },
+        },
+        required: ["prompt"],
+      },
+    })
+
     restApiInvoke.addMethod(
       "POST",
-      new apigw.LambdaIntegration(agentCoreProxyLambda),
+      new apigw.LambdaIntegration(agentCoreProxyLambda, {
+        responseTransferMode: apigw.ResponseTransferMode.STREAM,
+      }),
+      {
+        requestModels: {
+          "application/json": invokeModel,
+        },
+      },
     )
   }
 }
