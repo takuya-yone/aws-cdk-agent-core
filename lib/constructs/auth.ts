@@ -51,6 +51,9 @@ export class AuthConstruct extends Construct {
       {
         userPoolClientName: "StrandsUserPoolClient",
         userPool: userPool,
+        authFlows: {
+          adminUserPassword: true,
+        },
         oAuth: {
           scopes: [
             cognito.OAuthScope.EMAIL,
