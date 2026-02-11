@@ -83,21 +83,13 @@ export class ApiGwConstruct extends Construct {
       },
     )
 
-    const _invokeResponseModel: apigw.Model = restApi.addModel(
+    const invokeResponseModel: apigw.Model = restApi.addModel(
       "InvokeResponseModel",
       {
         modelName: "InvokeResponseModel",
         schema: {
           type: apigw.JsonSchemaType.OBJECT,
-          properties: {
-            prompt: {
-              type: apigw.JsonSchemaType.STRING,
-            },
-            sessionId: {
-              type: apigw.JsonSchemaType.STRING,
-            },
-          },
-          required: ["prompt"],
+          properties: {}
         },
       },
     )
@@ -115,7 +107,7 @@ export class ApiGwConstruct extends Construct {
           {
             statusCode: "200",
             responseModels: {
-              "text/event-stream": apigw.Model.EMPTY_MODEL,
+              "text/event-stream": invokeResponseModel,
             },
           },
         ],
