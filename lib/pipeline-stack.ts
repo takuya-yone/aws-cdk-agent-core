@@ -29,8 +29,8 @@ export class PipelineStack extends cdk.Stack {
       },
       synth: new ShellStep("Synth", {
         input: CodePipelineSource.gitHub(
-          `${props.githubRepo.repoOwner}/${props.githubRepo.repoName}`,
-          props.githubRepo.repoBranch,
+          `${props.githubRepoConfig.repoOwner}/${props.githubRepoConfig.repoName}`,
+          props.githubRepoConfig.repoBranch,
         ),
         commands: [
           "corepack enable",
@@ -69,8 +69,8 @@ export class PipelineStack extends cdk.Stack {
       "Chatbot",
       {
         slackChannelConfigurationName: "PipelineNotification",
-        slackWorkspaceId: props.slackChannel.workspaceId,
-        slackChannelId: props.slackChannel.channelId,
+        slackWorkspaceId: props.slackChannelConfig.workspaceId,
+        slackChannelId: props.slackChannelConfig.channelId,
         logRetention: logs.RetentionDays.ONE_MONTH, // CloudWatch Logs の保持期間をお好みで
         userRoleRequired: true,
       },

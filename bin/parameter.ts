@@ -11,19 +11,29 @@ type SlackChannelConfig = {
   channelId: string
 }
 
+export type CognitoClientConfig = {
+  callbackUrls: string[]
+  logoutUrls: string[]
+}
+
 export interface StackParameters extends cdk.StackProps {
-  githubRepo: GithubRepoConfig
-  slackChannel: SlackChannelConfig
+  githubRepoConfig: GithubRepoConfig
+  slackChannelConfig: SlackChannelConfig
+  cognitoClientConfig: CognitoClientConfig
 }
 
 export const defaultStackParameters: StackParameters = {
-  githubRepo: {
+  githubRepoConfig: {
     repoOwner: "takuya-yone",
     repoName: "aws-cdk-agent-core",
     repoBranch: "main",
   },
-  slackChannel: {
+  slackChannelConfig: {
     workspaceId: "T068N1FDGHY",
     channelId: "C068FC39686",
+  },
+  cognitoClientConfig: {
+    callbackUrls: ["https://localhost:3000/callback"],
+    logoutUrls: ["https://localhost:3000/signout"],
   },
 }
