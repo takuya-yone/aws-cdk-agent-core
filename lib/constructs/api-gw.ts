@@ -64,13 +64,17 @@ export class ApiGwConstruct extends Construct {
 
     const restApiInvoke = restApi.root.addResource("invoke")
 
-    const invokeModel: apigw.Model = restApi.addModel("InvokeModel", {
+    const invokeRequestModel: apigw.Model = restApi.addModel("InvokeRequestModel", {
+      modelName: "InvokeRequestModel",
       schema: {
         type: apigw.JsonSchemaType.OBJECT,
         properties: {
           prompt: {
             type: apigw.JsonSchemaType.STRING,
           },
+          sessionId:{
+            type: apigw.JsonSchemaType.STRING,
+          }
         },
         required: ["prompt"],
       },
@@ -83,7 +87,7 @@ export class ApiGwConstruct extends Construct {
       }),
       {
         requestModels: {
-          "application/json": invokeModel,
+          "application/json": invokeRequestModel,
         },
       },
     )

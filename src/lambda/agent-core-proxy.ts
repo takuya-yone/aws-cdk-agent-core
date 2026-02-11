@@ -34,6 +34,8 @@ const eventBodySchema = z.object({
   sessionId: z.string().optional(),
 })
 
+type eventBodySchemaType = z.infer<typeof eventBodySchema>
+
 const AGENT_RUNTIME_ARN = process.env.AGENT_RUNTIME_ARN
 if (!AGENT_RUNTIME_ARN) {
   throw new Error("AGENT_RUNTIME_ARN is not defined")
@@ -41,7 +43,7 @@ if (!AGENT_RUNTIME_ARN) {
 
 const agentCoreClient = new BedrockAgentCoreClient({})
 
-const invokeCommandFactory = (commandInput: z.infer<typeof eventBodySchema>) =>
+const invokeCommandFactory = (commandInput: eventBodySchemaType) =>
   new InvokeAgentRuntimeCommand({
     agentRuntimeArn: AGENT_RUNTIME_ARN,
     runtimeSessionId: commandInput.sessionId,
