@@ -5,7 +5,7 @@ from functools import cached_property
 
 from aws_lambda_powertools.utilities import parameters
 from dotenv import load_dotenv
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
 from strands.models import BedrockModel
 
 # .envファイルの内容を読み込む
@@ -27,8 +27,6 @@ class ModelSettings(BaseSettings):
 
 
 class TavilySettings(BaseSettings):
-    model_config = SettingsConfigDict(frozen=False)
-
     tavily_secret_name: str
 
     @cached_property
@@ -38,13 +36,20 @@ class TavilySettings(BaseSettings):
 
 
 class AwsRssSettings(BaseSettings):
-    model_config = SettingsConfigDict(frozen=False)
-
     rss_default_items: int = 10
     rss_max_items: int = 100
     rss_url: str = "https://aws.amazon.com/about-aws/whats-new/recent/feed/"
 
 
+class AgentCoreMemorySettings(BaseSettings):
+    memory_id: str
+
+
 model_settings = ModelSettings()
 tavily_settings = TavilySettings()
 aws_rss_settings = AwsRssSettings()
+memory_settings = AgentCoreMemorySettings()
+
+
+
+

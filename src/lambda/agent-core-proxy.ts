@@ -31,10 +31,7 @@ const logger = new Logger({})
 
 const eventBodySchema = z.object({
   prompt: z.string().min(1, "Prompt is required"),
-  sessionId: z.string().optional(),
 })
-
-type eventBodySchemaType = z.infer<typeof eventBodySchema>
 
 const AGENT_RUNTIME_ARN = process.env.AGENT_RUNTIME_ARN
 if (!AGENT_RUNTIME_ARN) {
@@ -43,12 +40,19 @@ if (!AGENT_RUNTIME_ARN) {
 
 const agentCoreClient = new BedrockAgentCoreClient({})
 
-const invokeCommandFactory = (commandInput: eventBodySchemaType) =>
+const invokeCommandFactory = (
+  prompt: string,
+  actorId?: string,
+  sessionId?: string,
+) =>
   new InvokeAgentRuntimeCommand({
     agentRuntimeArn: AGENT_RUNTIME_ARN,
-    runtimeSessionId: commandInput.sessionId,
     payload: new TextEncoder().encode(
-      JSON.stringify({ prompt: commandInput.prompt }),
+      JSON.stringify({
+        prompt: prompt,
+        actor_id: actorId,
+        session_id: sessionId,
+      }),
     ),
     qualifier: "DEFAULT",
   })
@@ -60,11 +64,19 @@ const streamHandler = async (
   responseStream: awslambda.HttpResponseStream,
   _context: Context,
 ) => {
+  logger.info("Received event", { event })
+
   const commandInput = eventBodySchema.parse(JSON.parse(event.body || "{}"))
+  const requestContext = event.requestContext
+  const actorId: string | undefined =
+    requestContext.authorizer?.claims.email ?? "unknown_user"
+  const sessionId = "default_session_id"
 
-  logger.info("Received event", { event, commandInput })
-
-  const invokeCommand = invokeCommandFactory(commandInput)
+  const invokeCommand = invokeCommandFactory(
+    commandInput.prompt,
+    actorId,
+    sessionId,
+  )
 
   responseStream = awslambda.HttpResponseStream.from(
     responseStream as Writable,
