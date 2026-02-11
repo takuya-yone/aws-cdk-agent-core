@@ -24,6 +24,18 @@ export class AuthConstruct extends Construct {
       removalPolicy: RemovalPolicy.DESTROY,
     })
 
+    const _userPoolDomain = new cognito.UserPoolDomain(
+      this,
+      "StrandsUserPoolDomain",
+      {
+        userPool: userPool,
+        cognitoDomain: {
+          domainPrefix: props.cognitoClientConfig.domainPrefix,
+        },
+        managedLoginVersion: cognito.ManagedLoginVersion.NEWER_MANAGED_LOGIN,
+      },
+    )
+
     this.cognitoAuthorizer = new apigw.CognitoUserPoolsAuthorizer(
       this,
       "CognitoAuthorizer",

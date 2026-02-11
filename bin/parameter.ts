@@ -12,6 +12,7 @@ type SlackChannelConfig = {
 }
 
 export type CognitoClientConfig = {
+  domainPrefix: string
   callbackUrls: string[]
   logoutUrls: string[]
 }
@@ -33,6 +34,7 @@ export const defaultStackParameters: StackParameters = {
     channelId: "C068FC39686",
   },
   cognitoClientConfig: {
+    domainPrefix: "strands-agent-core-auth-domain",
     callbackUrls: ["https://localhost:3000/callback"],
     logoutUrls: ["https://localhost:3000/signout"],
   },
