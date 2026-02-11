@@ -75,9 +75,6 @@ export class ApiGwConstruct extends Construct {
             prompt: {
               type: apigw.JsonSchemaType.STRING,
             },
-            sessionId: {
-              type: apigw.JsonSchemaType.STRING,
-            },
           },
           required: ["prompt"],
         },

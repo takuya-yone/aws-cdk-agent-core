@@ -73,9 +73,9 @@ const streamHandler = async (
   const commandInput = eventBodySchema.parse(JSON.parse(event.body || "{}"))
   const requestContext = event.requestContext
   const actorId: string | undefined =
-    requestContext.authorizer?.claims.sub ?? "default-actor"
+    requestContext.authorizer?.claims.sub ?? "unknown"
 
-  const sessionId = `${actorId}-default-session`
+  const sessionId = `${actorId}-default`
 
   const invokeCommand = invokeCommandFactory({
     prompt: commandInput.prompt,
