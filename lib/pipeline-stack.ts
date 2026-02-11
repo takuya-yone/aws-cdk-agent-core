@@ -27,12 +27,6 @@ export class PipelineStack extends cdk.Stack {
           buildImage: cdk.aws_codebuild.LinuxBuildImage.AMAZON_LINUX_2_ARM_3,
         },
       },
-      synthCodeBuildDefaults: {
-        buildEnvironment: {
-          computeType: cdk.aws_codebuild.ComputeType.SMALL,
-          buildImage: cdk.aws_codebuild.LinuxBuildImage.AMAZON_LINUX_2_ARM_3,
-        },
-      },
       synth: new ShellStep("Synth", {
         input: CodePipelineSource.gitHub(
           `${props.githubRepo.repoOwner}/${props.githubRepo.repoName}`,
