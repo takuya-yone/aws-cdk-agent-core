@@ -3,7 +3,6 @@ import * as bedrock from "@aws-cdk/aws-bedrock-alpha"
 import * as cdk from "aws-cdk-lib"
 import { aws_secretsmanager } from "aws-cdk-lib"
 import { Construct } from "constructs"
-
 export class AgentCoreConstruct extends Construct {
   public readonly runtime: agentcore.Runtime
   constructor(scope: Construct, id: string) {
@@ -40,6 +39,10 @@ export class AgentCoreConstruct extends Construct {
     const memory = new agentcore.Memory(this, "StrandsAgentMemory", {
       memoryName: "StrandsAgentMemory",
       description: "Memory for Strands Agent",
+      memoryStrategies: [
+         agentcore.MemoryStrategy.usingBuiltInSummarization(),
+         agentcore.MemoryStrategy.usingBuiltInSemantic()
+      ],
     })
 
     // Runtimeの作成
