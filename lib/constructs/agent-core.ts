@@ -54,10 +54,15 @@ export class AgentCoreConstruct extends Construct {
           name: "UserPreferenceStrategy",
           namespaces: ["/strategies/preference/actors/{actorId}"],
         }),
-        // agentcore.MemoryStrategy.usingEpisodic({
-        //   name: "EpisodicStrategy",
-        //   namespaces: ["/strategy/episodic/actor/{actorId}/session/{sessionId}"],
-        // }),
+        agentcore.MemoryStrategy.usingEpisodic({
+          name: "EpisodicStrategy",
+          namespaces: [
+            "/strategies/episodic/actors/{actorId}/session/{sessionId}",
+          ],
+          reflectionConfiguration: {
+            namespaces: ["/strategies/episodic/actors/{actorId}"],
+          },
+        }),
       ],
     })
 
