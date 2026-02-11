@@ -72,6 +72,8 @@ async def entrypoint(payload: dict):
     """
     _invocation_id = generate()
 
+    logger.info("Invocation started...", extra={"invocation_id": _invocation_id, "payload": payload})
+
     # Extract message and model configuration from payload
     message = payload.get("prompt", "")
     actor_id = payload.get("actor_id")
