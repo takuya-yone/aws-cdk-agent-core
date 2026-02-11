@@ -40,7 +40,8 @@ class TavilySettings(BaseSettings):
 class AwsRssSettings(BaseSettings):
     model_config = SettingsConfigDict(frozen=False)
 
-    rss_max_items: int = 10
+    rss_default_items: int = 10
+    rss_max_items: int = 100
     rss_url: str = "https://aws.amazon.com/about-aws/whats-new/recent/feed/"
 
 

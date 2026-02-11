@@ -25,6 +25,7 @@ def call_weather_agent(city: str) -> str:
     """
 
     result = weather_agent(f"Get the weather for {city} and current time.")
+    logger.info(f"Weather agent called for city: {city}", extra={"city": city, "tool": "call_weather_agent"})
     return result
 
 
@@ -38,6 +39,7 @@ def call_search_agent(query: str) -> dict:
     """
 
     result = search_agent(f"Search the web for {query}")
+    logger.info(f"Search agent called for query: {query}", extra={"query": query, "tool": "call_search_agent"})
     return result
 
 
@@ -51,6 +53,7 @@ def call_aws_rss_agent(keyword: str) -> list:
     """
 
     result = aws_rss_agent(f"Fetch RSS feed items for {keyword}")
+    logger.info(f"AWS RSS agent called for keyword: {keyword}", extra={"keyword": keyword, "tool": "call_aws_rss_agent"})
     return result
 
 

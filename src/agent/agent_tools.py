@@ -40,7 +40,7 @@ def _check_keyword_in_rss_entry(rss_item: RssItem, keyword: str) -> bool:
 
 
 @tool
-def get_aws_rss_feed(keyword:str = "AWS", max_items: int = aws_rss_settings.rss_max_items) -> list[RssItem]:
+def get_aws_rss_feed(keyword:str = "AWS", max_items: int = aws_rss_settings.rss_default_items) -> list[RssItem]:
     """Fetch and parse AWS-related RSS feed items based on a keyword.
     Args:
         keyword: The keyword to filter RSS feed items
@@ -49,9 +49,11 @@ def get_aws_rss_feed(keyword:str = "AWS", max_items: int = aws_rss_settings.rss_
         A list of RSS feed items matching the keyword
     """
     logger.info(f"Fetching AWS RSS feed for keyword: {keyword}", extra={"keyword": keyword,"max_items": max_items  ,"tool": "get_aws_rss_feed"})
-    feed = feedparser.parse(aws_rss_settings.rss_url)
 
-    max_items = min(max_items, 100)
+    feed = feedparser.parse(aws_rss_settings.rss_url)
+    logger.info(f"Fetched {len(feed.entries)} entries from RSS feed", extra={"tool": "get_aws_rss_feed"})
+
+    max_items = min(max_items, aws_rss_settings.rss_max_items)
 
     result_items = []
 
