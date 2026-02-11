@@ -40,10 +40,24 @@ export class AgentCoreConstruct extends Construct {
       memoryName: "StrandsAgentMemory",
       description: "Memory for Strands Agent",
       memoryStrategies: [
-        agentcore.MemoryStrategy.usingBuiltInSummarization(),
-        agentcore.MemoryStrategy.usingBuiltInSemantic(),
-        agentcore.MemoryStrategy.usingBuiltInEpisodic(),
-        agentcore.MemoryStrategy.usingBuiltInUserPreference(),
+        agentcore.MemoryStrategy.usingSummarization({
+          name: "SummarizationStrategy",
+          namespaces: [
+            "/strategies/summary/actors/{actorId}/sessions/{sessionId}",
+          ],
+        }),
+        agentcore.MemoryStrategy.usingSemantic({
+          name: "SemanticStrategy",
+          namespaces: ["/strategies/semantic/actors/{actorId}"],
+        }),
+        agentcore.MemoryStrategy.usingUserPreference({
+          name: "UserPreferenceStrategy",
+          namespaces: ["/strategies/preference/actors/{actorId}"],
+        }),
+        // agentcore.MemoryStrategy.usingEpisodic({
+        //   name: "EpisodicStrategy",
+        //   namespaces: ["/strategy/episodic/actor/{actorId}/session/{sessionId}"],
+        // }),
       ],
     })
 
