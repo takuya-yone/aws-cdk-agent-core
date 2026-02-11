@@ -40,8 +40,10 @@ export class AgentCoreConstruct extends Construct {
       memoryName: "StrandsAgentMemory",
       description: "Memory for Strands Agent",
       memoryStrategies: [
-         agentcore.MemoryStrategy.usingBuiltInSummarization(),
-         agentcore.MemoryStrategy.usingBuiltInSemantic()
+        agentcore.MemoryStrategy.usingBuiltInSummarization(),
+        agentcore.MemoryStrategy.usingBuiltInSemantic(),
+        agentcore.MemoryStrategy.usingBuiltInEpisodic(),
+        agentcore.MemoryStrategy.usingBuiltInUserPreference(),
       ],
     })
 
