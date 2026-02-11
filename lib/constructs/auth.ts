@@ -10,7 +10,7 @@ export class AuthConstruct extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id)
 
-    const userPool = new cognito.UserPool(this, "UserPool", {
+    const userPool = new cognito.UserPool(this, "StrandsUserPool", {
       userPoolName: "StrandsUserPool",
       selfSignUpEnabled: false,
       signInAliases: {
