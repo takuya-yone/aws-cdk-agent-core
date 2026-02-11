@@ -16,7 +16,6 @@ from sub_agents import aws_rss_agent, search_agent, weather_agent
 # Initialize the AgentCore app
 app = BedrockAgentCoreApp()
 model = model_settings.get_model()
-memory_settings = memory_settings()
 logger = Logger()
 
 
@@ -71,7 +70,7 @@ async def entrypoint(payload: dict):
     Yields:
         Streaming messages from the agent
     """
-    invocation_id = generate()
+    invocation_id = f"default-{generate()}"
 
     # Extract message and model configuration from payload
     message = payload.get("prompt", "")

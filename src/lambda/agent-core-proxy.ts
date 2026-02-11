@@ -40,11 +40,15 @@ if (!AGENT_RUNTIME_ARN) {
 
 const agentCoreClient = new BedrockAgentCoreClient({})
 
-const invokeCommandFactory = (
-  prompt: string,
-  actorId?: string,
-  sessionId?: string,
-) =>
+const invokeCommandFactory = ({
+  prompt,
+  actorId,
+  sessionId,
+}: {
+  prompt: string
+  actorId?: string
+  sessionId?: string
+}) =>
   new InvokeAgentRuntimeCommand({
     agentRuntimeArn: AGENT_RUNTIME_ARN,
     payload: new TextEncoder().encode(
@@ -69,14 +73,15 @@ const streamHandler = async (
   const commandInput = eventBodySchema.parse(JSON.parse(event.body || "{}"))
   const requestContext = event.requestContext
   const actorId: string | undefined =
-    requestContext.authorizer?.claims.email ?? "unknown_user"
-  const sessionId = "default_session_id"
+    requestContext.authorizer?.claims.sub ?? "default-actor"
 
-  const invokeCommand = invokeCommandFactory(
-    commandInput.prompt,
-    actorId,
-    sessionId,
-  )
+  const sessionId = `${actorId}-default-session`
+
+  const invokeCommand = invokeCommandFactory({
+    prompt: commandInput.prompt,
+    actorId: actorId,
+    sessionId: sessionId,
+  })
 
   responseStream = awslambda.HttpResponseStream.from(
     responseStream as Writable,
