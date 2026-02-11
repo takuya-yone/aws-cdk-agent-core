@@ -62,7 +62,7 @@ const streamHandler = async (
 ) => {
   const commandInput = eventBodySchema.parse(JSON.parse(event.body || "{}"))
 
-  logger.info("Received event", { commandInput })
+  logger.info("Received event", { event, commandInput })
 
   const invokeCommand = invokeCommandFactory(commandInput)
 
