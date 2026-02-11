@@ -64,21 +64,43 @@ export class ApiGwConstruct extends Construct {
 
     const restApiInvoke = restApi.root.addResource("invoke")
 
-    const invokeRequestModel: apigw.Model = restApi.addModel("InvokeRequestModel", {
-      modelName: "InvokeRequestModel",
-      schema: {
-        type: apigw.JsonSchemaType.OBJECT,
-        properties: {
-          prompt: {
-            type: apigw.JsonSchemaType.STRING,
+    const invokeRequestModel: apigw.Model = restApi.addModel(
+      "InvokeRequestModel",
+      {
+        modelName: "InvokeRequestModel",
+        schema: {
+          type: apigw.JsonSchemaType.OBJECT,
+          properties: {
+            prompt: {
+              type: apigw.JsonSchemaType.STRING,
+            },
+            sessionId: {
+              type: apigw.JsonSchemaType.STRING,
+            },
           },
-          sessionId:{
-            type: apigw.JsonSchemaType.STRING,
-          }
+          required: ["prompt"],
         },
-        required: ["prompt"],
       },
-    })
+    )
+
+    const _invokeResponseModel: apigw.Model = restApi.addModel(
+      "InvokeResponseModel",
+      {
+        modelName: "InvokeResponseModel",
+        schema: {
+          type: apigw.JsonSchemaType.OBJECT,
+          properties: {
+            prompt: {
+              type: apigw.JsonSchemaType.STRING,
+            },
+            sessionId: {
+              type: apigw.JsonSchemaType.STRING,
+            },
+          },
+          required: ["prompt"],
+        },
+      },
+    )
 
     restApiInvoke.addMethod(
       "POST",
@@ -89,6 +111,14 @@ export class ApiGwConstruct extends Construct {
         requestModels: {
           "application/json": invokeRequestModel,
         },
+        methodResponses: [
+          {
+            statusCode: "200",
+            responseModels: {
+              "text/event-stream": apigw.Model.EMPTY_MODEL,
+            },
+          },
+        ],
       },
     )
   }
