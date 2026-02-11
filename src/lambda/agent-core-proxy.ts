@@ -44,10 +44,12 @@ const invokeCommandFactory = ({
   prompt,
   actorId,
   sessionId,
+  traceId
 }: {
   prompt: string
   actorId?: string
   sessionId?: string
+  traceId?: string
 }) =>
   new InvokeAgentRuntimeCommand({
     agentRuntimeArn: AGENT_RUNTIME_ARN,
@@ -59,6 +61,7 @@ const invokeCommandFactory = ({
       }),
     ),
     qualifier: "DEFAULT",
+    traceId: traceId,
   })
 
 const asyncPipeline = promisify(streamPipeline)
