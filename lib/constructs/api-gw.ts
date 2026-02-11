@@ -11,6 +11,7 @@ import { Construct } from "constructs"
 
 type ApiGwConstructProps = {
   runtime: agentcore.Runtime
+  cognitoAuthorizer: apigw.CognitoUserPoolsAuthorizer
 }
 
 export class ApiGwConstruct extends Construct {
@@ -89,7 +90,7 @@ export class ApiGwConstruct extends Construct {
         modelName: "InvokeResponseModel",
         schema: {
           type: apigw.JsonSchemaType.OBJECT,
-          properties: {}
+          properties: {},
         },
       },
     )
@@ -100,6 +101,7 @@ export class ApiGwConstruct extends Construct {
         responseTransferMode: apigw.ResponseTransferMode.STREAM,
       }),
       {
+        authorizer: props.cognitoAuthorizer,
         requestModels: {
           "application/json": invokeRequestModel,
         },
