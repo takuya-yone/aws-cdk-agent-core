@@ -41,10 +41,17 @@ aws cognito-idp admin-enable-user \
   --user-pool-id ${USER_POOL_ID} \
   --username ${COGNITO_USER_NAME}
 
-# Enable cognito user by admin
+# Initiate cognito user  auth by admin
 aws cognito-idp admin-initiate-auth \
   --user-pool-id ${USER_POOL_ID} \
   --client-id ${CLIENT_ID} \
   --auth-flow "ADMIN_USER_PASSWORD_AUTH" \
+  --auth-parameters USERNAME=${COGNITO_USER_NAME},PASSWORD=${COGNITO_PASSWORD}
+
+
+# Initiate cognito user  auth by admin
+aws cognito-idp initiate-auth \
+  --client-id ${CLIENT_ID} \
+  --auth-flow "USER_PASSWORD_AUTH" \
   --auth-parameters USERNAME=${COGNITO_USER_NAME},PASSWORD=${COGNITO_PASSWORD}
 ```

@@ -53,6 +53,8 @@ export class AuthConstruct extends Construct {
         userPool: userPool,
         authFlows: {
           adminUserPassword: true,
+          userPassword: true,
+          userSrp: true,
         },
         oAuth: {
           scopes: [
