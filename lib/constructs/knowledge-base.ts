@@ -16,11 +16,14 @@ export class KnowledgeBaseConstruct extends Construct {
     const vectorStoreBucket = new s3vectors.CfnVectorBucket(
       this,
       "KnowledgeBaseVectorStoreBucket",
+      {
+        vectorBucketName: "knowledge-base-vector-store-bucket",
+      },
     )
 
-    const dataStoreBucket = new as3.Bucket(
+    const dataSourceBucket = new as3.Bucket(
       this,
-      "KnowledgeBaseDataStoreBucket",
+      "KnowledgeBaseDataSourceBucket",
       {
         removalPolicy: RemovalPolicy.DESTROY,
       },
@@ -78,14 +81,43 @@ export class KnowledgeBaseConstruct extends Construct {
         }),
       },
     })
-    dataStoreBucket.grantRead(knowledgeBaseRole)
+    dataSourceBucket.grantRead(knowledgeBaseRole)
 
-    // const _aaa = new bedrock.CfnKnowledgeBase(this, "CfnKnowledgeBase", {
-    //   name: "CfnKnowledgeBase",
-    //   roleArn: "arn:aws:iam::123456789012:role/BedrockKnowledgeBaseRole",
-    //   knowledgeBaseConfiguration: {
-    //     type: "VECTOR",
+    // const knowledgeBase = new bedrock.CfnKnowledgeBase(
+    //   this,
+    //   "CfnKnowledgeBase",
+    //   {
+    //     name: "CfnKnowledgeBase",
+    //     roleArn: knowledgeBaseRole.roleArn,
+    //     knowledgeBaseConfiguration: {
+    //       type: "VECTOR",
+    //       vectorKnowledgeBaseConfiguration: {
+    //         embeddingModelArn: titanFoundationModel.modelArn,
+    //       },
+    //     },
+    //     storageConfiguration: {
+    //       type: "S3_VECTORS",
+    //       s3VectorsConfiguration: {
+    //         vectorBucketArn: vectorStoreBucket.attrVectorBucketArn,
+    //         indexArn: vectorStoreBucket.ref,
+    //       },
+    //     },
     //   },
-    // })
+    // )
+
+    // const _kbDataSource = new bedrock.CfnDataSource(
+    //   this,
+    //   "BedrockKnowledgeBaseDataStore",
+    //   {
+    //     name: dataSourceBucket.bucketName,
+    //     knowledgeBaseId: knowledgeBase.ref,
+    //     dataSourceConfiguration: {
+    //       s3Configuration: {
+    //         bucketArn: dataSourceBucket.bucketArn,
+    //       },
+    //       type: "S3",
+    //     },
+    //   },
+    // )
   }
 }
