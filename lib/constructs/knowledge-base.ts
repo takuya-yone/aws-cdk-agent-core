@@ -12,11 +12,24 @@ export class KnowledgeBaseConstruct extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id)
 
+    const vectorDimension = 1024
+
     const vectorStoreBucket = new s3vectors.CfnVectorBucket(
       this,
       "KnowledgeBaseVectorStoreBucket",
       {
         vectorBucketName: "knowledge-base-vector-store-bucket",
+      },
+    )
+
+    const vectoreStoreBucketIndex = new s3vectors.CfnIndex(
+      this,
+      "VectorStoreBucketIndex",
+      {
+        dataType: "float32",
+        dimension: vectorDimension,
+        distanceMetric: "euclidean",
+        vectorBucketArn: vectorStoreBucket.attrVectorBucketArn,
       },
     )
 
@@ -92,13 +105,18 @@ export class KnowledgeBaseConstruct extends Construct {
           type: "VECTOR",
           vectorKnowledgeBaseConfiguration: {
             embeddingModelArn: titanFoundationModel.modelArn,
+            embeddingModelConfiguration: {
+              bedrockEmbeddingModelConfiguration: {
+                dimensions: vectorDimension,
+              },
+            },
           },
         },
         storageConfiguration: {
           type: "S3_VECTORS",
           s3VectorsConfiguration: {
             vectorBucketArn: vectorStoreBucket.attrVectorBucketArn,
-            indexArn: vectorStoreBucket.ref,
+            indexArn: vectoreStoreBucketIndex.attrIndexArn,
           },
         },
       },
