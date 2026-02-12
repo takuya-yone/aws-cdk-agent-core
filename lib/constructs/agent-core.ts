@@ -1,7 +1,7 @@
 import * as agentcore from "@aws-cdk/aws-bedrock-agentcore-alpha"
 import * as bedrock from "@aws-cdk/aws-bedrock-alpha"
 import * as cdk from "aws-cdk-lib"
-import { aws_secretsmanager } from "aws-cdk-lib"
+import { aws_secretsmanager as secretsmanager } from "aws-cdk-lib"
 import { Construct } from "constructs"
 export class AgentCoreConstruct extends Construct {
   public readonly runtime: agentcore.Runtime
@@ -31,7 +31,7 @@ export class AgentCoreConstruct extends Construct {
       })
 
     // Secrets Managerの作成(Tavily API Key)
-    const tavilySecret = new aws_secretsmanager.Secret(this, "TavilySecret", {
+    const tavilySecret = new secretsmanager.Secret(this, "TavilySecret", {
       secretName: "TavilySecret",
     })
 
