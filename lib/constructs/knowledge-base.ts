@@ -6,7 +6,6 @@ import {
   aws_s3vectors as s3vectors,
 } from "aws-cdk-lib"
 // import * as bedrock from "@aws-cdk/aws-bedrock-alpha"
-
 import { Construct } from "constructs"
 
 export class KnowledgeBaseConstruct extends Construct {
@@ -83,27 +82,27 @@ export class KnowledgeBaseConstruct extends Construct {
     })
     dataSourceBucket.grantRead(knowledgeBaseRole)
 
-    // const knowledgeBase = new bedrock.CfnKnowledgeBase(
-    //   this,
-    //   "CfnKnowledgeBase",
-    //   {
-    //     name: "CfnKnowledgeBase",
-    //     roleArn: knowledgeBaseRole.roleArn,
-    //     knowledgeBaseConfiguration: {
-    //       type: "VECTOR",
-    //       vectorKnowledgeBaseConfiguration: {
-    //         embeddingModelArn: titanFoundationModel.modelArn,
-    //       },
-    //     },
-    //     storageConfiguration: {
-    //       type: "S3_VECTORS",
-    //       s3VectorsConfiguration: {
-    //         vectorBucketArn: vectorStoreBucket.attrVectorBucketArn,
-    //         indexArn: vectorStoreBucket.ref,
-    //       },
-    //     },
-    //   },
-    // )
+    const _knowledgeBase = new bedrock.CfnKnowledgeBase(
+      this,
+      "CfnKnowledgeBase",
+      {
+        name: "CfnKnowledgeBase",
+        roleArn: knowledgeBaseRole.roleArn,
+        knowledgeBaseConfiguration: {
+          type: "VECTOR",
+          vectorKnowledgeBaseConfiguration: {
+            embeddingModelArn: titanFoundationModel.modelArn,
+          },
+        },
+        storageConfiguration: {
+          type: "S3_VECTORS",
+          s3VectorsConfiguration: {
+            vectorBucketArn: vectorStoreBucket.attrVectorBucketArn,
+            indexArn: vectorStoreBucket.ref,
+          },
+        },
+      },
+    )
 
     // const _kbDataSource = new bedrock.CfnDataSource(
     //   this,
@@ -117,6 +116,11 @@ export class KnowledgeBaseConstruct extends Construct {
     //       },
     //       type: "S3",
     //     },
+    //     vectorIngestionConfiguration:{
+    //       chunkingConfiguration:{
+    //         chunkingStrategy:"SEMANTIC",
+    //       }
+    //     }
     //   },
     // )
   }
