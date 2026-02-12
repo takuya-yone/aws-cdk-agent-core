@@ -1,11 +1,16 @@
 import * as agentcore from "@aws-cdk/aws-bedrock-agentcore-alpha"
 import * as bedrock from "@aws-cdk/aws-bedrock-alpha"
+import type { aws_bedrock } from "aws-cdk-lib"
 import * as cdk from "aws-cdk-lib"
 import { aws_secretsmanager as secretsmanager } from "aws-cdk-lib"
 import { Construct } from "constructs"
+
+export type AgentCoreConstructProps = {
+  knowledgeBase: aws_bedrock.CfnKnowledgeBase
+}
 export class AgentCoreConstruct extends Construct {
   public readonly runtime: agentcore.Runtime
-  constructor(scope: Construct, id: string) {
+  constructor(scope: Construct, id: string, props: AgentCoreConstructProps) {
     super(scope, id)
 
     // CrossRegionInferenceProfileの作成(Anthropic Claude Sonnet 4.5 Japanリージョン)
@@ -80,6 +85,7 @@ export class AgentCoreConstruct extends Construct {
         // MODEL_ID: "us.amazon.nova-pro-v1:0",
         TAVILY_SECRET_NAME: tavilySecret.secretName,
         MEMORY_ID: memory.memoryId,
+        BEDROCK_KB_ID: props.knowledgeBase.ref,
       },
     })
 

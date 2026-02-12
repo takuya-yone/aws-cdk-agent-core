@@ -9,6 +9,7 @@ import {
 import { Construct } from "constructs"
 
 export class KnowledgeBaseConstruct extends Construct {
+  public readonly knowledgeBase: bedrock.CfnKnowledgeBase
   constructor(scope: Construct, id: string) {
     super(scope, id)
 
@@ -102,7 +103,7 @@ export class KnowledgeBaseConstruct extends Construct {
     })
     dataSourceBucket.grantRead(knowledgeBaseRole)
 
-    const knowledgeBase = new bedrock.CfnKnowledgeBase(
+    this.knowledgeBase = new bedrock.CfnKnowledgeBase(
       this,
       "BedrockKnowledgeBase",
       {
@@ -134,7 +135,7 @@ export class KnowledgeBaseConstruct extends Construct {
       "BedrockKnowledgeBaseDataStore",
       {
         name: dataSourceBucket.bucketName,
-        knowledgeBaseId: knowledgeBase.ref,
+        knowledgeBaseId: this.knowledgeBase.ref,
         dataSourceConfiguration: {
           s3Configuration: {
             bucketArn: dataSourceBucket.bucketArn,

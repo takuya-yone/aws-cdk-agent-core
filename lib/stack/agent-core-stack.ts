@@ -10,7 +10,7 @@ export class AgentCoreStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: StackParameters) {
     super(scope, id, props)
 
-    const _knowledgeBaseConstruct = new KnowledgeBaseConstruct(
+    const knowledgeBaseConstruct = new KnowledgeBaseConstruct(
       this,
       "KnowledgeBaseConstruct",
     )
@@ -18,6 +18,9 @@ export class AgentCoreStack extends cdk.Stack {
     const agentCoreConstruct = new AgentCoreConstruct(
       this,
       "AgentCoreConstruct",
+      {
+        knowledgeBase: knowledgeBaseConstruct.knowledgeBase,
+      },
     )
 
     const authConstruct = new AuthConstruct(this, "AuthConstruct", {
