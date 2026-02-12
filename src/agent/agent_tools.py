@@ -65,7 +65,9 @@ def get_aws_rss_feed(keyword:str = "AWS", max_items: int = aws_rss_settings.rss_
         if _check_keyword_in_rss_entry(rss_item, keyword):
             result_items.append(rss_item)
 
-    return result_items[:max_items]
+    logger.info(f"Returning {len(result_items)} items matching keyword: {keyword}", extra={"keyword": keyword,"returned_items": len(result_items) ,"tool": "get_aws_rss_feed"})
+
+    return result_items
 
 
 @tool
