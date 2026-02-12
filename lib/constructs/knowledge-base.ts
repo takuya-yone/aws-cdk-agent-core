@@ -95,11 +95,11 @@ export class KnowledgeBaseConstruct extends Construct {
     })
     dataSourceBucket.grantRead(knowledgeBaseRole)
 
-    const _knowledgeBase = new bedrock.CfnKnowledgeBase(
+    const knowledgeBase = new bedrock.CfnKnowledgeBase(
       this,
-      "CfnKnowledgeBase",
+      "BedrockKnowledgeBase",
       {
-        name: "CfnKnowledgeBase",
+        name: "BedrockKnowledgeBase",
         roleArn: knowledgeBaseRole.roleArn,
         knowledgeBaseConfiguration: {
           type: "VECTOR",
@@ -122,24 +122,24 @@ export class KnowledgeBaseConstruct extends Construct {
       },
     )
 
-    // const _kbDataSource = new bedrock.CfnDataSource(
-    //   this,
-    //   "BedrockKnowledgeBaseDataStore",
-    //   {
-    //     name: dataSourceBucket.bucketName,
-    //     knowledgeBaseId: knowledgeBase.ref,
-    //     dataSourceConfiguration: {
-    //       s3Configuration: {
-    //         bucketArn: dataSourceBucket.bucketArn,
-    //       },
-    //       type: "S3",
-    //     },
-    //     vectorIngestionConfiguration:{
-    //       chunkingConfiguration:{
-    //         chunkingStrategy:"SEMANTIC",
-    //       }
-    //     }
-    //   },
-    // )
+    const _kbDataSource = new bedrock.CfnDataSource(
+      this,
+      "BedrockKnowledgeBaseDataStore",
+      {
+        name: dataSourceBucket.bucketName,
+        knowledgeBaseId: knowledgeBase.ref,
+        dataSourceConfiguration: {
+          s3Configuration: {
+            bucketArn: dataSourceBucket.bucketArn,
+          },
+          type: "S3",
+        },
+        vectorIngestionConfiguration: {
+          chunkingConfiguration: {
+            chunkingStrategy: "SEMANTIC",
+          },
+        },
+      },
+    )
   }
 }
