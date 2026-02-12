@@ -137,6 +137,11 @@ export class KnowledgeBaseConstruct extends Construct {
         vectorIngestionConfiguration: {
           chunkingConfiguration: {
             chunkingStrategy: "SEMANTIC",
+            semanticChunkingConfiguration: {
+              breakpointPercentileThreshold: 95,
+              bufferSize: 0,
+              maxTokens: 300,
+            },
           },
         },
       },
