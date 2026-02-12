@@ -22,7 +22,7 @@ export class KnowledgeBaseConstruct extends Construct {
       },
     )
 
-    const vectoreStoreBucketIndex = new s3vectors.CfnIndex(
+    const vectorStoreBucketIndex = new s3vectors.CfnIndex(
       this,
       "VectorStoreBucketIndex",
       {
@@ -30,6 +30,12 @@ export class KnowledgeBaseConstruct extends Construct {
         dimension: vectorDimension,
         distanceMetric: "euclidean",
         vectorBucketArn: vectorStoreBucket.attrVectorBucketArn,
+        metadataConfiguration: {
+          nonFilterableMetadataKeys: [
+            "AMAZON_BEDROCK_TEXT",
+            "AMAZON_BEDROCK_METADATA",
+          ],
+        },
       },
     )
 
@@ -116,7 +122,7 @@ export class KnowledgeBaseConstruct extends Construct {
           type: "S3_VECTORS",
           s3VectorsConfiguration: {
             vectorBucketArn: vectorStoreBucket.attrVectorBucketArn,
-            indexArn: vectoreStoreBucketIndex.attrIndexArn,
+            indexArn: vectorStoreBucketIndex.attrIndexArn,
           },
         },
       },
