@@ -148,7 +148,7 @@ export class KnowledgeBaseConstruct extends Construct {
             semanticChunkingConfiguration: {
               breakpointPercentileThreshold: 95,
               bufferSize: 0,
-              maxTokens: 300,
+              maxTokens: 500,
             },
           },
         },
