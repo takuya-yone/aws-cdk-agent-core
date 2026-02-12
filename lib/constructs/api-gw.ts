@@ -8,10 +8,12 @@ import {
   RemovalPolicy,
 } from "aws-cdk-lib"
 import { Construct } from "constructs"
+import type { ApiGwConfig } from "../../bin/parameter"
 
 type ApiGwConstructProps = {
   runtime: agentcore.Runtime
   cognitoAuthorizer: apigw.CognitoUserPoolsAuthorizer
+  apiGwConfig: ApiGwConfig
 }
 
 export class ApiGwConstruct extends Construct {
@@ -48,7 +50,7 @@ export class ApiGwConstruct extends Construct {
     const restApi = new apigw.RestApi(this, restApiName, {
       restApiName: restApiName,
       deployOptions: {
-        stageName: "v1",
+        stageName: props.apiGwConfig.stageName,
         tracingEnabled: true,
         metricsEnabled: true,
         dataTraceEnabled: true,
@@ -96,6 +98,7 @@ export class ApiGwConstruct extends Construct {
       "POST",
       new apigw.LambdaIntegration(agentCoreProxyLambda, {
         responseTransferMode: apigw.ResponseTransferMode.STREAM,
+        timeout: props.apiGwConfig.timeoutSeconds,
       }),
       {
         authorizer: props.cognitoAuthorizer,

@@ -1,4 +1,12 @@
 import type * as cdk from "aws-cdk-lib"
+import {
+  aws_apigateway as apigw,
+  Duration,
+  aws_lambda as lambda,
+  aws_lambda_nodejs as lambda_nodejs,
+  aws_logs as logs,
+  RemovalPolicy,
+} from "aws-cdk-lib"
 
 type GithubRepoConfig = {
   repoName: string
@@ -17,10 +25,16 @@ export type CognitoClientConfig = {
   logoutUrls: string[]
 }
 
+export type ApiGwConfig = {
+  stageName: string
+  timeoutSeconds: Duration
+}
+
 export interface StackParameters extends cdk.StackProps {
   githubRepoConfig: GithubRepoConfig
   slackChannelConfig: SlackChannelConfig
   cognitoClientConfig: CognitoClientConfig
+  apiGwConfig: ApiGwConfig
 }
 
 export const defaultStackParameters: StackParameters = {
@@ -37,5 +51,9 @@ export const defaultStackParameters: StackParameters = {
     domainPrefix: "strands-agent-core-auth-domain",
     callbackUrls: ["https://localhost:3000/callback"],
     logoutUrls: ["https://localhost:3000/signout"],
+  },
+  apiGwConfig: {
+    stageName: "v1",
+    timeoutSeconds: Duration.seconds(60),
   },
 }

@@ -44,7 +44,7 @@ const invokeCommandFactory = ({
   prompt,
   actorId,
   sessionId,
-  traceId
+  traceId,
 }: {
   prompt: string
   actorId?: string
