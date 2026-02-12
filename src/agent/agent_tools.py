@@ -55,12 +55,13 @@ def get_aws_rss_feed(keyword:str = "AWS", max_items: int = aws_rss_settings.rss_
 
     max_items = min(max_items, aws_rss_settings.rss_max_items)
 
-    result_items = []
+    result_items: list[RssItem] = []
 
     for entry in feed.entries:
-        rss_item = RssItem.from_entry(entry)
         if len(result_items) >= max_items:
             break
+
+        rss_item = RssItem.from_entry(entry)
         if _check_keyword_in_rss_entry(rss_item, keyword):
             result_items.append(rss_item)
 

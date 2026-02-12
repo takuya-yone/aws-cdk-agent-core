@@ -76,8 +76,8 @@ async def entrypoint(payload: dict):
 
     # Extract message and model configuration from payload
     message = payload.get("prompt", "")
-    actor_id = payload.get("actor_id")
-    session_id = payload.get("session_id")
+    actor_id = payload.get("actor_id","not_set")
+    session_id = payload.get("session_id","not_set")
 
     agentcore_memory_config = AgentCoreMemoryConfig(
         memory_id=memory_settings.memory_id,
