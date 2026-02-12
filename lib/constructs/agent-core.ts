@@ -1,8 +1,11 @@
 import * as agentcore from "@aws-cdk/aws-bedrock-agentcore-alpha"
 import * as bedrock from "@aws-cdk/aws-bedrock-alpha"
-import type { aws_bedrock } from "aws-cdk-lib"
 import * as cdk from "aws-cdk-lib"
-import { aws_secretsmanager as secretsmanager } from "aws-cdk-lib"
+import {
+  type aws_bedrock,
+  aws_iam as iam,
+  aws_secretsmanager as secretsmanager,
+} from "aws-cdk-lib"
 import { Construct } from "constructs"
 
 export type AgentCoreConstructProps = {
@@ -12,6 +15,12 @@ export class AgentCoreConstruct extends Construct {
   public readonly runtime: agentcore.Runtime
   constructor(scope: Construct, id: string, props: AgentCoreConstructProps) {
     super(scope, id)
+
+    const kbAccessPolicyStatement = new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["bedrock:RetrieveAndGenerate", "bedrock:Retrieve"],
+      resources: [props.knowledgeBase.attrKnowledgeBaseArn],
+    })
 
     // CrossRegionInferenceProfileの作成(Anthropic Claude Sonnet 4.5 Japanリージョン)
     const inferenceProfileSonnet =
@@ -96,6 +105,7 @@ export class AgentCoreConstruct extends Construct {
     tavilySecret.grantRead(this.runtime)
     memory.grantWrite(this.runtime)
     memory.grantRead(this.runtime)
+    this.runtime.addToRolePolicy(kbAccessPolicyStatement)
     //   new iam.PolicyStatement({
     //     effect: iam.Effect.ALLOW,
     //     actions: [
