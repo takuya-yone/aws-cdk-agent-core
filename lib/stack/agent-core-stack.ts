@@ -4,16 +4,16 @@ import type { StackParameters } from "../../bin/parameter"
 import { AgentCoreConstruct } from "../constructs/agent-core"
 import { ApiGwConstruct } from "../constructs/api-gw"
 import { AuthConstruct } from "../constructs/auth"
-// import { KnowledgeBaseConstruct } from "../constructs/knowledge-base"
+import { KnowledgeBaseConstruct } from "../constructs/knowledge-base"
 
 export class AgentCoreStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: StackParameters) {
     super(scope, id, props)
 
-    // const _knowledgeBaseConstruct = new KnowledgeBaseConstruct(
-    //   this,
-    //   "KnowledgeBaseConstruct",
-    // )
+    const _knowledgeBaseConstruct = new KnowledgeBaseConstruct(
+      this,
+      "KnowledgeBaseConstruct",
+    )
 
     const agentCoreConstruct = new AgentCoreConstruct(
       this,

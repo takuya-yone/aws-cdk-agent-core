@@ -44,6 +44,7 @@ export class KnowledgeBaseConstruct extends Construct {
       "KnowledgeBaseDataSourceBucket",
       {
         removalPolicy: RemovalPolicy.DESTROY,
+        autoDeleteObjects: true,
       },
     )
 
