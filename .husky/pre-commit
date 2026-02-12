@@ -1,2 +1,2 @@
-pnpm biome:fix
-pnpm ruff:fix
+pnpm biome:dry
+pnpm ruff:dry

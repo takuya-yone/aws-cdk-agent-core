@@ -9,7 +9,9 @@
     "watch": "tsc -w",
     "test": "vitest",
     "cdk": "cdk",
+    "biome:dry": "biome check --unsafe bin lib src tests",
     "biome:fix": "biome check --write --unsafe bin lib src tests",
+    "ruff:dry": "uv run ruff check src",
     "ruff:fix": "uv run ruff check src --fix",
     "prepare": "husky"
   },
