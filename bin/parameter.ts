@@ -1,12 +1,5 @@
 import type * as cdk from "aws-cdk-lib"
-import {
-  aws_apigateway as apigw,
-  Duration,
-  aws_lambda as lambda,
-  aws_lambda_nodejs as lambda_nodejs,
-  aws_logs as logs,
-  RemovalPolicy,
-} from "aws-cdk-lib"
+import { Duration } from "aws-cdk-lib"
 
 type GithubRepoConfig = {
   repoName: string
