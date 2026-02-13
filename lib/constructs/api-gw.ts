@@ -30,6 +30,7 @@ export class ApiGwConstruct extends Construct {
         functionName: agentCoreProxyLambdaName,
         entry: "src/lambda/agent-core-proxy.ts",
         timeout: Duration.seconds(900),
+        memorySize: 128,
         tracing: lambda.Tracing.ACTIVE,
         logGroup: new logs.LogGroup(this, "AgentCoreProxyLambdaLogGroup", {
           logGroupName: `/aws/lambda/${agentCoreProxyLambdaName}`,
@@ -56,6 +57,7 @@ export class ApiGwConstruct extends Construct {
         functionName: apiGwRouterLambdaName,
         entry: "src/lambda/apigw-router/index.ts",
         timeout: Duration.seconds(900),
+        memorySize: 256,
         tracing: lambda.Tracing.ACTIVE,
         logGroup: new logs.LogGroup(this, "ApiGwRouterLambdaLogGroup", {
           logGroupName: `/aws/lambda/${apiGwRouterLambdaName}`,
@@ -84,11 +86,11 @@ export class ApiGwConstruct extends Construct {
 
     const restApiName = "AgentCoreRestApi"
 
-    // const _restApi = new apigw.LambdaRestApi(this, restApiName, {
-    //   restApiName: restApiName,
-    //   handler: apigwRouterLambda,
-    //   proxy:true
-    // })
+    const _restApi = new apigw.LambdaRestApi(this, "aaaaaaa", {
+      restApiName: "aaaaaaa",
+      handler: apigwRouterLambda,
+      proxy:true
+    })
     // _restApi.root
 
     const restApi = new apigw.RestApi(this, restApiName, {
