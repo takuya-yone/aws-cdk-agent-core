@@ -85,14 +85,14 @@ async def entrypoint(payload: dict):
     Yields:
         Streaming messages from the agent
     """
-    _invocation_id = generate()
+    invocation_id = generate()
 
-    logger.info("Invocation started...", extra={"invocation_id": _invocation_id, "payload": payload})
+    logger.info("Invocation started...", extra={"invocation_id": invocation_id, "payload": payload})
 
     # Extract message and model configuration from payload
     message = payload.get("prompt", "")
-    actor_id = payload.get("actor_id","not_set")
-    session_id = payload.get("session_id","not_set")
+    actor_id = payload.get("actor_id",invocation_id)
+    session_id = payload.get("session_id",'default_session_id')
 
     agentcore_memory_config = AgentCoreMemoryConfig(
         memory_id=memory_settings.memory_id,
