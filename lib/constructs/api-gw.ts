@@ -73,39 +73,41 @@ export class ApiGwConstruct extends Construct {
     )
     props.runtime.grantInvoke(apigwRouterLambda)
 
-    // const cognitoAuthorizer = new apigw.CognitoUserPoolsAuthorizer(
-    //   this,
-    //   "CognitoAuthorizer",
-    //   {
-    //     authorizerName: "CognitoAuthorizer",
-    //     cognitoUserPools: [props.userPool],
-    //   },
-    // )
+    const cognitoAuthorizer = new apigw.CognitoUserPoolsAuthorizer(
+      this,
+      "CognitoAuthorizer",
+      {
+        authorizerName: "CognitoAuthorizer",
+        cognitoUserPools: [props.userPool],
+      },
+    )
 
-    const restApiName = "AgentCoreRestApiProxy"
+    const restApiName = "AgentCoreRestApi"
 
-    const _restApi = new apigw.LambdaRestApi(this, restApiName, {
-      restApiName: restApiName,
-      handler: apigwRouterLambda,
-    })
-
-    // const restApi = new apigw.RestApi(this, restApiName, {
+    // const _restApi = new apigw.LambdaRestApi(this, restApiName, {
     //   restApiName: restApiName,
-    //   deployOptions: {
-    //     stageName: props.apiGwConfig.stageName,
-    //     tracingEnabled: true,
-    //     metricsEnabled: true,
-    //     dataTraceEnabled: true,
-    //     accessLogDestination: new apigw.LogGroupLogDestination(
-    //       new logs.LogGroup(this, "ApiGwAccessLogGroup", {
-    //         logGroupName: `/aws/apigateway/${restApiName}-AccessLogs`,
-    //         retention: logs.RetentionDays.ONE_WEEK,
-    //         removalPolicy: RemovalPolicy.DESTROY,
-    //       }),
-    //     ),
-    //     accessLogFormat: apigw.AccessLogFormat.jsonWithStandardFields(),
-    //   },
+    //   handler: apigwRouterLambda,
+    //   proxy:true
     // })
+    // _restApi.root
+
+    const restApi = new apigw.RestApi(this, restApiName, {
+      restApiName: restApiName,
+      deployOptions: {
+        stageName: props.apiGwConfig.stageName,
+        tracingEnabled: true,
+        metricsEnabled: true,
+        dataTraceEnabled: true,
+        accessLogDestination: new apigw.LogGroupLogDestination(
+          new logs.LogGroup(this, "ApiGwAccessLogGroup", {
+            logGroupName: `/aws/apigateway/${restApiName}-AccessLogs`,
+            retention: logs.RetentionDays.ONE_WEEK,
+            removalPolicy: RemovalPolicy.DESTROY,
+          }),
+        ),
+        accessLogFormat: apigw.AccessLogFormat.jsonWithStandardFields(),
+      },
+    })
 
     // const restApiInvoke = restApi.root.addResource("invoke")
 
@@ -136,27 +138,28 @@ export class ApiGwConstruct extends Construct {
     //   },
     // )
 
-    // restApi.root.addMethod(
-    //   "ANY",
-    //   new apigw.LambdaIntegration(apigwRouterLambda, {
-    //     responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
-    //     timeout: props.apiGwConfig.timeoutSeconds,
-    //   }),
-    //   {
-    //     authorizer: props.cognitoAuthorizer,
-    //     requestModels: {
-    //       "application/json": invokeRequestModel,
-    //     },
-    //     methodResponses: [
-    //       {
-    //         statusCode: "200",
-    //         responseModels: {
-    //           "text/event-stream": invokeResponseModel,
-    //         },
-    //       },
-    //     ],
-    //   },
-    // )
+    restApi.root.addMethod(
+      "ANY",
+      new apigw.LambdaIntegration(apigwRouterLambda, {
+        responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
+        timeout: props.apiGwConfig.timeoutSeconds,
+        proxy: true,
+      }),
+      {
+        authorizer: cognitoAuthorizer,
+        // requestModels: {
+        //   "application/json": invokeRequestModel,
+        // },
+        // methodResponses: [
+        //   {
+        //     statusCode: "200",
+        //     responseModels: {
+        //       "text/event-stream": invokeResponseModel,
+        //     },
+        //   },
+        // ],
+      },
+    )
 
     // restApiInvoke.addMethod(
     //   "POST",
