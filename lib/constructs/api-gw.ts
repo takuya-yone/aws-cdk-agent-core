@@ -128,7 +128,7 @@ export class ApiGwConstruct extends Construct {
         proxy: true,
       }),
       {
-        // authorizer: props.cognitoAuthorizer,
+        authorizer: props.cognitoAuthorizer,
         requestModels: {
           "application/json": invokeRequestModel,
         },
