@@ -82,7 +82,7 @@ export class ApiGwConstruct extends Construct {
     //   },
     // )
 
-    const restApiName = "AgentCoreRestApi"
+    const restApiName = "AgentCoreRestApiProxy"
 
     const _restApi = new apigw.LambdaRestApi(this, restApiName, {
       restApiName: restApiName,
