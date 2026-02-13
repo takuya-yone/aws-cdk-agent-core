@@ -14,9 +14,10 @@ from strands import Agent, tool
 from sub_agents import aws_rss_agent, react_agent, search_agent, weather_agent
 
 # Initialize the AgentCore app
-
+app = BedrockAgentCoreApp()
 model = model_settings.get_model()
 logger = Logger()
+
 
 
 @tool
@@ -74,8 +75,6 @@ def call_react_agent(topic: str) -> str:
     logger.info(f"React agent called for topic: {topic}", extra={"topic": topic, "tool": "call_react_agent"})
     return result
 
-
-app = BedrockAgentCoreApp()
 
 @app.entrypoint
 async def entrypoint(payload: dict):
