@@ -18,7 +18,6 @@ from sub_agents import aws_rss_agent, react_agent, search_agent, weather_agent
 model = model_settings.get_model()
 logger = Logger()
 
-app = BedrockAgentCoreApp()
 
 @tool
 def call_weather_agent(city: str) -> str:
@@ -76,6 +75,7 @@ def call_react_agent(topic: str) -> str:
     return result
 
 
+app = BedrockAgentCoreApp()
 
 @app.entrypoint
 async def entrypoint(payload: dict):
