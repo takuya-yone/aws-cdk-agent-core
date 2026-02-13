@@ -90,3 +90,20 @@ def get_weather(city: str) -> str:
 
     return weather_data.get(city, f"{city}の天気情報は現在利用できません")
 
+
+@tool
+def get_frontend_best_practices(topic: str) -> str:
+    """Provide best practices for front-end applications using React and Next.js.
+    Args:
+        topic: The specific topic or area of interest
+    Returns:
+        A string describing best practices
+    """
+    logger.info(f"Fetching front-end best practices for topic: {topic}", extra={"topic": topic, "tool": "get_frontend_best_practices"})
+    best_practices = {
+        "performance": "Use code splitting and lazy loading to improve performance in React and Next.js applications.",
+        "seo": "Utilize Next.js's server-side rendering capabilities to enhance SEO for your web applications.",
+        "state management": "Consider using React Context or libraries like Redux for effective state management in complex applications.",
+    }
+
+    return best_practices.get(topic.lower(), f"Best practices for {topic} are currently unavailable.")

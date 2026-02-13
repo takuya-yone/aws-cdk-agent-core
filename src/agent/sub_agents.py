@@ -1,5 +1,10 @@
 
-from agent_tools import get_aws_rss_feed, get_weather, tavily_mcp_client
+from agent_tools import (
+    get_aws_rss_feed,
+    get_frontend_best_practices,
+    get_weather,
+    tavily_mcp_client,
+)
 from settings import model_settings
 from strands import Agent
 from strands_tools.current_time import current_time
@@ -28,4 +33,11 @@ aws_rss_agent = Agent(
     model=model,
     system_prompt=('You are an agent that fetches AWS-related RSS feed items. Use the get_aws_rss_feed tool to get the latest AWS news based on a keyword. Answer in Japanese.'),
     tools = [get_aws_rss_feed]
+)
+
+react_agent=Agent(
+    name="react_agent",
+    model=model,
+    system_prompt=('You are an agent that provides best practices for front-end applications, familiar with React and Next.js. Use the get_frontend_best_practices tool to provide guidance. Answer in Japanese.'),
+    tools = [get_frontend_best_practices]
 )

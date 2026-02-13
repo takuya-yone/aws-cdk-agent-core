@@ -11,7 +11,7 @@ from bedrock_agentcore.runtime import BedrockAgentCoreApp
 from nanoid import generate
 from settings import memory_settings, model_settings
 from strands import Agent, tool
-from sub_agents import aws_rss_agent, search_agent, weather_agent
+from sub_agents import aws_rss_agent, react_agent, search_agent, weather_agent
 
 # Initialize the AgentCore app
 app = BedrockAgentCoreApp()
@@ -61,6 +61,21 @@ def call_aws_rss_agent(keyword: str) -> list:
     return result
 
 
+@tool
+def call_react_agent(topic: str) -> str:
+    """Call agent to fetch front-end best practices using the react_agent.
+    Args:
+        topic: The specific topic or area of interest
+    Returns:
+        A string describing best practices
+    """
+
+    result = react_agent(f"Provide best practices for {topic}")
+    logger.info(f"React agent called for topic: {topic}", extra={"topic": topic, "tool": "call_react_agent"})
+    return result
+
+
+
 @app.entrypoint
 async def entrypoint(payload: dict):
     """Handle the agent invocation.
@@ -93,13 +108,14 @@ async def entrypoint(payload: dict):
         name="main_agent",
         model=model,
         session_manager=agentcore_session_manager,
-        tools=[call_weather_agent, call_search_agent, call_aws_rss_agent],
+        tools=[call_weather_agent, call_search_agent, call_aws_rss_agent, call_react_agent],
         system_prompt="""
             You are a kind AI assistant.
             Please answer user questions politely.
             If weather information is needed, please use the call_weather_agent.
             If information is unknown, use call_search_agent to search.
             If AWS RSS feed items are needed, use call_aws_rss_agent to fetch them.
+            If front-end best practices are needed, use call_react_agent to provide guidance.
             Answer in the language used by the user.
         """
     )
