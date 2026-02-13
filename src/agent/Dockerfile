@@ -20,4 +20,4 @@ ENV DOCKER_CONTAINER=1
 EXPOSE 8080
 
 # Run the application with OpenTelemetry instrumentation
-CMD ["uv", "run", "opentelemetry-instrument", "python", "main.py"]
+CMD ["uv", "run", "opentelemetry-instrument", "python", "main.py -q"]
