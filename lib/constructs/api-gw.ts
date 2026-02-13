@@ -46,6 +46,32 @@ export class ApiGwConstruct extends Construct {
     )
     props.runtime.grantInvoke(agentCoreProxyLambda)
 
+    const apiGwRouterLambdaName = "ApiGwRouterLambda"
+    const apigwRouterLambda = new lambda_nodejs.NodejsFunction(
+      this,
+      apiGwRouterLambdaName,
+      {
+        runtime: lambda.Runtime.NODEJS_24_X,
+        functionName: apiGwRouterLambdaName,
+        entry: "src/lambda/apigw-router/index.ts",
+        timeout: Duration.seconds(900),
+        tracing: lambda.Tracing.ACTIVE,
+        logGroup: new logs.LogGroup(this, "ApiGwRouterLambdaLogGroup", {
+          logGroupName: `/aws/lambda/${apiGwRouterLambdaName}`,
+          retention: logs.RetentionDays.ONE_WEEK,
+          removalPolicy: RemovalPolicy.DESTROY,
+        }),
+        bundling: {
+          bundleAwsSDK: true,
+        },
+        environment: {
+          POWERTOOLS_SERVICE_NAME: apiGwRouterLambdaName,
+          AGENT_RUNTIME_ARN: props.runtime.agentRuntimeArn,
+        },
+      },
+    )
+    props.runtime.grantInvoke(apigwRouterLambda)
+
     const restApiName = "AgentCoreRestApi"
     const restApi = new apigw.RestApi(this, restApiName, {
       restApiName: restApiName,
@@ -95,7 +121,7 @@ export class ApiGwConstruct extends Construct {
     )
 
     restApiInvoke.addMethod(
-      "POST",
+      "ANY",
       new apigw.LambdaIntegration(agentCoreProxyLambda, {
         responseTransferMode: apigw.ResponseTransferMode.STREAM,
         timeout: props.apiGwConfig.timeoutSeconds,
@@ -115,5 +141,50 @@ export class ApiGwConstruct extends Construct {
         ],
       },
     )
+
+    restApiInvoke.addMethod(
+      "ANY",
+      new apigw.LambdaIntegration(apigwRouterLambda, {
+        responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
+        timeout: props.apiGwConfig.timeoutSeconds,
+        proxy: true,
+      }),
+      {
+        // authorizer: props.cognitoAuthorizer,
+        requestModels: {
+          "application/json": invokeRequestModel,
+        },
+        methodResponses: [
+          {
+            statusCode: "200",
+            responseModels: {
+              "text/event-stream": invokeResponseModel,
+            },
+          },
+        ],
+      },
+    )
+
+    // restApiInvoke.addMethod(
+    //   "POST",
+    //   new apigw.LambdaIntegration(agentCoreProxyLambda, {
+    //     responseTransferMode: apigw.ResponseTransferMode.STREAM,
+    //     timeout: props.apiGwConfig.timeoutSeconds,
+    //   }),
+    //   {
+    //     authorizer: props.cognitoAuthorizer,
+    //     requestModels: {
+    //       "application/json": invokeRequestModel,
+    //     },
+    //     methodResponses: [
+    //       {
+    //         statusCode: "200",
+    //         responseModels: {
+    //           "text/event-stream": invokeResponseModel,
+    //         },
+    //       },
+    //     ],
+    //   },
+    // )
   }
 }
