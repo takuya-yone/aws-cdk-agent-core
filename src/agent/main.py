@@ -14,10 +14,11 @@ from strands import Agent, tool
 from sub_agents import aws_rss_agent, react_agent, search_agent, weather_agent
 
 # Initialize the AgentCore app
-app = BedrockAgentCoreApp()
+
 model = model_settings.get_model()
 logger = Logger()
 
+app = BedrockAgentCoreApp()
 
 @tool
 def call_weather_agent(city: str) -> str:
