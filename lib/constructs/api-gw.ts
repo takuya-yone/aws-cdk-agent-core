@@ -1,6 +1,7 @@
 import type * as agentcore from "@aws-cdk/aws-bedrock-agentcore-alpha"
 import {
   aws_apigateway as apigw,
+  type aws_cognito as cognito,
   Duration,
   aws_lambda as lambda,
   aws_lambda_nodejs as lambda_nodejs,
@@ -12,7 +13,7 @@ import type { ApiGwConfig } from "../../bin/parameter"
 
 type ApiGwConstructProps = {
   runtime: agentcore.Runtime
-  cognitoAuthorizer: apigw.CognitoUserPoolsAuthorizer
+  userPool: cognito.UserPool
   apiGwConfig: ApiGwConfig
 }
 
@@ -72,75 +73,90 @@ export class ApiGwConstruct extends Construct {
     )
     props.runtime.grantInvoke(apigwRouterLambda)
 
+    // const cognitoAuthorizer = new apigw.CognitoUserPoolsAuthorizer(
+    //   this,
+    //   "CognitoAuthorizer",
+    //   {
+    //     authorizerName: "CognitoAuthorizer",
+    //     cognitoUserPools: [props.userPool],
+    //   },
+    // )
+
     const restApiName = "AgentCoreRestApi"
-    const restApi = new apigw.RestApi(this, restApiName, {
+
+    const _restApi = new apigw.LambdaRestApi(this, restApiName, {
       restApiName: restApiName,
-      deployOptions: {
-        stageName: props.apiGwConfig.stageName,
-        tracingEnabled: true,
-        metricsEnabled: true,
-        dataTraceEnabled: true,
-        accessLogDestination: new apigw.LogGroupLogDestination(
-          new logs.LogGroup(this, "ApiGwAccessLogGroup", {
-            logGroupName: `/aws/apigateway/${restApiName}-AccessLogs`,
-            retention: logs.RetentionDays.ONE_WEEK,
-            removalPolicy: RemovalPolicy.DESTROY,
-          }),
-        ),
-        accessLogFormat: apigw.AccessLogFormat.jsonWithStandardFields(),
-      },
+      handler: apigwRouterLambda,
     })
+
+    // const restApi = new apigw.RestApi(this, restApiName, {
+    //   restApiName: restApiName,
+    //   deployOptions: {
+    //     stageName: props.apiGwConfig.stageName,
+    //     tracingEnabled: true,
+    //     metricsEnabled: true,
+    //     dataTraceEnabled: true,
+    //     accessLogDestination: new apigw.LogGroupLogDestination(
+    //       new logs.LogGroup(this, "ApiGwAccessLogGroup", {
+    //         logGroupName: `/aws/apigateway/${restApiName}-AccessLogs`,
+    //         retention: logs.RetentionDays.ONE_WEEK,
+    //         removalPolicy: RemovalPolicy.DESTROY,
+    //       }),
+    //     ),
+    //     accessLogFormat: apigw.AccessLogFormat.jsonWithStandardFields(),
+    //   },
+    // })
 
     // const restApiInvoke = restApi.root.addResource("invoke")
 
-    const invokeRequestModel: apigw.Model = restApi.addModel(
-      "InvokeRequestModel",
-      {
-        modelName: "InvokeRequestModel",
-        schema: {
-          type: apigw.JsonSchemaType.OBJECT,
-          properties: {
-            prompt: {
-              type: apigw.JsonSchemaType.STRING,
-            },
-          },
-          required: ["prompt"],
-        },
-      },
-    )
+    // const invokeRequestModel: apigw.Model = restApi.addModel(
+    //   "InvokeRequestModel",
+    //   {
+    //     modelName: "InvokeRequestModel",
+    //     schema: {
+    //       type: apigw.JsonSchemaType.OBJECT,
+    //       properties: {
+    //         prompt: {
+    //           type: apigw.JsonSchemaType.STRING,
+    //         },
+    //       },
+    //       required: ["prompt"],
+    //     },
+    //   },
+    // )
 
-    const invokeResponseModel: apigw.Model = restApi.addModel(
-      "InvokeResponseModel",
-      {
-        modelName: "InvokeResponseModel",
-        schema: {
-          type: apigw.JsonSchemaType.OBJECT,
-          properties: {},
-        },
-      },
-    )
+    // const invokeResponseModel: apigw.Model = restApi.addModel(
+    //   "InvokeResponseModel",
+    //   {
+    //     modelName: "InvokeResponseModel",
+    //     schema: {
+    //       type: apigw.JsonSchemaType.OBJECT,
+    //       properties: {},
+    //     },
+    //   },
+    // )
 
-    restApi.root.addMethod(
-      "ANY",
-      new apigw.LambdaIntegration(apigwRouterLambda, {
-        responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
-        timeout: props.apiGwConfig.timeoutSeconds,
-      }),
-      {
-        authorizer: props.cognitoAuthorizer,
-        requestModels: {
-          "application/json": invokeRequestModel,
-        },
-        methodResponses: [
-          {
-            statusCode: "200",
-            responseModels: {
-              "text/event-stream": invokeResponseModel,
-            },
-          },
-        ],
-      },
-    )
+    // restApi.root.addMethod(
+    //   "ANY",
+    //   new apigw.LambdaIntegration(apigwRouterLambda, {
+    //     responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
+    //     timeout: props.apiGwConfig.timeoutSeconds,
+    //   }),
+    //   {
+    //     authorizer: props.cognitoAuthorizer,
+    //     requestModels: {
+    //       "application/json": invokeRequestModel,
+    //     },
+    //     methodResponses: [
+    //       {
+    //         statusCode: "200",
+    //         responseModels: {
+    //           "text/event-stream": invokeResponseModel,
+    //         },
+    //       },
+    //     ],
+    //   },
+    // )
 
     // restApiInvoke.addMethod(
     //   "POST",

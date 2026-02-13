@@ -1,6 +1,7 @@
 // import { streamHandle } from 'hono/aws-lambda'
 // import { streamText } from 'hono/streaming'
 import { Logger } from "@aws-lambda-powertools/logger"
+import { serve } from "@hono/node-server"
 import { Hono } from "hono"
 import type { LambdaEvent } from "hono/aws-lambda"
 import { type ApiGatewayRequestContext, handle } from "hono/aws-lambda"
@@ -16,13 +17,13 @@ const _logger = new Logger()
 
 app.get("/", (c) => {
   // logger.info(c)
-  console.log(c.env.event.requestContext)
+  //   console.log(c.env.event.requestContext)
   return c.text("Hello Hono!")
 })
 
 app.get("/aaa", (c) => {
-  console.log(c.env.context.authorizer.claims)
-  // logger.info(c)
+  console.log(c)
+  //   console.log(c.env.context.authorizer.claims)
   return c.text("Hello Hono!aaa")
 })
 
@@ -36,4 +37,7 @@ app.get("/aaa", (c) => {
 // })
 
 export const handler = handle(app)
-// export const handler = streamHandle(app)
+
+serve(app, (info) => {
+  console.log(`Listening on http://localhost:${info.port}`) // Listening on http://localhost:3000
+})

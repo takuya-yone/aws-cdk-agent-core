@@ -29,7 +29,7 @@ export class AgentCoreStack extends cdk.Stack {
 
     const _apiGwConstruct = new ApiGwConstruct(this, "ApiGwConstruct", {
       runtime: agentCoreConstruct.runtime,
-      cognitoAuthorizer: authConstruct.cognitoAuthorizer,
+      userPool: authConstruct.userPool,
       apiGwConfig: props.apiGwConfig,
     })
   }

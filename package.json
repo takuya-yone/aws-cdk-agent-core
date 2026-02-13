@@ -5,6 +5,7 @@
     "aws-cdk-agent-core": "bin/aws-cdk-agent-core.js"
   },
   "scripts": {
+    "dev": "tsx watch src/lambda/apigw-router/index.ts",
     "build": "tsc",
     "watch": "tsc -w",
     "test": "vitest",
@@ -17,12 +18,14 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.14",
+    "@hono/node-server": "^1.19.9",
     "@types/aws-lambda": "^8.10.160",
     "@types/node": "^25.2.3",
     "aws-cdk": "2.1105.0",
     "esbuild": "^0.27.3",
     "husky": "^9.1.7",
     "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript": "~5.9.3",
     "vitest": "^4.0.18"
   },

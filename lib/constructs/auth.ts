@@ -1,8 +1,4 @@
-import {
-  aws_apigateway as apigw,
-  aws_cognito as cognito,
-  RemovalPolicy,
-} from "aws-cdk-lib"
+import { aws_cognito as cognito, RemovalPolicy } from "aws-cdk-lib"
 import { Construct } from "constructs"
 import type { CognitoClientConfig } from "../../bin/parameter"
 
@@ -11,11 +7,11 @@ type AuthConstructProps = {
 }
 
 export class AuthConstruct extends Construct {
-  public readonly cognitoAuthorizer: apigw.CognitoUserPoolsAuthorizer
+  public readonly userPool: cognito.UserPool
   constructor(scope: Construct, id: string, props: AuthConstructProps) {
     super(scope, id)
 
-    const userPool = new cognito.UserPool(this, "StrandsUserPool", {
+    this.userPool = new cognito.UserPool(this, "StrandsUserPool", {
       userPoolName: "StrandsUserPool",
       selfSignUpEnabled: false,
       signInAliases: {
@@ -28,20 +24,11 @@ export class AuthConstruct extends Construct {
       this,
       "StrandsUserPoolDomain",
       {
-        userPool: userPool,
+        userPool: this.userPool,
         cognitoDomain: {
           domainPrefix: props.cognitoClientConfig.domainPrefix,
         },
         managedLoginVersion: cognito.ManagedLoginVersion.NEWER_MANAGED_LOGIN,
-      },
-    )
-
-    this.cognitoAuthorizer = new apigw.CognitoUserPoolsAuthorizer(
-      this,
-      "CognitoAuthorizer",
-      {
-        authorizerName: "CognitoAuthorizer",
-        cognitoUserPools: [userPool],
       },
     )
 
@@ -50,7 +37,7 @@ export class AuthConstruct extends Construct {
       "StrandsUserPoolClient",
       {
         userPoolClientName: "StrandsUserPoolClient",
-        userPool: userPool,
+        userPool: this.userPool,
         authFlows: {
           adminUserPassword: true,
           userPassword: true,
