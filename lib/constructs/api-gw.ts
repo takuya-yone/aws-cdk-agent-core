@@ -122,28 +122,6 @@ export class ApiGwConstruct extends Construct {
 
     restApiInvoke.addMethod(
       "ANY",
-      new apigw.LambdaIntegration(agentCoreProxyLambda, {
-        responseTransferMode: apigw.ResponseTransferMode.STREAM,
-        timeout: props.apiGwConfig.timeoutSeconds,
-      }),
-      {
-        authorizer: props.cognitoAuthorizer,
-        requestModels: {
-          "application/json": invokeRequestModel,
-        },
-        methodResponses: [
-          {
-            statusCode: "200",
-            responseModels: {
-              "text/event-stream": invokeResponseModel,
-            },
-          },
-        ],
-      },
-    )
-
-    restApiInvoke.addMethod(
-      "ANY",
       new apigw.LambdaIntegration(apigwRouterLambda, {
         responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
         timeout: props.apiGwConfig.timeoutSeconds,
