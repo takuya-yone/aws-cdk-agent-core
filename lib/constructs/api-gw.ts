@@ -91,7 +91,7 @@ export class ApiGwConstruct extends Construct {
       },
     })
 
-    const restApiInvoke = restApi.root.addResource("invoke")
+    // const restApiInvoke = restApi.root.addResource("invoke")
 
     const invokeRequestModel: apigw.Model = restApi.addModel(
       "InvokeRequestModel",
@@ -120,12 +120,11 @@ export class ApiGwConstruct extends Construct {
       },
     )
 
-    restApiInvoke.addMethod(
+    restApi.root.addMethod(
       "ANY",
       new apigw.LambdaIntegration(apigwRouterLambda, {
         responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
         timeout: props.apiGwConfig.timeoutSeconds,
-        proxy: true,
       }),
       {
         authorizer: props.cognitoAuthorizer,
