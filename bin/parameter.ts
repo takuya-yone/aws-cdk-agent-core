@@ -47,6 +47,6 @@ export const defaultStackParameters: StackParameters = {
   },
   apiGwConfig: {
     stageName: "v1",
-    timeoutSeconds: Duration.seconds(900),
+    timeoutSeconds: Duration.seconds(90),
   },
 }
