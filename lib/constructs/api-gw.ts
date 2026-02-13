@@ -137,29 +137,38 @@ export class ApiGwConstruct extends Construct {
     //     },
     //   },
     // )
-
-    restApi.root.addMethod(
-      "ANY",
-      new apigw.LambdaIntegration(apigwRouterLambda, {
+    const _apiProxyResource = restApi.root.addProxy({
+      defaultIntegration: new apigw.LambdaIntegration(apigwRouterLambda, {
         responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
         timeout: props.apiGwConfig.timeoutSeconds,
         proxy: true,
       }),
-      {
+      defaultMethodOptions: {
         authorizer: cognitoAuthorizer,
-        // requestModels: {
-        //   "application/json": invokeRequestModel,
-        // },
-        // methodResponses: [
-        //   {
-        //     statusCode: "200",
-        //     responseModels: {
-        //       "text/event-stream": invokeResponseModel,
-        //     },
-        //   },
-        // ],
       },
-    )
+    })
+    // restApi.root.addMethod(
+    //   "ANY",
+    //   new apigw.LambdaIntegration(apigwRouterLambda, {
+    //     responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
+    //     timeout: props.apiGwConfig.timeoutSeconds,
+    //     proxy: true,
+    //   }),
+    //   {
+    //     authorizer: cognitoAuthorizer,
+    //     // requestModels: {
+    //     //   "application/json": invokeRequestModel,
+    //     // },
+    //     // methodResponses: [
+    //     //   {
+    //     //     statusCode: "200",
+    //     //     responseModels: {
+    //     //       "text/event-stream": invokeResponseModel,
+    //     //     },
+    //     //   },
+    //     // ],
+    //   },
+    // )
 
     // restApiInvoke.addMethod(
     //   "POST",
