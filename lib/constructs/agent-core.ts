@@ -95,6 +95,7 @@ export class AgentCoreConstruct extends Construct {
         TAVILY_SECRET_NAME: tavilySecret.secretName,
         MEMORY_ID: memory.memoryId,
         BEDROCK_KB_ID: props.knowledgeBase.ref,
+        KB_RESULT_NUMS: "10",
       },
     })
 

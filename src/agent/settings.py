@@ -45,7 +45,14 @@ class AgentCoreMemorySettings(BaseSettings):
     memory_id: str
 
 
+class KnowledgeBaseSettings(BaseSettings):
+    model_id: str
+    bedrock_kb_id: str
+    kb_result_nums: int = 10
+
+
 model_settings = ModelSettings()
 tavily_settings = TavilySettings()
 aws_rss_settings = AwsRssSettings()
 memory_settings = AgentCoreMemorySettings()
+knowledge_base_settings = KnowledgeBaseSettings()
