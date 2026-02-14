@@ -21,32 +21,32 @@ export class ApiGwConstruct extends Construct {
   constructor(scope: Construct, id: string, props: ApiGwConstructProps) {
     super(scope, id)
 
-    const agentCoreProxyLambdaName = "AgentCoreProxyLambda"
-    const agentCoreProxyLambda = new lambda_nodejs.NodejsFunction(
-      this,
-      agentCoreProxyLambdaName,
-      {
-        runtime: lambda.Runtime.NODEJS_24_X,
-        functionName: agentCoreProxyLambdaName,
-        entry: "src/lambda/agent-core-proxy.ts",
-        timeout: Duration.seconds(900),
-        memorySize: 128,
-        tracing: lambda.Tracing.ACTIVE,
-        logGroup: new logs.LogGroup(this, "AgentCoreProxyLambdaLogGroup", {
-          logGroupName: `/aws/lambda/${agentCoreProxyLambdaName}`,
-          retention: logs.RetentionDays.ONE_WEEK,
-          removalPolicy: RemovalPolicy.DESTROY,
-        }),
-        bundling: {
-          bundleAwsSDK: true,
-        },
-        environment: {
-          POWERTOOLS_SERVICE_NAME: agentCoreProxyLambdaName,
-          AGENT_RUNTIME_ARN: props.runtime.agentRuntimeArn,
-        },
-      },
-    )
-    props.runtime.grantInvoke(agentCoreProxyLambda)
+    // const agentCoreProxyLambdaName = "AgentCoreProxyLambda"
+    // const agentCoreProxyLambda = new lambda_nodejs.NodejsFunction(
+    //   this,
+    //   agentCoreProxyLambdaName,
+    //   {
+    //     runtime: lambda.Runtime.NODEJS_24_X,
+    //     functionName: agentCoreProxyLambdaName,
+    //     entry: "src/lambda/agent-core-proxy.ts",
+    //     timeout: Duration.seconds(900),
+    //     memorySize: 128,
+    //     tracing: lambda.Tracing.ACTIVE,
+    //     logGroup: new logs.LogGroup(this, "AgentCoreProxyLambdaLogGroup", {
+    //       logGroupName: `/aws/lambda/${agentCoreProxyLambdaName}`,
+    //       retention: logs.RetentionDays.ONE_WEEK,
+    //       removalPolicy: RemovalPolicy.DESTROY,
+    //     }),
+    //     bundling: {
+    //       bundleAwsSDK: true,
+    //     },
+    //     environment: {
+    //       POWERTOOLS_SERVICE_NAME: agentCoreProxyLambdaName,
+    //       AGENT_RUNTIME_ARN: props.runtime.agentRuntimeArn,
+    //     },
+    //   },
+    // )
+    // props.runtime.grantInvoke(agentCoreProxyLambda)
 
     const apiGwRouterLambdaName = "ApiGwRouterLambda"
     const apigwRouterLambda = new lambda_nodejs.NodejsFunction(
