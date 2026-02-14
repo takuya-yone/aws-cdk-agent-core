@@ -1,6 +1,9 @@
 import { Logger } from "@aws-lambda-powertools/logger"
+import {
+  BedrockAgentCoreClient,
+  InvokeAgentRuntimeCommand,
+} from "@aws-sdk/client-bedrock-agentcore"
 import type { RouteHandler } from "@hono/zod-openapi"
-
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi"
 import type { APIGatewayProxyEvent } from "aws-lambda"
 
@@ -44,13 +47,44 @@ type InvokeRouteResponse200 = z.infer<
   (typeof invokeRoute.responses)["200"]["content"]["application/json"]["schema"]
 >
 
+const invokeCommandFactory = ({
+  prompt,
+  actorId,
+  sessionId,
+  traceId,
+}: {
+  prompt: string
+  actorId?: string
+  sessionId?: string
+  traceId?: string
+}) =>
+  new InvokeAgentRuntimeCommand({
+    agentRuntimeArn: AGENT_RUNTIME_ARN,
+    payload: new TextEncoder().encode(
+      JSON.stringify({
+        prompt: prompt,
+        actor_id: actorId,
+        session_id: sessionId,
+      }),
+    ),
+    qualifier: "DEFAULT",
+    traceId: traceId,
+  })
+
 const logger = new Logger()
+
+const AGENT_RUNTIME_ARN = process.env.AGENT_RUNTIME_ARN
+if (!AGENT_RUNTIME_ARN) {
+  throw new Error("AGENT_RUNTIME_ARN is not defined")
+}
+
+const _agentCoreClient = new BedrockAgentCoreClient({})
 
 const invokeRouteHandler: RouteHandler<
   typeof invokeRoute,
   { Bindings: Bindings }
 > = async (c) => {
-  console.log(c.env.event.headers)
+//   console.log(c.env.event.headers)
   //   console.log(c, { depth: null })
   console.log(JSON.stringify(c, null, 4))
   const { prompt } = c.req.valid("json")
@@ -59,7 +93,19 @@ const invokeRouteHandler: RouteHandler<
   const actorId: string | undefined =
     requestContext.authorizer?.claims.sub ?? "unknown"
 
+  const sessionId = `${actorId}-default`
+
   logger.info("Received invoke request", { prompt, actorId })
+
+  const invokeCommand = invokeCommandFactory({
+    prompt: prompt,
+    actorId: actorId,
+    sessionId: sessionId,
+  })
+
+  logger.info("Invoking agent runtime", {
+    invokeCommandInput: invokeCommand.input,
+  })
 
   const result: InvokeRouteResponse200 = {
     response: `Sample response for prompt: ${prompt}`,
