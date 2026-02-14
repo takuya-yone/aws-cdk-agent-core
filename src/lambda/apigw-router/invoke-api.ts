@@ -6,13 +6,15 @@ import {
 import type { RouteHandler } from "@hono/zod-openapi"
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi"
 import type { APIGatewayProxyEvent } from "aws-lambda"
+import { stream } from "hono/streaming"
 
 export const inputSchema = z.object({
   prompt: z.string().min(1, "Prompt is required"),
 })
 
 const outputSchema = z.object({
-  message: z.string(),
+  event: z.enum(["start", "token", "end", "error"]),
+  data: z.string(),
 })
 
 type Bindings = {
@@ -33,19 +35,15 @@ export const invokeRoute = createRoute({
   },
   responses: {
     200: {
+      description: "Successful response with SSE stream",
       content: {
-        "application/json": {
+        "text/event-stream": {
           schema: outputSchema,
         },
       },
-      description: "Invoke the agent runtime",
     },
   },
 })
-
-type InvokeRouteResponse200 = z.infer<
-  (typeof invokeRoute.responses)["200"]["content"]["application/json"]["schema"]
->
 
 const invokeCommandFactory = ({
   prompt,
@@ -86,9 +84,11 @@ const invokeRouteHandler: RouteHandler<
 > = async (c) => {
   const { prompt } = c.req.valid("json")
 
-  const requestContext = c.env.event.requestContext
-  const actorId: string | undefined =
-    requestContext.authorizer?.claims.sub ?? "unknown"
+  const event = c.env.event
+
+  const actorId: string | undefined = event ? event.requestContext.authorizer?.claims.sub : 'local-user'
+
+  console.log("actorId", actorId)
 
   const sessionId = `${actorId}-default`
 
@@ -102,13 +102,20 @@ const invokeRouteHandler: RouteHandler<
 
   const runtimeResponse = await agentCoreClient.send(invokeCommand)
 
-  console.log(JSON.stringify(runtimeResponse, null, 2))
-
-  const result: InvokeRouteResponse200 = {
-    message: `Sample response for prompt: ${prompt}`,
+  if (!runtimeResponse.response) {
+    logger.error("No response received from agent runtime", { runtimeResponse })
+    return c.json({ message: "No response received from agent runtime" }, 500)
   }
 
-  return c.json(result, 200)
+  const webStream = runtimeResponse.response.transformToWebStream()
+
+  return stream(c, async (stream) => {
+    // Write a process to be executed when aborted.
+    stream.onAbort(() => {
+      console.log("Aborted!")
+    })
+    await stream.pipe(webStream)
+  })
 }
 
 export const invokeApi = new OpenAPIHono<{ Bindings: Bindings }>().openapi(

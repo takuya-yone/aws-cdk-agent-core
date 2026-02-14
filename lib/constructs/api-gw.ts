@@ -114,7 +114,7 @@ export class ApiGwConstruct extends Construct {
 
     const _restApiRoot = restApi.root.addProxy({
       defaultIntegration: new apigw.LambdaIntegration(apigwRouterLambda, {
-        responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
+        responseTransferMode: apigw.ResponseTransferMode.STREAM,
         timeout: props.apiGwConfig.timeoutSeconds,
         proxy: true,
       }),
