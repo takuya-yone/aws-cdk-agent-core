@@ -1,40 +1,37 @@
 // import { streamHandle } from 'hono/aws-lambda'
 // import { streamText } from 'hono/streaming'
+
 import { Logger } from "@aws-lambda-powertools/logger"
 import { serve } from "@hono/node-server"
-import { Hono } from "hono"
-import type { LambdaEvent } from "hono/aws-lambda"
-import { type ApiGatewayRequestContext, handle } from "hono/aws-lambda"
+import { swaggerUI } from "@hono/swagger-ui"
+import { OpenAPIHono } from "@hono/zod-openapi"
+import { handle } from "hono/aws-lambda"
+import { invokeApi } from "./invoke-api"
+import { rootApi } from "./root-api"
 
-type Bindings = {
-  event: LambdaEvent
-  context: ApiGatewayRequestContext
-}
+const logger = new Logger()
 
-const app = new Hono<{ Bindings: Bindings }>()
+const app = new OpenAPIHono()
+  .route("/", rootApi)
+  .route("/invoke", invokeApi)
+  .doc("/specification", {
+    openapi: "3.0.0",
+    info: {
+      title: "API",
+      version: "1.0.0",
+    },
+  })
+  .get(
+    "/doc",
+    swaggerUI({
+      url: "/specification",
+    }),
+  )
 
-const _logger = new Logger()
-
-app.get("/", (c) => {
-  // logger.info(c)
-  //   console.log(c.env.event.requestContext)
-  return c.text("Hello Hono!")
+app.onError((err, c) => {
+  logger.error("Unhandled error", { error: err.message, stack: err.stack })
+  return c.json({ message: "Internal Server Error", details: err.message }, 500)
 })
-
-app.get("/aaa", (c) => {
-  console.log(c)
-  //   console.log(c.env.context.authorizer.claims)
-  return c.text("Hello Hono!aaa")
-})
-
-// app.get('/stream', async (c) => {
-//   return streamText(c, async (stream) => {
-//     for (let i = 0; i < 3; i++) {
-//       await stream.writeln(`${i}`)
-//       await stream.sleep(1)
-//     }
-//   })
-// })
 
 export const handler = handle(app)
 
