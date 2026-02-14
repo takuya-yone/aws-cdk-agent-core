@@ -45,6 +45,12 @@ export const invokeRoute = createRoute({
   },
 })
 
+const AGENT_RUNTIME_ARN = process.env.AGENT_RUNTIME_ARN
+if (!AGENT_RUNTIME_ARN) {
+  throw new Error("AGENT_RUNTIME_ARN is not defined")
+}
+
+
 const invokeCommandFactory = ({
   prompt,
   actorId,
@@ -70,11 +76,6 @@ const invokeCommandFactory = ({
   })
 
 const logger = new Logger()
-
-const AGENT_RUNTIME_ARN = process.env.AGENT_RUNTIME_ARN
-if (!AGENT_RUNTIME_ARN) {
-  throw new Error("AGENT_RUNTIME_ARN is not defined")
-}
 
 const agentCoreClient = new BedrockAgentCoreClient({})
 
@@ -114,6 +115,9 @@ const invokeRouteHandler: RouteHandler<
     stream.onAbort(() => {
       console.log("Aborted!")
     })
+
+    console.log("Start piping stream")
+    console.log("webStream", webStream)
     await stream.pipe(webStream)
   })
 }
