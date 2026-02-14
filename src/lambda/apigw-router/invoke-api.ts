@@ -78,23 +78,12 @@ if (!AGENT_RUNTIME_ARN) {
   throw new Error("AGENT_RUNTIME_ARN is not defined")
 }
 
-const _getJwtFromAuthHeader = (authHeader: string): string => {
-  const parts = authHeader.split(" ")
-  if (parts.length === 2 && parts[0] === "Bearer") {
-    return parts[1]
-  }
-  throw new Error(
-    "Invalid Authorization header format. Expected 'Bearer <token>'.",
-  )
-}
-
-const _agentCoreClient = new BedrockAgentCoreClient({})
+const agentCoreClient = new BedrockAgentCoreClient({})
 
 const invokeRouteHandler: RouteHandler<
   typeof invokeRoute,
   { Bindings: Bindings }
 > = async (c) => {
-  console.log(JSON.stringify(c, null, 4))
   const { prompt } = c.req.valid("json")
 
   const requestContext = c.env.event.requestContext
@@ -103,7 +92,7 @@ const invokeRouteHandler: RouteHandler<
 
   const sessionId = `${actorId}-default`
 
-  logger.info("Received invoke request", { prompt, actorId })
+  logger.info("invoke request inputs", { prompt, actorId, sessionId })
 
   const invokeCommand = invokeCommandFactory({
     prompt: prompt,
@@ -111,9 +100,9 @@ const invokeRouteHandler: RouteHandler<
     sessionId: sessionId,
   })
 
-  logger.info("Invoking agent runtime", {
-    invokeCommandInput: invokeCommand,
-  })
+  const runtimeResponse = await agentCoreClient.send(invokeCommand)
+
+  console.log(JSON.stringify(runtimeResponse, null, 2))
 
   const result: InvokeRouteResponse200 = {
     message: `Sample response for prompt: ${prompt}`,
