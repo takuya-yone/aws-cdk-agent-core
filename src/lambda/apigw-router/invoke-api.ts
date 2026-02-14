@@ -2,12 +2,16 @@ import { Logger } from "@aws-lambda-powertools/logger"
 import type { RouteHandler } from "@hono/zod-openapi"
 
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi"
-import type { ApiGatewayRequestContext, LambdaEvent } from "hono/aws-lambda"
+import type { ApiGatewayRequestContext } from "hono/aws-lambda"
 
 type _Bindings = {
-  event: LambdaEvent
+  //   event: LambdaEvent
   context: ApiGatewayRequestContext
 }
+
+// type Bindings = {
+//   requestContext: ApiGatewayRequestContext
+// }
 
 export const inputSchema = z.object({
   prompt: z.string().min(1, "Prompt is required"),
@@ -48,7 +52,8 @@ type InvokeRouteResponse200 = z.infer<
 const _logger = new Logger()
 
 const invokeRouteHandler: RouteHandler<typeof invokeRoute> = async (c) => {
-  console.log(c)
+  //   console.log(c.env.event.requestContext)
+  console.dir(c, { depth: null })
   const { prompt } = c.req.valid("json")
   const result: InvokeRouteResponse200 = {
     response: `Sample response for prompt: ${prompt}`,
