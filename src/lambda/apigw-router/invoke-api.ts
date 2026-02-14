@@ -12,7 +12,7 @@ export const inputSchema = z.object({
 })
 
 const outputSchema = z.object({
-  response: z.string(),
+  message: z.string(),
 })
 
 type Bindings = {
@@ -78,14 +78,22 @@ if (!AGENT_RUNTIME_ARN) {
   throw new Error("AGENT_RUNTIME_ARN is not defined")
 }
 
+const _getJwtFromAuthHeader = (authHeader: string): string => {
+  const parts = authHeader.split(" ")
+  if (parts.length === 2 && parts[0] === "Bearer") {
+    return parts[1]
+  }
+  throw new Error(
+    "Invalid Authorization header format. Expected 'Bearer <token>'.",
+  )
+}
+
 const _agentCoreClient = new BedrockAgentCoreClient({})
 
 const invokeRouteHandler: RouteHandler<
   typeof invokeRoute,
   { Bindings: Bindings }
 > = async (c) => {
-//   console.log(c.env.event.headers)
-  //   console.log(c, { depth: null })
   console.log(JSON.stringify(c, null, 4))
   const { prompt } = c.req.valid("json")
 
@@ -104,11 +112,11 @@ const invokeRouteHandler: RouteHandler<
   })
 
   logger.info("Invoking agent runtime", {
-    invokeCommandInput: invokeCommand.input,
+    invokeCommandInput: invokeCommand,
   })
 
   const result: InvokeRouteResponse200 = {
-    response: `Sample response for prompt: ${prompt}`,
+    message: `Sample response for prompt: ${prompt}`,
   }
 
   return c.json(result, 200)

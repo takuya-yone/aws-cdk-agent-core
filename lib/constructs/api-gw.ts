@@ -86,16 +86,6 @@ export class ApiGwConstruct extends Construct {
 
     const restApiName = "AgentCoreRestApi"
 
-    const defaultIntegration = new apigw.LambdaIntegration(apigwRouterLambda, {
-      responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
-      timeout: props.apiGwConfig.timeoutSeconds,
-      proxy: true,
-    })
-
-    const defaultMethodOptions: apigw.MethodOptions = {
-      authorizer: cognitoAuthorizer,
-    }
-
     const restApi = new apigw.RestApi(this, restApiName, {
       restApiName: restApiName,
       deployOptions: {
@@ -112,14 +102,32 @@ export class ApiGwConstruct extends Construct {
         ),
         accessLogFormat: apigw.AccessLogFormat.jsonWithStandardFields(),
       },
-      defaultIntegration,
-      defaultMethodOptions,
+      defaultIntegration: new apigw.LambdaIntegration(apigwRouterLambda, {
+        responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
+        timeout: props.apiGwConfig.timeoutSeconds,
+        proxy: true,
+      }),
+      defaultMethodOptions: {
+        authorizer: cognitoAuthorizer,
+      },
     })
 
     const _restApiRoot = restApi.root.addProxy({
-      defaultIntegration,
-      defaultMethodOptions,
+      defaultIntegration: new apigw.LambdaIntegration(apigwRouterLambda, {
+        responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
+        timeout: props.apiGwConfig.timeoutSeconds,
+        proxy: true,
+      }),
+      defaultMethodOptions: {
+        authorizer: cognitoAuthorizer,
+      },
     })
+
+    // const _restApiRoot = restApi.root.addProxy({
+    //   defaultIntegration,
+    //   defaultMethodOptions,
+    // })
+    // defaultMethodOptions,
 
     // const restApiInvoke = restApi.root.addResource("invoke")
 
