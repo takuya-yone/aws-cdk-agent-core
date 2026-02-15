@@ -6,10 +6,10 @@ export class DatastoreConstruct extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id)
 
-    this.agentCoreLogTable = new dynamodb.TableV2(this, "AgentCoreLogTable", {
-      tableName: "AgentCoreLogTable",
+    this.agentCoreLogTable = new dynamodb.TableV2(this, "AgentCoreLogsTable", {
+      tableName: "AgentCoreLogsTable",
       partitionKey: {
-        name: "UserId",
+        name: "ActorId",
         type: dynamodb.AttributeType.STRING,
       },
       sortKey: {

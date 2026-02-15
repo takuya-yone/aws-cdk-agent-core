@@ -51,8 +51,14 @@ class KnowledgeBaseSettings(BaseSettings):
     kb_result_nums: int = 10
 
 
+class LogSettings(BaseSettings):
+    log_table_name: str
+
+
 model_settings = ModelSettings()
 tavily_settings = TavilySettings()
 aws_rss_settings = AwsRssSettings()
 memory_settings = AgentCoreMemorySettings()
 knowledge_base_settings = KnowledgeBaseSettings()
+log_settings = LogSettings()
+

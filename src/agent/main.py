@@ -2,12 +2,16 @@
 
 Uses BedrockAgentCoreApp for simplified deployment
 """
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 from aws_lambda_powertools import Logger
 from bedrock_agentcore.memory.integrations.strands.config import AgentCoreMemoryConfig
 from bedrock_agentcore.memory.integrations.strands.session_manager import (
     AgentCoreMemorySessionManager,
 )
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
+from models import AgentCoreInvokeLogModel
 from nanoid import generate
 from settings import memory_settings, model_settings
 from strands import Agent, tool
@@ -18,6 +22,18 @@ app = BedrockAgentCoreApp()
 model = model_settings.get_model()
 logger = Logger()
 
+
+def save_invocation_log(invocation_id: str, actor_id: str, session_id: str, input: str, output: str):
+    """Save the invocation log to DynamoDB."""
+    log_entry = AgentCoreInvokeLogModel(
+        InvocationId=invocation_id,
+        ActorId=actor_id,
+        Timestamp=datetime.now(ZoneInfo("Asia/Tokyo")).isoformat(),
+        SessionId=session_id,
+        Input=input,
+        Output=output
+    )
+    log_entry.save()
 
 
 @tool
@@ -120,11 +136,15 @@ async def entrypoint(payload: dict):
         """
     )
 
+    save_invocation_log(invocation_id, actor_id, session_id, message, "")
+
     # Stream responses back to the caller
     stream_messages = main_agent.stream_async(message)
     async for msg in stream_messages:
         if "event" in msg:
             yield msg
+            # print(msg)
+            # pass
 
     # result = await main_agent.invoke_async(message)
     # yield result
