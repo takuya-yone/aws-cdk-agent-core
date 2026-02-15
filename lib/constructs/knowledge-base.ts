@@ -23,6 +23,9 @@ export class KnowledgeBaseConstruct extends Construct {
       },
     )
 
+    /**
+     * @see - https://repost.aws/ja/questions/QUWezLMjc0S8GOiaa3jOOKGQ/s3-vector-big-metadata-error
+     */
     const vectorStoreBucketIndex = new s3vectors.CfnIndex(
       this,
       "VectorStoreBucketIndex",

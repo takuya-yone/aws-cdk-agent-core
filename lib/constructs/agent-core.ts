@@ -3,6 +3,7 @@ import * as bedrock from "@aws-cdk/aws-bedrock-alpha"
 import * as cdk from "aws-cdk-lib"
 import {
   type aws_bedrock,
+  type aws_dynamodb as dynamodb,
   aws_iam as iam,
   aws_secretsmanager as secretsmanager,
 } from "aws-cdk-lib"
@@ -10,6 +11,7 @@ import { Construct } from "constructs"
 
 export type AgentCoreConstructProps = {
   knowledgeBase: aws_bedrock.CfnKnowledgeBase
+  agentCoreLogTable: dynamodb.TableV2
 }
 export class AgentCoreConstruct extends Construct {
   public readonly runtime: agentcore.Runtime
@@ -95,6 +97,7 @@ export class AgentCoreConstruct extends Construct {
         TAVILY_SECRET_NAME: tavilySecret.secretName,
         MEMORY_ID: memory.memoryId,
         BEDROCK_KB_ID: props.knowledgeBase.ref,
+        LOG_TABLE_NAME: props.agentCoreLogTable.tableName,
         KB_RESULT_NUMS: "10",
       },
     })
@@ -108,6 +111,7 @@ export class AgentCoreConstruct extends Construct {
     memory.grantRead(this.runtime)
     memory.grantDelete(this.runtime)
     this.runtime.addToRolePolicy(kbAccessPolicyStatement)
+    props.agentCoreLogTable.grantReadWriteData(this.runtime)
     //   new iam.PolicyStatement({
     //     effect: iam.Effect.ALLOW,
     //     actions: [

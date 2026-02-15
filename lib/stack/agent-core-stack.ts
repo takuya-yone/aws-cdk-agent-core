@@ -1,14 +1,22 @@
 import * as cdk from "aws-cdk-lib/core"
 import type { Construct } from "constructs"
 import type { StackParameters } from "../../bin/parameter"
-import { AgentCoreConstruct } from "../constructs/agent-core"
-import { ApiGwConstruct } from "../constructs/api-gw"
-import { AuthConstruct } from "../constructs/auth"
-import { KnowledgeBaseConstruct } from "../constructs/knowledge-base"
+import {
+  AgentCoreConstruct,
+  ApiGwConstruct,
+  AuthConstruct,
+  DatastoreConstruct,
+  KnowledgeBaseConstruct,
+} from "../constructs"
 
 export class AgentCoreStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: StackParameters) {
     super(scope, id, props)
+
+    const datastoreConstruct = new DatastoreConstruct(
+      this,
+      "DatastoreConstruct",
+    )
 
     const knowledgeBaseConstruct = new KnowledgeBaseConstruct(
       this,
@@ -20,6 +28,7 @@ export class AgentCoreStack extends cdk.Stack {
       "AgentCoreConstruct",
       {
         knowledgeBase: knowledgeBaseConstruct.knowledgeBase,
+        agentCoreLogTable: datastoreConstruct.agentCoreLogTable,
       },
     )
 

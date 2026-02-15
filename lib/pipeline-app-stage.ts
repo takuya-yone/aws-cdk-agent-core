@@ -1,8 +1,7 @@
 import * as cdk from "aws-cdk-lib"
 import type { Construct } from "constructs"
 import { defaultStackParameters } from "../bin/parameter"
-import { AgentCoreStack } from "./stack/agent-core-stack"
-import { SampleStack } from "./stack/sample-stack"
+import { AgentCoreStack, SampleStack } from "./stack"
 
 export class StackStage extends cdk.Stage {
   constructor(scope: Construct, id: string, props?: cdk.StageProps) {
