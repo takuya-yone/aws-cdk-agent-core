@@ -101,12 +101,12 @@ async def entrypoint(payload: dict):
     Yields:
         Streaming messages from the agent
     """
-    invocation_id = generate()
+    invocation_id = generate(alphabet="0123456789abcdefghijklmnopqrst", size=10)
 
     logger.info("Invocation started...", extra={"invocation_id": invocation_id, "payload": payload})
 
-    # Extract message and model configuration from payload
-    message = payload.get("prompt", "")
+    # Extract user prompt and model configuration from payload
+    user_prompt = payload.get("prompt", "")
     actor_id = payload.get("actor_id",invocation_id)
     session_id = payload.get("session_id",'default_session_id')
 
@@ -136,15 +136,19 @@ async def entrypoint(payload: dict):
         """
     )
 
-    save_invocation_log(invocation_id, actor_id, session_id, message, "")
-
     # Stream responses back to the caller
-    stream_messages = main_agent.stream_async(message)
+    response_msg_list = []
+    stream_messages = main_agent.stream_async(user_prompt)
     async for msg in stream_messages:
         if "event" in msg:
             yield msg
-            # print(msg)
-            # pass
+
+            # Update the log with the latest output
+            if "contentBlockDelta" in msg['event']:
+                response_msg_list.append(msg['event']['contentBlockDelta']['delta'].get("text", ""))
+
+    # Save the invocation log after processing
+    save_invocation_log(invocation_id, actor_id, session_id, user_prompt, "".join(response_msg_list))
 
     # result = await main_agent.invoke_async(message)
     # yield result
