@@ -38,6 +38,10 @@ export const invokeRoute = createRoute({
   },
 })
 
+const logger = new Logger()
+
+const agentCoreClient = new BedrockAgentCoreClient({})
+
 const AGENT_RUNTIME_ARN = process.env.AGENT_RUNTIME_ARN
 if (!AGENT_RUNTIME_ARN) {
   throw new Error("AGENT_RUNTIME_ARN is not defined")
@@ -77,29 +81,32 @@ const responseSse = async (
   stream: SSEStreamingApi,
   reader: ReadableStreamDefaultReader<string>,
 ) => {
+  let buffer = ""
   while (true) {
     const { value, done } = await reader.read()
     if (done) break
-    const lines = value.split("\n")
+    buffer += value
+    const lines = buffer.split("\n")
+    buffer = lines.pop() ?? ""
     for (const line of lines) {
-      if (line) {
-        if (line.startsWith("data: ")) {
-          const data = JSON.parse(line.slice(6))
-          const eventKey = EventTypeSchema.parse(Object.keys(data.event)[0])
-          const eventData = OutputSchema.parse(data.event)
-          await stream.writeSSE({
-            event: eventKey,
-            data: JSON.stringify(eventData),
-          })
-        }
+      if (!line.startsWith("data: ")) continue
+      try {
+        const data = JSON.parse(line.slice(6))
+        const eventKey = EventTypeSchema.parse(Object.keys(data.event)[0])
+        const eventData = OutputSchema.parse(data.event)
+        await stream.writeSSE({
+          event: eventKey,
+          data: JSON.stringify(eventData),
+        })
+      } catch (err) {
+        logger.error("Failed to parse SSE data", {
+          line,
+          error: err instanceof Error ? err.message : String(err),
+        })
       }
     }
   }
 }
-
-const logger = new Logger()
-
-const agentCoreClient = new BedrockAgentCoreClient({})
 
 const invokeRouteHandler: RouteHandler<
   typeof invokeRoute,
@@ -111,7 +118,7 @@ const invokeRouteHandler: RouteHandler<
 
   const actorId: string | undefined = event
     ? event.requestContext.authorizer?.claims.sub
-    : "local-useraaaa"
+    : "local-user"
 
   const sessionId = `${actorId}-default`
 
