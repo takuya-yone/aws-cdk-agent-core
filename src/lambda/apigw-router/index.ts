@@ -1,12 +1,9 @@
-import { streamHandle } from "hono/aws-lambda"
-// import { streamText } from 'hono/streaming'
-
 import { Logger } from "@aws-lambda-powertools/logger"
 import { serve } from "@hono/node-server"
 import { swaggerUI } from "@hono/swagger-ui"
 import { OpenAPIHono } from "@hono/zod-openapi"
 import type { Handler } from "aws-lambda"
-import { handle } from "hono/aws-lambda"
+import { handle, streamHandle } from "hono/aws-lambda"
 import { invokeApi } from "./invoke-api"
 import { rootApi } from "./root-api"
 
