@@ -106,6 +106,7 @@ export class AgentCoreConstruct extends Construct {
     tavilySecret.grantRead(this.runtime)
     memory.grantWrite(this.runtime)
     memory.grantRead(this.runtime)
+    memory.grantDelete(this.runtime)
     this.runtime.addToRolePolicy(kbAccessPolicyStatement)
     //   new iam.PolicyStatement({
     //     effect: iam.Effect.ALLOW,
