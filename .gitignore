@@ -16,3 +16,6 @@ settings.local.json
 
 # python cache
 __pycache__/
+
+# drawio
+*.drawio.bkp

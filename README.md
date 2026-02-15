@@ -4,14 +4,24 @@ This is a blank project for CDK development with TypeScript.
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
+## Architecture
+
+![](./docs/Architecture.drawio.png)
+
 ## Useful commands
 
+### CDK
 * `pnpm run build`   compile typescript to js
 * `pnpm run watch`   watch for changes and compile
 * `pnpm run test`    perform the vitest unit tests
 * `pnpm cdk deploy`  deploy this stack to your default AWS account/region
 * `pnpm cdk diff`    compare deployed stack with current state
 * `pnpm cdk synth`   emits the synthesized CloudFormation template
+
+### Application
+* `pnpm dev`         run lambda proxy with Hono
+* `pnpm biome:fix`   apply format/lint on TypeScript files
+* `pnpm ruff:fix`    apply format/lint on Python files
 
 
 ## Cognito Opration
@@ -56,7 +66,7 @@ aws cognito-idp initiate-auth \
   --auth-parameters USERNAME=${COGNITO_USER_NAME},PASSWORD=${COGNITO_PASSWORD}
 ```
 
-## endpoint
+## Endpoints
 
 - http://localhost:8080/invocations
 - http://localhost:3000/invoke
