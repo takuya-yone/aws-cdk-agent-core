@@ -55,3 +55,9 @@ aws cognito-idp initiate-auth \
   --auth-flow "USER_PASSWORD_AUTH" \
   --auth-parameters USERNAME=${COGNITO_USER_NAME},PASSWORD=${COGNITO_PASSWORD}
 ```
+
+## endpoint
+
+- http://localhost:8080/invocations
+- http://localhost:3000/invoke
+- https://xxxxxxx.execute-api.ap-northeast-1.amazonaws.com/v1/invoke
