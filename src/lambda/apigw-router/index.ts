@@ -35,6 +35,12 @@ export const streamHandler: Handler = streamHandle(app)
 
 export const handler: Handler = handle(app)
 
-serve(app, (info) => {
-  console.log(`Listening on http://localhost:${info.port}`) // Listening on http://localhost:3000
-})
+/**
+ * Local development entry point
+ * Note: This will not be used in the deployed Lambda environment
+ */
+if (!process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  serve(app, (info) => {
+    console.log(`Listening on http://localhost:${info.port}`)
+  })
+}
