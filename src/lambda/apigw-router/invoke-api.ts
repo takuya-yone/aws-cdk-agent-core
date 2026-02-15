@@ -67,6 +67,36 @@ const invokeCommandFactory = ({
     traceId: traceId,
   })
 
+/**
+ *
+ * @param stream
+ * @param reader
+ * @see - https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-invoke-agent.html
+ */
+const responseSse = async (
+  stream: SSEStreamingApi,
+  reader: ReadableStreamDefaultReader<string>,
+) => {
+  while (true) {
+    const { value, done } = await reader.read()
+    if (done) break
+    const lines = value.split("\n")
+    for (const line of lines) {
+      if (line) {
+        if (line.startsWith("data: ")) {
+          const data = JSON.parse(line.slice(6))
+          const eventKey = EventTypeSchema.parse(Object.keys(data.event)[0])
+          const eventData = OutputSchema.parse(data.event)
+          await stream.writeSSE({
+            event: eventKey,
+            data: JSON.stringify(eventData),
+          })
+        }
+      }
+    }
+  }
+}
+
 const logger = new Logger()
 
 const agentCoreClient = new BedrockAgentCoreClient({})
@@ -104,30 +134,6 @@ const invokeRouteHandler: RouteHandler<
     .transformToWebStream()
     .pipeThrough(new TextDecoderStream())
   const responseReader = responseStream.getReader()
-
-  const responseSse = async (
-    stream: SSEStreamingApi,
-    reader: ReadableStreamDefaultReader<string>,
-  ) => {
-    while (true) {
-      const { value, done } = await reader.read()
-      if (done) break
-      const lines = value.split("\n")
-      for (const line of lines) {
-        if (line) {
-          if (line.startsWith("data: ")) {
-            const data = JSON.parse(line.slice(6))
-            const eventKey = EventTypeSchema.parse(Object.keys(data.event)[0])
-            const eventData = OutputSchema.parse(data.event)
-            await stream.writeSSE({
-              event: eventKey,
-              data: JSON.stringify(eventData),
-            })
-          }
-        }
-      }
-    }
-  }
 
   return streamSSE(c, async (stream) => {
     await responseSse(stream, responseReader)
