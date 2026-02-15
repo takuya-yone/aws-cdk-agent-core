@@ -45,6 +45,7 @@
     "cdk-ecr-deployment": "^4.1.0",
     "constructs": "^10.4.5",
     "hono": "^4.11.9",
+    "nanoid": "^5.1.6",
     "zod": "^4.3.6"
   },
   "packageManager": "pnpm@10.29.3"

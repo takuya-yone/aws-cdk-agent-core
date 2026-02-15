@@ -8,6 +8,7 @@ import { createRoute, OpenAPIHono } from "@hono/zod-openapi"
 import type { APIGatewayProxyEvent } from "aws-lambda"
 import type { SSEStreamingApi } from "hono/streaming"
 import { streamSSE } from "hono/streaming"
+import { customAlphabet } from "nanoid"
 import { EventTypeSchema, InputSchema, OutputSchema } from "./schema"
 
 type Bindings = {
@@ -37,6 +38,10 @@ export const invokeRoute = createRoute({
     },
   },
 })
+
+const nanoid = customAlphabet(
+  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+)
 
 const logger = new Logger()
 
@@ -81,28 +86,21 @@ const responseSse = async (
   stream: SSEStreamingApi,
   reader: ReadableStreamDefaultReader<string>,
 ) => {
-  let buffer = ""
   while (true) {
     const { value, done } = await reader.read()
     if (done) break
-    buffer += value
-    const lines = buffer.split("\n")
-    buffer = lines.pop() ?? ""
+    const lines = value.split("\n")
     for (const line of lines) {
-      if (!line.startsWith("data: ")) continue
-      try {
-        const data = JSON.parse(line.slice(6))
-        const eventKey = EventTypeSchema.parse(Object.keys(data.event)[0])
-        const eventData = OutputSchema.parse(data.event)
-        await stream.writeSSE({
-          event: eventKey,
-          data: JSON.stringify(eventData),
-        })
-      } catch (err) {
-        logger.error("Failed to parse SSE data", {
-          line,
-          error: err instanceof Error ? err.message : String(err),
-        })
+      if (line) {
+        if (line.startsWith("data: ")) {
+          const data = JSON.parse(line.slice(6))
+          const eventKey = EventTypeSchema.parse(Object.keys(data.event)[0])
+          const eventData = OutputSchema.parse(data.event)
+          await stream.writeSSE({
+            event: eventKey,
+            data: JSON.stringify(eventData),
+          })
+        }
       }
     }
   }
@@ -118,7 +116,7 @@ const invokeRouteHandler: RouteHandler<
 
   const actorId: string | undefined = event
     ? event.requestContext.authorizer?.claims.sub
-    : "local-user"
+    : `local-user-${nanoid(10)}`
 
   const sessionId = `${actorId}-default`
 
