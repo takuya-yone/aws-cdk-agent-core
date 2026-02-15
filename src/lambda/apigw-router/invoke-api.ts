@@ -93,12 +93,15 @@ const responseSse = async (
     for (const line of lines) {
       if (line) {
         if (line.startsWith("data: ")) {
+          const id = nanoid(10)
           const data = JSON.parse(line.slice(6))
-          const _eventKey = EventTypeSchema.parse(Object.keys(data.event)[0])
+          const eventKey = EventTypeSchema.parse(Object.keys(data.event)[0])
           const eventData = OutputSchema.parse(data.event)
           await stream.writeSSE({
-            // event: eventKey,
             data: JSON.stringify(eventData),
+            event: eventKey,
+            id: id,
+            retry: 3000, // Client will retry after 3 seconds if the connection is lost
           })
         }
       }
