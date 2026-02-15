@@ -4,14 +4,30 @@ import { swaggerUI } from "@hono/swagger-ui"
 import { OpenAPIHono } from "@hono/zod-openapi"
 import type { Handler } from "aws-lambda"
 import { handle, streamHandle } from "hono/aws-lambda"
+import { cors } from "hono/cors"
 import { invokeApi } from "./invoke-api"
 import { rootApi } from "./root-api"
 
 const logger = new Logger()
 
 const app = new OpenAPIHono()
-  .route("/", rootApi)
-  .route("/invoke", invokeApi)
+
+/**
+ * CORS middleware configuration
+ * Note: Adjust the origin, allowHeaders, and allowMethods as needed for your applicatio
+ */
+app.use(
+  "/*",
+  cors({
+    origin: ["http://localhost:5173"],
+    allowHeaders: ["Content-Type"],
+    allowMethods: ["POST", "GET", "OPTIONS"],
+  }),
+)
+
+app.route("/", rootApi).route("/invoke", invokeApi)
+
+app
   .doc("/specification", {
     openapi: "3.0.0",
     info: {

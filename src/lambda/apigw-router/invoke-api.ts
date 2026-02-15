@@ -94,10 +94,10 @@ const responseSse = async (
       if (line) {
         if (line.startsWith("data: ")) {
           const data = JSON.parse(line.slice(6))
-          const eventKey = EventTypeSchema.parse(Object.keys(data.event)[0])
+          const _eventKey = EventTypeSchema.parse(Object.keys(data.event)[0])
           const eventData = OutputSchema.parse(data.event)
           await stream.writeSSE({
-            event: eventKey,
+            // event: eventKey,
             data: JSON.stringify(eventData),
           })
         }
