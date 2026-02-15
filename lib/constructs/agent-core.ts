@@ -52,9 +52,10 @@ export class AgentCoreConstruct extends Construct {
     })
 
     // AgentCore Memoryの作成
-    const memory = new agentcore.Memory(this, "StrandsAgentCoreMemory", {
-      memoryName: "StrandsAgentCoreMemory",
+    const memory = new agentcore.Memory(this, "AgentCoreMemory", {
+      memoryName: "AgentCoreMemory",
       description: "Memory for Strands Agent",
+      expirationDuration: cdk.Duration.days(7),
       memoryStrategies: [
         agentcore.MemoryStrategy.usingSummarization({
           name: "SummarizationStrategy",
