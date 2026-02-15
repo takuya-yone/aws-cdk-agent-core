@@ -103,6 +103,10 @@ export class ApiGwConstruct extends Construct {
         ),
         accessLogFormat: apigw.AccessLogFormat.jsonWithStandardFields(),
       },
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigw.Cors.ALL_ORIGINS,
+        allowMethods: apigw.Cors.ALL_METHODS,
+      },
       defaultIntegration: new apigw.LambdaIntegration(apigwRouterLambda, {
         responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
         timeout: props.apiGwConfig.timeoutSeconds,
@@ -114,6 +118,10 @@ export class ApiGwConstruct extends Construct {
     })
 
     const _restApiRoot = restApi.root.addProxy({
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigw.Cors.ALL_ORIGINS,
+        allowMethods: apigw.Cors.ALL_METHODS,
+      },
       defaultIntegration: new apigw.LambdaIntegration(apigwRouterLambda, {
         responseTransferMode: apigw.ResponseTransferMode.STREAM,
         timeout: props.apiGwConfig.timeoutSeconds,
