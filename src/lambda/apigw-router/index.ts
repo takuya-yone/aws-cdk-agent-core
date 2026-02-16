@@ -1,4 +1,5 @@
 import { Logger } from "@aws-lambda-powertools/logger"
+import { serve } from "@hono/node-server"
 import { swaggerUI } from "@hono/swagger-ui"
 import { OpenAPIHono } from "@hono/zod-openapi"
 import type { Handler } from "aws-lambda"
@@ -50,25 +51,21 @@ app.onError((err, c) => {
  * Lambda entry point
  * Note: This will be used in the deployed Lambda environment
  */
-// let handler: Handler
-
-export const bufferedHandler: Handler = handle(app)
-
-export const streamHandler: Handler = streamHandle(app)
+let handler: Handler
 
 /**
  * Local development entry point
  * Note: This will not be used in the deployed Lambda environment
  */
-// if (!process.env.AWS_LAMBDA_FUNCTION_NAME) {
-//   logger.info("Running in local development mode")
-//   handler = handle(app)
-//   serve(app, (info) => {
-//     console.log(`Listening on http://localhost:${info.port}`)
-//   })
-// } else {
-//   logger.info("Running in Lambda environment")
-//   handler = streamHandle(app)
-// }
+if (!process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  logger.info("Running in local development mode")
+  handler = handle(app)
+  serve(app, (info) => {
+    console.log(`Listening on http://localhost:${info.port}`)
+  })
+} else {
+  logger.info("Running in Lambda environment")
+  handler = streamHandle(app)
+}
 
-// export { handler }
+export { handler }
