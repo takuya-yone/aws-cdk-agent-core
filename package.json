@@ -5,8 +5,7 @@
     "aws-cdk-agent-core": "bin/aws-cdk-agent-core.js"
   },
   "scripts": {
-    "dev:stream": "dotenvx run -f .env -- tsx watch src/lambda/apigw-stream-router/index.ts",
-    "dev:buffered": "dotenvx run -f .env -- tsx watch src/lambda/apigw-buffered-router/index.ts",
+    "dev": "dotenvx run -f .env -- tsx watch src/lambda/apigw-router/index.ts",
     "build": "tsc",
     "watch": "tsc -w",
     "test": "vitest",

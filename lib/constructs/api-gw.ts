@@ -55,8 +55,8 @@ export class ApiGwConstruct extends Construct {
       {
         runtime: lambda.Runtime.NODEJS_24_X,
         functionName: apiGwStreamRouterLambdaName,
-        entry: "src/lambda/apigw-stream-router/index.ts",
-        handler: "handler",
+        entry: "src/lambda/apigw-router/index.ts",
+        handler: "streamHandler",
         timeout: Duration.seconds(900),
         memorySize: 256,
         tracing: lambda.Tracing.ACTIVE,
@@ -83,8 +83,8 @@ export class ApiGwConstruct extends Construct {
       {
         runtime: lambda.Runtime.NODEJS_24_X,
         functionName: apiGwBufferedRouterLambdaName,
-        entry: "src/lambda/apigw-buffered-router/index.ts",
-        handler: "handler",
+        entry: "src/lambda/apigw-router/index.ts",
+        handler: "bufferedHandler",
         timeout: Duration.seconds(900),
         memorySize: 256,
         tracing: lambda.Tracing.ACTIVE,
