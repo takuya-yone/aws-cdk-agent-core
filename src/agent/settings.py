@@ -1,4 +1,3 @@
-
 import json
 import os
 from functools import cached_property
@@ -9,10 +8,12 @@ from pydantic_settings import BaseSettings
 from strands.models import BedrockModel
 
 # .envファイルの内容を読み込む
-load_dotenv('.env')
+load_dotenv(".env")
+
 
 def is_local() -> bool:
     return os.getenv("IS_LOCAL") == "True"
+
 
 class ModelSettings(BaseSettings):
     model_id: str
@@ -61,4 +62,3 @@ aws_rss_settings = AwsRssSettings()
 memory_settings = AgentCoreMemorySettings()
 knowledge_base_settings = KnowledgeBaseSettings()
 log_settings = LogSettings()
-

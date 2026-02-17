@@ -12,8 +12,8 @@
     "cdk": "cdk",
     "biome:dry": "biome check --unsafe bin lib src tests",
     "biome:fix": "biome check --write --unsafe bin lib src tests",
-    "ruff:dry": "uv run ruff check src",
-    "ruff:fix": "uv run ruff check src --fix",
+    "ruff:dry": "uv run ruff format --check src && uv run ruff check src",
+    "ruff:fix": "uv run ruff format src && uv run ruff check src --fix",
     "prepare": "husky"
   },
   "devDependencies": {
