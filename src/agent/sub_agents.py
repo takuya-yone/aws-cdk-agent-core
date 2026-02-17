@@ -56,7 +56,7 @@ aws_access_agent = Agent(
     name="aws_access_agent",
     model=model,
     system_prompt=(
-        "You are an agent that provides guidance on AWS access and usage. Use the use_aws tool to provide guidance. If no region is specified, please target ap-northeast-1. Answer in Japanese."
+        "You are an agent that provides guidance on AWS access and usage. Use the use_aws tool to provide guidance. If no region is specified, please target ap-northeast-1. If an error occurs, please terminate the process without retrying. Answer in Japanese."
     ),
     tools=[use_aws],
 )
