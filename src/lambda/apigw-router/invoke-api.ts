@@ -74,6 +74,7 @@ const invokeCommandFactory = ({
     ),
     qualifier: "DEFAULT",
     traceId: traceId,
+    contentType: "application/json",
   })
 
 /**
@@ -90,15 +91,27 @@ const responseSse = async (
     const { value, done } = await reader.read()
     if (done) break
     const lines = value.split("\n")
+
+    let eventKey: string | undefined
     for (const line of lines) {
       if (line) {
+        if (line.startsWith("event: ")) {
+          eventKey = line.slice(7).replace(/\r/, "")
+          EventTypeSchema.parse(eventKey)
+        }
+
         if (line.startsWith("data: ")) {
           const id = nanoid(10)
           const data = JSON.parse(line.slice(6))
-          const eventKey = EventTypeSchema.parse(Object.keys(data.event)[0])
-          const eventData = OutputSchema.parse(data.event)
+          OutputSchema.parse(data)
+          // if eventKey not included in data
+          if (Object.keys(data)[0] !== eventKey) {
+            throw new Error(
+              `Event type ${eventKey} does not match data keys ${Object.keys(data)}`,
+            )
+          }
           await stream.writeSSE({
-            data: JSON.stringify(eventData),
+            data: JSON.stringify(data),
             event: eventKey,
             id: id,
             retry: 3000, // Client will retry after 3 seconds if the connection is lost
