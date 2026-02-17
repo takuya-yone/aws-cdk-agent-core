@@ -122,6 +122,7 @@ class EventTypeEnum(Enum):
     messageStop = 'messageStop' # noqa: N815
     metadata = 'metadata'
 
+
 class InvocationRequestModel(BaseModel):
     prompt: str
     actor_id: str | None = None
@@ -135,7 +136,7 @@ class InvocationResponseModel(BaseModel):
 
 def save_invocation_log(invocation_id: str, payload: InvocationRequestModel, output: str):
     """
-    Docstring for save_invocation_log
+    Save the invocation log to the database
 
     :param invocation_id: Unique identifier for the invocation
     :type invocation_id: str
@@ -155,10 +156,9 @@ def save_invocation_log(invocation_id: str, payload: InvocationRequestModel, out
     log_entry.save()
 
 
-# @app.entrypoint
-async def entrypoint(invocation_id:str, payload: InvocationRequestModel):
+async def entrypoint(invocation_id: str, payload: InvocationRequestModel):
     """
-    Docstring for entrypoint
+    Entry point for handling agent invocations.
 
     :param invocation_id: Unique identifier for the invocation
     :type invocation_id: str
@@ -225,7 +225,7 @@ async def ping():
     return {"status": "healthy"}
 
 
-@app.post("/invocations",response_model=InvocationResponseModel)
+@app.post("/invocations", response_model=EventSourceResponse)
 async def invocations(payload: InvocationRequestModel) -> EventSourceResponse:
     invocation_id = generate(alphabet="0123456789abcdefghijklmnopqrst", size=10)
     logger.info("Invocation started...", extra={"invocation_id": invocation_id})
@@ -239,6 +239,7 @@ async def invocations(payload: InvocationRequestModel) -> EventSourceResponse:
         entrypoint(invocation_id, payload),
         media_type="text/event-stream",
     )
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080, log_level="debug")
