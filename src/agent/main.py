@@ -8,7 +8,6 @@ from datetime import datetime
 from enum import Enum
 from zoneinfo import ZoneInfo
 
-import uvicorn
 from aws_lambda_powertools import Logger
 from bedrock_agentcore.memory.integrations.strands.config import AgentCoreMemoryConfig
 from bedrock_agentcore.memory.integrations.strands.session_manager import (
@@ -269,5 +268,6 @@ async def invocations(payload: InvocationRequestModel) -> InvocationResponseMode
 
 
 if __name__ == "__main__":
+    import uvicorn
     # AgentCore Runtime listens on port 8080 for incoming requests
     uvicorn.run(app, host="0.0.0.0", port=8080, log_level="debug")
