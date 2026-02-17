@@ -17,6 +17,7 @@ RUN uv sync
 ENV DOCKER_CONTAINER=1
 
 # Expose required ports
+# AgentCore Runtime listens on port 8080 for incoming requests
 EXPOSE 8080
 
 # Run the application with OpenTelemetry instrumentation

@@ -252,8 +252,8 @@ async def ping():
     return {"status": "healthy"}
 
 
-@app.post("/invocations", response_model=EventSourceResponse)
-async def invocations(payload: InvocationRequestModel) -> EventSourceResponse:
+@app.post("/invocations", response_model=InvocationResponseModel)
+async def invocations(payload: InvocationRequestModel) -> InvocationResponseModel:
     invocation_id = generate(alphabet="0123456789abcdefghijklmnopqrst", size=10)
     logger.info("Invocation started...", extra={"invocation_id": invocation_id})
 
@@ -269,4 +269,5 @@ async def invocations(payload: InvocationRequestModel) -> EventSourceResponse:
 
 
 if __name__ == "__main__":
+    # AgentCore Runtime listens on port 8080 for incoming requests
     uvicorn.run(app, host="0.0.0.0", port=8080, log_level="debug")
