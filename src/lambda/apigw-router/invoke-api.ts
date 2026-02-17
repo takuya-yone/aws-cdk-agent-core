@@ -87,25 +87,27 @@ const responseSse = async (
   stream: SSEStreamingApi,
   reader: ReadableStreamDefaultReader<string>,
 ) => {
+  let eventKey: string | undefined
   while (true) {
     const { value, done } = await reader.read()
     if (done) break
     const lines = value.split("\n")
 
-    let eventKey: string | undefined
     for (const line of lines) {
       if (line) {
         if (line.startsWith("event: ")) {
-          eventKey = line.slice(7).replace(/\r/, "")
+          eventKey = line.slice(7).trim()
           EventTypeSchema.parse(eventKey)
         }
 
         if (line.startsWith("data: ")) {
+          if (!eventKey) {
+            throw new Error("Received data line without preceding event line")
+          }
           const id = nanoid(10)
           const data = JSON.parse(line.slice(6))
           OutputSchema.parse(data)
-          // if eventKey not included in data
-          if (Object.keys(data)[0] !== eventKey) {
+          if (!Object.hasOwn(data, eventKey)) {
             throw new Error(
               `Event type ${eventKey} does not match data keys ${Object.keys(data)}`,
             )
