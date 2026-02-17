@@ -15,7 +15,13 @@ from models import AgentCoreInvokeLogModel
 from nanoid import generate
 from settings import memory_settings, model_settings
 from strands import Agent, tool
-from sub_agents import aws_rss_agent, react_agent, search_agent, weather_agent
+from sub_agents import (
+    aws_access_agent,
+    aws_rss_agent,
+    react_agent,
+    search_agent,
+    weather_agent,
+)
 
 # Initialize the AgentCore app
 app = BedrockAgentCoreApp()
@@ -92,6 +98,20 @@ def call_react_agent(topic: str) -> str:
     return result
 
 
+@tool
+def call_aws_access_agent(topic: str) -> str:
+    """Call agent to fetch AWS access guidance using the aws_access_agent.
+    Args:
+        topic: The specific topic or area of interest related to AWS access
+    Returns:
+        A string describing AWS access guidance
+    """
+
+    result = aws_access_agent(f"Provide guidance on AWS access for {topic}")
+    logger.info(f"AWS Access agent called for topic: {topic}", extra={"topic": topic, "tool": "call_aws_access_agent"})
+    return result
+
+
 @app.entrypoint
 async def entrypoint(payload: dict):
     """Handle the agent invocation.
@@ -124,7 +144,7 @@ async def entrypoint(payload: dict):
         name="main_agent",
         model=model,
         session_manager=agentcore_session_manager,
-        tools=[call_weather_agent, call_search_agent, call_aws_rss_agent, call_react_agent],
+        tools=[call_weather_agent, call_search_agent, call_aws_rss_agent, call_react_agent, call_aws_access_agent],
         system_prompt="""
             You are a kind AI assistant.
             Please answer user questions politely.
@@ -132,6 +152,7 @@ async def entrypoint(payload: dict):
             If weather information is needed, please use the call_weather_agent.
             If information is unknown, use call_search_agent to search.
             If AWS RSS feed items are needed, use call_aws_rss_agent to fetch them.
+            If AWS access guidance is needed, use call_aws_access_agent to provide guidance.
             Answer in the language used by the user.
         """
     )

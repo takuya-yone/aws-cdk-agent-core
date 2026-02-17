@@ -7,6 +7,7 @@ from agent_tools import (
 )
 from settings import model_settings
 from strands import Agent
+from strands_tools import use_aws
 from strands_tools.current_time import current_time
 
 model = model_settings.get_model()
@@ -35,9 +36,18 @@ aws_rss_agent = Agent(
     tools = [get_aws_rss_feed]
 )
 
+
 react_agent=Agent(
     name="react_agent",
     model=model,
     system_prompt=('You are an agent that provides best practices for front-end applications, familiar with React and Next.js. Use the get_frontend_best_practices tool to provide guidance. Answer in Japanese.'),
     tools = [get_frontend_best_practices]
+)
+
+
+aws_access_agent=Agent(
+    name="aws_access_agent",
+    model=model,
+    system_prompt=('You are an agent that provides guidance on AWS access and usage. Use the use_aws tool to provide guidance. If no region is specified, please target ap-northeast-1. Answer in Japanese.'),
+    tools = [use_aws]
 )
