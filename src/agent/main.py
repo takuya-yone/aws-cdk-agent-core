@@ -2,6 +2,7 @@
 
 Uses BedrockAgentCoreApp for simplified deployment
 """
+
 import json
 from datetime import datetime
 from enum import Enum
@@ -54,7 +55,10 @@ def call_weather_agent(city: str) -> str:
     """
 
     result = weather_agent(f"Get the weather for {city} and current time.")
-    logger.info(f"Weather agent called for city: {city}", extra={"city": city, "tool": "call_weather_agent"})
+    logger.info(
+        f"Weather agent called for city: {city}",
+        extra={"city": city, "tool": "call_weather_agent"},
+    )
     return result
 
 
@@ -68,7 +72,10 @@ def call_search_agent(query: str) -> dict:
     """
 
     result = search_agent(f"Search the web for {query}")
-    logger.info(f"Search agent called for query: {query}", extra={"query": query, "tool": "call_search_agent"})
+    logger.info(
+        f"Search agent called for query: {query}",
+        extra={"query": query, "tool": "call_search_agent"},
+    )
     return result
 
 
@@ -82,7 +89,10 @@ def call_aws_rss_agent(keyword: str) -> list:
     """
 
     result = aws_rss_agent(f"Fetch RSS feed items for {keyword}")
-    logger.info(f"AWS RSS agent called for keyword: {keyword}", extra={"keyword": keyword, "tool": "call_aws_rss_agent"})
+    logger.info(
+        f"AWS RSS agent called for keyword: {keyword}",
+        extra={"keyword": keyword, "tool": "call_aws_rss_agent"},
+    )
     return result
 
 
@@ -96,7 +106,10 @@ def call_react_agent(topic: str) -> str:
     """
 
     result = react_agent(f"Provide best practices for {topic}")
-    logger.info(f"React agent called for topic: {topic}", extra={"topic": topic, "tool": "call_react_agent"})
+    logger.info(
+        f"React agent called for topic: {topic}",
+        extra={"topic": topic, "tool": "call_react_agent"},
+    )
     return result
 
 
@@ -110,17 +123,20 @@ def call_aws_access_agent(topic: str) -> str:
     """
 
     result = aws_access_agent(f"Provide guidance on AWS access for {topic}")
-    logger.info(f"AWS Access agent called for topic: {topic}", extra={"topic": topic, "tool": "call_aws_access_agent"})
+    logger.info(
+        f"AWS Access agent called for topic: {topic}",
+        extra={"topic": topic, "tool": "call_aws_access_agent"},
+    )
     return result
 
 
 class EventTypeEnum(Enum):
-    messageStart = 'messageStart'  # noqa: N815
-    contentBlockStart = 'contentBlockStart' # noqa: N815
-    contentBlockDelta = 'contentBlockDelta' # noqa: N815
-    contentBlockStop = 'contentBlockStop' # noqa: N815
-    messageStop = 'messageStop' # noqa: N815
-    metadata = 'metadata'
+    messageStart = "messageStart"  # noqa: N815
+    contentBlockStart = "contentBlockStart"  # noqa: N815
+    contentBlockDelta = "contentBlockDelta"  # noqa: N815
+    contentBlockStop = "contentBlockStop"  # noqa: N815
+    messageStop = "messageStop"  # noqa: N815
+    metadata = "metadata"
 
 
 class InvocationRequestModel(BaseModel):
@@ -134,7 +150,9 @@ class InvocationResponseModel(BaseModel):
     data: str
 
 
-def save_invocation_log(invocation_id: str, payload: InvocationRequestModel, output: str):
+def save_invocation_log(
+    invocation_id: str, payload: InvocationRequestModel, output: str
+):
     """
     Save the invocation log to the database
 
@@ -151,7 +169,7 @@ def save_invocation_log(invocation_id: str, payload: InvocationRequestModel, out
         Timestamp=datetime.now(ZoneInfo("Asia/Tokyo")).isoformat(),
         SessionId=payload.session_id,
         Input=payload.prompt,
-        Output=output
+        Output=output,
     )
     log_entry.save()
 
@@ -169,7 +187,7 @@ async def entrypoint(invocation_id: str, payload: InvocationRequestModel):
     agentcore_memory_config = AgentCoreMemoryConfig(
         memory_id=memory_settings.memory_id,
         session_id=payload.session_id,
-        actor_id=payload.actor_id
+        actor_id=payload.actor_id,
     )
     agentcore_session_manager = AgentCoreMemorySessionManager(
         agentcore_memory_config=agentcore_memory_config,
@@ -180,7 +198,13 @@ async def entrypoint(invocation_id: str, payload: InvocationRequestModel):
         name="main_agent",
         model=model,
         session_manager=agentcore_session_manager,
-        tools=[call_weather_agent, call_search_agent, call_aws_rss_agent, call_react_agent, call_aws_access_agent],
+        tools=[
+            call_weather_agent,
+            call_search_agent,
+            call_aws_rss_agent,
+            call_react_agent,
+            call_aws_access_agent,
+        ],
         system_prompt="""
             You are a kind AI assistant.
             Please answer user questions politely.
@@ -190,7 +214,7 @@ async def entrypoint(invocation_id: str, payload: InvocationRequestModel):
             If AWS RSS feed items are needed, use call_aws_rss_agent to fetch them.
             If AWS access guidance is needed, use call_aws_access_agent to provide guidance.
             Answer in the language used by the user.
-        """
+        """,
     )
 
     # Stream responses back to the caller
@@ -202,14 +226,17 @@ async def entrypoint(invocation_id: str, payload: InvocationRequestModel):
             event_type = list(event.keys())[0]
             event_type_enum = EventTypeEnum[event_type]
             response = InvocationResponseModel(
-                event=event_type_enum,
-                data=json.dumps(event, ensure_ascii=False)
+                event=event_type_enum, data=json.dumps(event, ensure_ascii=False)
             )
             yield response.model_dump(mode="json")
 
             # Update the log with the latest output
-            if EventTypeEnum.contentBlockDelta.value in msg['event']:
-                response_msg_list.append(msg['event'][EventTypeEnum.contentBlockDelta.value]['delta'].get("text", ""))
+            if EventTypeEnum.contentBlockDelta.value in msg["event"]:
+                response_msg_list.append(
+                    msg["event"][EventTypeEnum.contentBlockDelta.value]["delta"].get(
+                        "text", ""
+                    )
+                )
 
     # Save the invocation log after processing
     save_invocation_log(invocation_id, payload, "".join(response_msg_list))
@@ -233,7 +260,7 @@ async def invocations(payload: InvocationRequestModel) -> EventSourceResponse:
     if not payload.actor_id:
         payload.actor_id = invocation_id
     if not payload.session_id:
-        payload.session_id = 'default-session'
+        payload.session_id = "default-session"
 
     return EventSourceResponse(
         entrypoint(invocation_id, payload),

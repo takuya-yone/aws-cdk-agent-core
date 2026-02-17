@@ -1,4 +1,3 @@
-
 import boto3
 import feedparser
 from aws_lambda_powertools import Logger
@@ -10,10 +9,13 @@ from strands.tools.mcp import MCPClient
 from tavily import TavilyClient
 
 tavily_client = TavilyClient(api_key=tavily_settings.tavily_api_key)
-tavily_mcp_client = MCPClient(lambda: streamable_http_client(f'https://mcp.tavily.com/mcp/?tavilyApiKey={tavily_settings.tavily_api_key}'))
+tavily_mcp_client = MCPClient(
+    lambda: streamable_http_client(
+        f"https://mcp.tavily.com/mcp/?tavilyApiKey={tavily_settings.tavily_api_key}"
+    )
+)
 
 logger = Logger()
-
 
 
 # @tool
@@ -42,7 +44,9 @@ def _check_keyword_in_rss_entry(rss_item: RssItem, keyword: str) -> bool:
 
 
 @tool
-def get_aws_rss_feed(keyword:str = "AWS", max_items: int = aws_rss_settings.rss_default_items) -> list[RssItem]:
+def get_aws_rss_feed(
+    keyword: str = "AWS", max_items: int = aws_rss_settings.rss_default_items
+) -> list[RssItem]:
     """Fetch and parse AWS-related RSS feed items based on a keyword.
     Args:
         keyword: The keyword to filter RSS feed items
@@ -50,10 +54,16 @@ def get_aws_rss_feed(keyword:str = "AWS", max_items: int = aws_rss_settings.rss_
     Returns:
         A list of RSS feed items matching the keyword
     """
-    logger.info(f"Fetching AWS RSS feed for keyword: {keyword}", extra={"keyword": keyword,"max_items": max_items  ,"tool": "get_aws_rss_feed"})
+    logger.info(
+        f"Fetching AWS RSS feed for keyword: {keyword}",
+        extra={"keyword": keyword, "max_items": max_items, "tool": "get_aws_rss_feed"},
+    )
 
     feed = feedparser.parse(aws_rss_settings.rss_url)
-    logger.info(f"Fetched {len(feed.entries)} entries from RSS feed", extra={"tool": "get_aws_rss_feed"})
+    logger.info(
+        f"Fetched {len(feed.entries)} entries from RSS feed",
+        extra={"tool": "get_aws_rss_feed"},
+    )
 
     max_items = min(max_items, aws_rss_settings.rss_max_items)
 
@@ -67,7 +77,14 @@ def get_aws_rss_feed(keyword:str = "AWS", max_items: int = aws_rss_settings.rss_
         if _check_keyword_in_rss_entry(rss_item, keyword):
             result_items.append(rss_item)
 
-    logger.info(f"Returning {len(result_items)} items matching keyword: {keyword}", extra={"keyword": keyword,"returned_items": len(result_items) ,"tool": "get_aws_rss_feed"})
+    logger.info(
+        f"Returning {len(result_items)} items matching keyword: {keyword}",
+        extra={
+            "keyword": keyword,
+            "returned_items": len(result_items),
+            "tool": "get_aws_rss_feed",
+        },
+    )
 
     return result_items
 
@@ -80,7 +97,10 @@ def get_weather(city: str) -> str:
     Returns:
         A string describing the weather
     """
-    logger.info(f"Fetching weather for city: {city}", extra={"city": city, "tool": "get_weather"})
+    logger.info(
+        f"Fetching weather for city: {city}",
+        extra={"city": city, "tool": "get_weather"},
+    )
     weather_data = {
         "Tokyo": "晴れ、気温25度",
         "東京": "晴れ、気温25度",
@@ -101,28 +121,38 @@ def get_frontend_best_practices(topic: str) -> str:
     Returns:
         A string describing best practices
     """
-    logger.info(f"Fetching front-end best practices for topic: {topic}", extra={"topic": topic, "tool": "get_frontend_best_practices"})
+    logger.info(
+        f"Fetching front-end best practices for topic: {topic}",
+        extra={"topic": topic, "tool": "get_frontend_best_practices"},
+    )
     kb_client = boto3.client("bedrock-agent-runtime")
 
     response = kb_client.retrieve_and_generate(
         input={"text": topic},
         retrieveAndGenerateConfiguration={
-            "type": 'KNOWLEDGE_BASE',
+            "type": "KNOWLEDGE_BASE",
             "knowledgeBaseConfiguration": {
-                "knowledgeBaseId": knowledge_base_settings.bedrock_kb_id, # ナレッジベースID
-                "modelArn": knowledge_base_settings.model_id, # 回答を行うモデルのARN（詳細は補足に記載）
-                'retrievalConfiguration': {
-                    'vectorSearchConfiguration': {
-                        'numberOfResults': knowledge_base_settings.kb_result_nums, # ナレッジベースから取得する関連情報の数
+                "knowledgeBaseId": knowledge_base_settings.bedrock_kb_id,  # ナレッジベースID
+                "modelArn": knowledge_base_settings.model_id,  # 回答を行うモデルのARN（詳細は補足に記載）
+                "retrievalConfiguration": {
+                    "vectorSearchConfiguration": {
+                        "numberOfResults": knowledge_base_settings.kb_result_nums,  # ナレッジベースから取得する関連情報の数
                     }
-                }
+                },
             },
         },
     )
 
     text = response["output"]["text"]
     citations = response["citations"]
-    logger.info(f"Retrieved {len(citations)} citations from knowledge base", extra={"text": text, "citations_count": len(citations), "tool": "get_frontend_best_practices"})
+    logger.info(
+        f"Retrieved {len(citations)} citations from knowledge base",
+        extra={
+            "text": text,
+            "citations_count": len(citations),
+            "tool": "get_frontend_best_practices",
+        },
+    )
     # citations
     # logger.info
     return text

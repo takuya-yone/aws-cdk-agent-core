@@ -14,10 +14,10 @@ class RssItem(BaseModel):
     def from_entry(cls, entry):
         """Create an RssItem instance from a feedparser entry."""
         return cls(
-            title=entry.get('title', ''),
-            link=entry.get('link', ''),
-            published=entry.get('published', ''),
-            summary=entry.get('summary', '')
+            title=entry.get("title", ""),
+            link=entry.get("link", ""),
+            published=entry.get("published", ""),
+            summary=entry.get("summary", ""),
         )
 
 
@@ -25,6 +25,7 @@ class AgentCoreInvokeLogModel(Model):
     """
     DynamoDB model for logging agent invocations.
     """
+
     class Meta:
         table_name = log_settings.log_table_name
 
