@@ -20,7 +20,7 @@ export type CognitoClientConfig = {
 
 export type ApiGwConfig = {
   stageName: string
-  timeoutSeconds: Duration
+  timeoutSeconds: { buffered: Duration; stream: Duration }
 }
 
 export interface StackParameters extends cdk.StackProps {
@@ -47,6 +47,9 @@ export const defaultStackParameters: StackParameters = {
   },
   apiGwConfig: {
     stageName: "v1",
-    timeoutSeconds: Duration.seconds(300),
+    timeoutSeconds: {
+      buffered: Duration.seconds(90),
+      stream: Duration.seconds(300),
+    },
   },
 }

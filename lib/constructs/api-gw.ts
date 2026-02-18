@@ -109,7 +109,7 @@ export class ApiGwConstruct extends Construct {
       },
       defaultIntegration: new apigw.LambdaIntegration(apigwRouterLambda, {
         responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
-        timeout: props.apiGwConfig.timeoutSeconds,
+        timeout: props.apiGwConfig.timeoutSeconds.buffered,
         proxy: true,
       }),
       defaultMethodOptions: {
@@ -124,7 +124,7 @@ export class ApiGwConstruct extends Construct {
       },
       defaultIntegration: new apigw.LambdaIntegration(apigwRouterLambda, {
         responseTransferMode: apigw.ResponseTransferMode.STREAM,
-        timeout: props.apiGwConfig.timeoutSeconds,
+        timeout: props.apiGwConfig.timeoutSeconds.stream,
         proxy: true,
       }),
       defaultMethodOptions: {
