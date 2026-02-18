@@ -62,8 +62,14 @@ const invokeCommandFactory = ({
   actorId?: string
   sessionId?: string
   traceId?: string
-}) =>
-  new InvokeAgentRuntimeCommand({
+}) => {
+  logger.info("Creating InvokeAgentRuntimeCommand with inputs", {
+    prompt,
+    actorId,
+    sessionId,
+    traceId,
+  })
+  return new InvokeAgentRuntimeCommand({
     agentRuntimeArn: AGENT_RUNTIME_ARN,
     payload: new TextEncoder().encode(
       JSON.stringify({
@@ -76,6 +82,7 @@ const invokeCommandFactory = ({
     traceId: traceId,
     contentType: "application/json",
   })
+}
 
 /**
  *
