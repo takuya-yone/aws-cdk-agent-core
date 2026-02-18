@@ -13,6 +13,7 @@ export class AuthConstruct extends Construct {
 
     this.userPool = new cognito.UserPool(this, "StrandsUserPool", {
       userPoolName: "StrandsUserPool",
+      featurePlan: cognito.FeaturePlan.ESSENTIALS,
       selfSignUpEnabled: false,
       signInAliases: {
         email: true,
