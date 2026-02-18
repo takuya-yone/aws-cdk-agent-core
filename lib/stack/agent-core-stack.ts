@@ -5,6 +5,7 @@ import {
   AgentCoreConstruct,
   ApiGwConstruct,
   AuthConstruct,
+  CdnConstruct,
   DatastoreConstruct,
   KnowledgeBaseConstruct,
 } from "../constructs"
@@ -40,6 +41,10 @@ export class AgentCoreStack extends cdk.Stack {
       runtime: agentCoreConstruct.runtime,
       userPool: authConstruct.userPool,
       apiGwConfig: props.apiGwConfig,
+    })
+
+    const _cdnConstruct = new CdnConstruct(this, "CdnConstruct", {
+      restApi: _apiGwConstruct.restApi,
     })
   }
 }

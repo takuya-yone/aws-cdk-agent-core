@@ -18,6 +18,7 @@ type ApiGwConstructProps = {
 }
 
 export class ApiGwConstruct extends Construct {
+  public readonly restApi: apigw.RestApi
   constructor(scope: Construct, id: string, props: ApiGwConstructProps) {
     super(scope, id)
 
@@ -87,7 +88,7 @@ export class ApiGwConstruct extends Construct {
 
     const restApiName = "AgentCoreRestApi"
 
-    const restApi = new apigw.RestApi(this, restApiName, {
+    this.restApi = new apigw.RestApi(this, restApiName, {
       restApiName: restApiName,
       deployOptions: {
         stageName: props.apiGwConfig.stageName,
@@ -117,7 +118,7 @@ export class ApiGwConstruct extends Construct {
       },
     })
 
-    const _restApiRoot = restApi.root.addProxy({
+    const _restApiRoot = this.restApi.root.addProxy({
       defaultCorsPreflightOptions: {
         allowOrigins: apigw.Cors.ALL_ORIGINS,
         allowMethods: apigw.Cors.ALL_METHODS,
