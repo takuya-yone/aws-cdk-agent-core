@@ -1,8 +1,13 @@
-import { aws_cognito as cognito, RemovalPolicy } from "aws-cdk-lib"
+import {
+  type aws_cloudfront as cloudfront,
+  aws_cognito as cognito,
+  RemovalPolicy,
+} from "aws-cdk-lib"
 import { Construct } from "constructs"
 import type { CognitoClientConfig } from "../../bin/parameter"
 
 type AuthConstructProps = {
+  distribution: cloudfront.Distribution
   cognitoClientConfig: CognitoClientConfig
 }
 
@@ -50,8 +55,14 @@ export class AuthConstruct extends Construct {
             cognito.OAuthScope.OPENID,
             cognito.OAuthScope.PROFILE,
           ],
-          callbackUrls: props.cognitoClientConfig.callbackUrls,
-          logoutUrls: props.cognitoClientConfig.logoutUrls,
+          callbackUrls: [
+            ...props.cognitoClientConfig.callbackUrls,
+            `https://${props.distribution.distributionDomainName}`,
+          ],
+          logoutUrls: [
+            ...props.cognitoClientConfig.logoutUrls,
+            `https://${props.distribution.distributionDomainName}`,
+          ],
         },
         supportedIdentityProviders: [
           cognito.UserPoolClientIdentityProvider.COGNITO,

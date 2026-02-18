@@ -33,18 +33,18 @@ export class AgentCoreStack extends cdk.Stack {
       },
     )
 
+    const cdnConstruct = new CdnConstruct(this, "CdnConstruct")
+
     const authConstruct = new AuthConstruct(this, "AuthConstruct", {
+      distribution: cdnConstruct.distribution,
       cognitoClientConfig: props.cognitoClientConfig,
     })
 
     const _apiGwConstruct = new ApiGwConstruct(this, "ApiGwConstruct", {
       runtime: agentCoreConstruct.runtime,
       userPool: authConstruct.userPool,
+      distribution: cdnConstruct.distribution,
       apiGwConfig: props.apiGwConfig,
-    })
-
-    const _cdnConstruct = new CdnConstruct(this, "CdnConstruct", {
-      restApi: _apiGwConstruct.restApi,
     })
   }
 }

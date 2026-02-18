@@ -1,6 +1,8 @@
 import type * as agentcore from "@aws-cdk/aws-bedrock-agentcore-alpha"
 import {
   aws_apigateway as apigw,
+  aws_cloudfront as cloudfront,
+  aws_cloudfront_origins as cloudfront_origins,
   type aws_cognito as cognito,
   Duration,
   aws_lambda as lambda,
@@ -14,6 +16,7 @@ import type { ApiGwConfig } from "../../bin/parameter"
 type ApiGwConstructProps = {
   runtime: agentcore.Runtime
   userPool: cognito.UserPool
+  distribution: cloudfront.Distribution
   apiGwConfig: ApiGwConfig
 }
 
@@ -132,6 +135,23 @@ export class ApiGwConstruct extends Construct {
         authorizer: cognitoAuthorizer,
       },
     })
+
+    props.distribution.addBehavior(
+      "/api/*",
+      new cloudfront_origins.RestApiOrigin(this.restApi, {
+        //   customHeaders: { Referer: 'c46d2fbb-4ff3-4c34-a201-4b57bfa8bc1a' },
+      }),
+      {
+        allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
+        cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.HTTPS_ONLY,
+        originRequestPolicy:
+          cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+        responseHeadersPolicy:
+          cloudfront.ResponseHeadersPolicy
+            .CORS_ALLOW_ALL_ORIGINS_WITH_PREFLIGHT,
+      },
+    )
 
     // const _restApiRoot = restApi.root.addProxy({
     //   defaultIntegration,
