@@ -128,16 +128,13 @@ const invokeRouteHandler: RouteHandler<
   typeof invokeRoute,
   { Bindings: Bindings }
 > = async (c) => {
-  const { prompt } = c.req.valid("json")
+  const { prompt, sessionId } = c.req.valid("json")
 
   const event = c.env.event
 
   const actorId: string | undefined = event
     ? event.requestContext.authorizer?.claims.sub
     : `local-user-${nanoid(10)}`
-
-  // const sessionId = `${actorId}-default`
-  const sessionId = `${actorId}-${nanoid(10)}-default`
 
   logger.info("invoke request inputs", { prompt, actorId, sessionId })
 

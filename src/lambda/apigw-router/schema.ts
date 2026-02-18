@@ -2,6 +2,7 @@ import { z } from "@hono/zod-openapi"
 
 export const InputSchema = z.object({
   prompt: z.string().min(1, "Prompt is required"),
+  sessionId: z.string().optional(),
 })
 
 export const EventTypeSchema = z.enum([
