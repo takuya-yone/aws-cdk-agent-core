@@ -113,16 +113,10 @@ export class AgentCoreConstruct extends Construct {
     memory.grantDelete(this.runtime)
     this.runtime.addToRolePolicy(kbAccessPolicyStatement)
     props.agentCoreLogTable.grantReadWriteData(this.runtime)
-    //   new iam.PolicyStatement({
-    //     effect: iam.Effect.ALLOW,
-    //     actions: [
-    //       "bedrock:InvokeModel",
-    //       "bedrock:InvokeModelWithResponseStream",
-    //     ],
-    //     resources: [
-    //       `arn:aws:bedrock:${cdk.Stack.of(this).region}::foundation-model/*`,
-    //     ],
-    //   }),
-    // )
+
+    // AWS環境調査用
+    this.runtime.role.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName("ReadOnlyAccess"),
+    )
   }
 }
