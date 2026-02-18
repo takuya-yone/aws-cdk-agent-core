@@ -10,7 +10,7 @@ import { rootApi } from "./root-api"
 
 const logger = new Logger()
 
-const app = new OpenAPIHono()
+const app = new OpenAPIHono().basePath("/api")
 
 /**
  * CORS middleware configuration
@@ -19,9 +19,9 @@ const app = new OpenAPIHono()
 app.use(
   "/*",
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["*"],
     allowHeaders: ["Content-Type"],
-    allowMethods: ["POST", "GET", "OPTIONS"],
+    allowMethods: ["*"],
   }),
 )
 
@@ -38,7 +38,7 @@ app
   .get(
     "/doc",
     swaggerUI({
-      url: "/specification",
+      url: "/api/specification",
     }),
   )
 
