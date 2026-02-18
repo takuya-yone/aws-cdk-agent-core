@@ -52,6 +52,9 @@ export class AuthConstruct extends Construct {
           callbackUrls: props.cognitoClientConfig.callbackUrls,
           logoutUrls: props.cognitoClientConfig.logoutUrls,
         },
+        supportedIdentityProviders: [
+          cognito.UserPoolClientIdentityProvider.COGNITO,
+        ],
       },
     )
   }
