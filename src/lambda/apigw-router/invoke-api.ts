@@ -136,7 +136,8 @@ const invokeRouteHandler: RouteHandler<
     ? event.requestContext.authorizer?.claims.sub
     : `local-user-${nanoid(10)}`
 
-  const sessionId = `${actorId}-default`
+  // const sessionId = `${actorId}-default`
+  const sessionId = `${actorId}-${nanoid(10)}-default`
 
   logger.info("invoke request inputs", { prompt, actorId, sessionId })
 
