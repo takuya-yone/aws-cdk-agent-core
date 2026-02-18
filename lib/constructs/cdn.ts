@@ -44,6 +44,9 @@ export class CdnConstruct extends Construct {
             viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.HTTPS_ONLY,
             originRequestPolicy:
               cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+            responseHeadersPolicy:
+              cloudfront.ResponseHeadersPolicy
+                .CORS_ALLOW_ALL_ORIGINS_WITH_PREFLIGHT,
           },
         },
         defaultRootObject: "index.html",
