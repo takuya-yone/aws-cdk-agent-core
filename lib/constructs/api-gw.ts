@@ -169,6 +169,10 @@ export class ApiGwConstruct extends Construct {
         ),
         accessLogFormat: apigw.AccessLogFormat.jsonWithStandardFields(),
       },
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigw.Cors.ALL_ORIGINS,
+        allowMethods: apigw.Cors.ALL_METHODS,
+      },
     })
 
     const _restApiRoot = this.restApi.root.addProxy({
@@ -217,6 +221,10 @@ export class ApiGwConstruct extends Construct {
           }),
         ),
         accessLogFormat: apigw.AccessLogFormat.jsonWithStandardFields(),
+      },
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigw.Cors.ALL_ORIGINS,
+        allowMethods: apigw.Cors.ALL_METHODS,
       },
     })
 
