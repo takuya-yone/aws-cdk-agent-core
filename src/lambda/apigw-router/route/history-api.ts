@@ -2,6 +2,7 @@ import type { RouteHandler } from "@hono/zod-openapi"
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi"
 import type { APIGatewayProxyEvent } from "aws-lambda"
 import type { ApiGatewayRequestContext } from "hono/aws-lambda"
+import { LogModel } from "../schema"
 import { logger } from "../utils"
 
 type Bindings = {
@@ -10,7 +11,14 @@ type Bindings = {
 }
 
 const outputSchema = z.object({
-  response: z.string(),
+  records: z.array(
+    z.object({
+      ActorId: z.string(),
+      Timestamp: z.string(),
+      SessionId: z.string().optional(),
+      Input: z.string(),
+    }),
+  ),
 })
 
 export const historyRoute = createRoute({
@@ -32,24 +40,44 @@ type HistoryRouteResponse200 = z.infer<
   (typeof historyRoute.responses)["200"]["content"]["application/json"]["schema"]
 >
 
-const AGENTCORE_LOG_TABLE_NAME = process.env.AGENTCORE_LOG_TABLE_NAME
-if (!AGENTCORE_LOG_TABLE_NAME) {
-  throw new Error("AGENTCORE_LOG_TABLE_NAME is not defined")
-}
-
 const historyRouteHandler: RouteHandler<
   typeof historyRoute,
   { Bindings: Bindings }
 > = async (c) => {
-  const event = c.env.event
-
   const actorId: string | undefined =
-    event.requestContext.authorizer?.claims.sub ?? undefined
+    c.env.event?.requestContext?.authorizer?.claims.sub ?? undefined
 
-  logger.info(actorId ?? "Unknown actor")
+  if (!actorId) {
+    const result: HistoryRouteResponse200 = {
+      records: [],
+    }
+    logger.info(
+      "No actorId found in the request context, returning empty records",
+    )
+    return c.json(result, 200)
+  }
+
+  const logRecords = await LogModel.query("ActorId")
+    .where("ActorId")
+    .eq(actorId)
+    .sort("descending")
+    .limit(20)
+    .exec()
+
+  logger.info("Fetched log records", {
+    actorId,
+    count: logRecords.length,
+    queriedCount: logRecords.queriedCount,
+    timesQueried: logRecords.timesQueried,
+  })
 
   const result: HistoryRouteResponse200 = {
-    response: `Sample response for history endpoint`,
+    records: logRecords.map((record) => ({
+      ActorId: record.ActorId,
+      Timestamp: record.Timestamp,
+      SessionId: record.SessionId,
+      Input: record.Input,
+    })),
   }
 
   return c.json(result, 200)

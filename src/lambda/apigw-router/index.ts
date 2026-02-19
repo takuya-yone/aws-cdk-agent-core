@@ -56,11 +56,11 @@ app.onError((err, c) => {
  * Note: This will be used in the deployed Lambda environment
  */
 
-const handler: Handler = handle(app)
+// const handler: Handler = handle(app)
 
-const streamHandler: Handler = streamHandle(app)
+// const streamHandler: Handler = streamHandle(app)
 
-export { handler, streamHandler }
+// export { handler, streamHandler }
 
 /**
  * Local development entry point
