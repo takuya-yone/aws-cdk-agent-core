@@ -44,6 +44,7 @@ export class AgentCoreStack extends cdk.Stack {
       runtime: agentCoreConstruct.runtime,
       userPool: authConstruct.userPool,
       distribution: cdnConstruct.distribution,
+      agentCoreLogTable: datastoreConstruct.agentCoreLogTable,
       apiGwConfig: props.apiGwConfig,
     })
   }
