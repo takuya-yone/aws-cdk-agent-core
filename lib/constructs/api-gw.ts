@@ -113,7 +113,7 @@ export class ApiGwConstruct extends Construct {
     ////////////////////////////////////////////
 
     const apigwResource = "execute-api:/*"
-    const apigwResourcePolicy = new iam.PolicyDocument({
+    const _apigwResourcePolicy = new iam.PolicyDocument({
       statements: [
         new iam.PolicyStatement({
           effect: iam.Effect.DENY,
@@ -149,7 +149,7 @@ export class ApiGwConstruct extends Construct {
     )
     this.restApi = new apigw.RestApi(this, restApiName, {
       restApiName: restApiName,
-      policy: apigwResourcePolicy,
+      // policy: apigwResourcePolicy,
       deployOptions: {
         stageName: props.apiGwConfig.stageName,
         tracingEnabled: true,
@@ -164,21 +164,21 @@ export class ApiGwConstruct extends Construct {
         ),
         accessLogFormat: apigw.AccessLogFormat.jsonWithStandardFields(),
       },
-      defaultCorsPreflightOptions: {
-        allowOrigins: apigw.Cors.ALL_ORIGINS,
-        allowMethods: apigw.Cors.ALL_METHODS,
-      },
-      defaultIntegration: new apigw.LambdaIntegration(
-        apigwBufferedRouterLambda,
-        {
-          responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
-          timeout: props.apiGwConfig.timeoutSeconds.buffered,
-          proxy: true,
-        },
-      ),
-      defaultMethodOptions: {
-        authorizer: cognitoRestAuthorizer,
-      },
+      // defaultCorsPreflightOptions: {
+      //   allowOrigins: apigw.Cors.ALL_ORIGINS,
+      //   allowMethods: apigw.Cors.ALL_METHODS,
+      // },
+      // defaultIntegration: new apigw.LambdaIntegration(
+      //   apigwBufferedRouterLambda,
+      //   {
+      //     responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
+      //     timeout: props.apiGwConfig.timeoutSeconds.buffered,
+      //     proxy: true,
+      //   },
+      // ),
+      // defaultMethodOptions: {
+      //   authorizer: cognitoRestAuthorizer,
+      // },
     })
 
     const _restApiRoot = this.restApi.root.addProxy({
@@ -213,7 +213,7 @@ export class ApiGwConstruct extends Construct {
     )
     this.streamApi = new apigw.RestApi(this, streamApiName, {
       restApiName: streamApiName,
-      policy: apigwResourcePolicy,
+      // policy: apigwResourcePolicy,
       deployOptions: {
         stageName: props.apiGwConfig.stageName,
         tracingEnabled: true,
@@ -228,18 +228,18 @@ export class ApiGwConstruct extends Construct {
         ),
         accessLogFormat: apigw.AccessLogFormat.jsonWithStandardFields(),
       },
-      defaultCorsPreflightOptions: {
-        allowOrigins: apigw.Cors.ALL_ORIGINS,
-        allowMethods: apigw.Cors.ALL_METHODS,
-      },
-      defaultIntegration: new apigw.LambdaIntegration(apigwStreamRouterLambda, {
-        responseTransferMode: apigw.ResponseTransferMode.STREAM,
-        timeout: props.apiGwConfig.timeoutSeconds.stream,
-        proxy: true,
-      }),
-      defaultMethodOptions: {
-        authorizer: cognitoStreamAuthorizer,
-      },
+      // defaultCorsPreflightOptions: {
+      //   allowOrigins: apigw.Cors.ALL_ORIGINS,
+      //   allowMethods: apigw.Cors.ALL_METHODS,
+      // },
+      // defaultIntegration: new apigw.LambdaIntegration(apigwStreamRouterLambda, {
+      //   responseTransferMode: apigw.ResponseTransferMode.STREAM,
+      //   timeout: props.apiGwConfig.timeoutSeconds.stream,
+      //   proxy: true,
+      // }),
+      // defaultMethodOptions: {
+      //   authorizer: cognitoStreamAuthorizer,
+      // },
     })
 
     const _streamApiRoot = this.streamApi.root.addProxy({
