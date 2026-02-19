@@ -1,11 +1,11 @@
-import { Logger } from "@aws-lambda-powertools/logger"
 import type { RouteHandler } from "@hono/zod-openapi"
 
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi"
-import type { ApiGatewayRequestContext, LambdaEvent } from "hono/aws-lambda"
+import type { APIGatewayProxyEvent } from "aws-lambda"
+import type { ApiGatewayRequestContext } from "hono/aws-lambda"
 
-type _Bindings = {
-  event: LambdaEvent
+type Bindings = {
+  event: APIGatewayProxyEvent
   context: ApiGatewayRequestContext
 }
 
@@ -23,26 +23,27 @@ export const rootRoute = createRoute({
           schema: outputSchema,
         },
       },
-      description: "Invoke the history endpoint",
+      description: "Invoke the root endpoint",
     },
   },
 })
 
-type HistoryRouteResponse200 = z.infer<
+type RootRouteResponse200 = z.infer<
   (typeof rootRoute.responses)["200"]["content"]["application/json"]["schema"]
 >
 
-const _logger = new Logger()
-
-const historyRouteHandler: RouteHandler<typeof rootRoute> = async (c) => {
-  const result: HistoryRouteResponse200 = {
-    response: `Sample response for history endpoint`,
+const rootRouteHandler: RouteHandler<
+  typeof rootRoute,
+  { Bindings: Bindings }
+> = async (c) => {
+  const result: RootRouteResponse200 = {
+    response: `Sample response for root endpoint`,
   }
 
   return c.json(result, 200)
 }
 
-export const historyApi = new OpenAPIHono().openapi(
+export const rootApi = new OpenAPIHono<{ Bindings: Bindings }>().openapi(
   rootRoute,
-  historyRouteHandler,
+  rootRouteHandler,
 )

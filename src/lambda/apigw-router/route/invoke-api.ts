@@ -1,4 +1,3 @@
-import { Logger } from "@aws-lambda-powertools/logger"
 import {
   BedrockAgentCoreClient,
   InvokeAgentRuntimeCommand,
@@ -8,8 +7,8 @@ import { createRoute, OpenAPIHono } from "@hono/zod-openapi"
 import type { APIGatewayProxyEvent } from "aws-lambda"
 import type { SSEStreamingApi } from "hono/streaming"
 import { streamSSE } from "hono/streaming"
-import { customAlphabet } from "nanoid"
-import { EventTypeSchema, InputSchema, OutputSchema } from "./schema"
+import { EventTypeSchema, InputSchema, OutputSchema } from "../schema"
+import { logger, nanoid } from "../utils"
 
 type Bindings = {
   event: APIGatewayProxyEvent
@@ -38,12 +37,6 @@ export const invokeRoute = createRoute({
     },
   },
 })
-
-const nanoid = customAlphabet(
-  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-)
-
-const logger = new Logger()
 
 const agentCoreClient = new BedrockAgentCoreClient({})
 
@@ -139,9 +132,8 @@ const invokeRouteHandler: RouteHandler<
 
   const event = c.env.event
 
-  const actorId: string | undefined = event
-    ? event.requestContext.authorizer?.claims.sub
-    : `local-user-${nanoid(10)}`
+  const actorId: string | undefined =
+    event.requestContext.authorizer?.claims.sub ?? `local-user-${nanoid(10)}`
 
   logger.info("invoke request inputs", { prompt, actorId, sessionId })
 

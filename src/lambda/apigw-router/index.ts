@@ -5,9 +5,9 @@ import { OpenAPIHono } from "@hono/zod-openapi"
 import type { Handler } from "aws-lambda"
 import { handle, streamHandle } from "hono/aws-lambda"
 import { cors } from "hono/cors"
-import { historyApi } from "./history-api"
-import { invokeApi } from "./invoke-api"
-import { rootApi } from "./root-api"
+import { historyApi } from "./route/history-api"
+import { invokeApi } from "./route/invoke-api"
+import { rootApi } from "./route/root-api"
 
 const logger = new Logger()
 
