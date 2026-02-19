@@ -100,7 +100,6 @@ const responseSse = async (
           if (!eventKey) {
             throw new Error("Received data line without preceding event line")
           }
-          const id = nanoid(10)
           const data = JSON.parse(line.slice(6))
           OutputSchema.parse(data)
           if (!Object.hasOwn(data, eventKey)) {
@@ -111,8 +110,8 @@ const responseSse = async (
           await stream.writeSSE({
             data: JSON.stringify(data),
             event: eventKey,
-            id: id,
-            retry: 3000, // Client will retry after 3 seconds if the connection is lost
+            // id: nanoid(10),
+            // retry: 3000, // Client will retry after 3 seconds if the connection is lost
           })
         }
       }
