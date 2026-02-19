@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi"
 import * as dynamoose from "dynamoose"
-
+import { SERVER_ENV } from "./env"
 export const InputSchema = z.object({
   prompt: z.string().min(1, "Prompt is required"),
   sessionId: z.string().optional(),
@@ -236,11 +236,6 @@ export const OutputSchema = MessageStartEventSchema.or(
 /**
  * Dynamoose model for logging conversation events. Each log entry includes details about the invocation, actor, session, input, and output of a conversation event.
  */
-const AGENTCORE_LOG_TABLE_NAME = process.env.AGENTCORE_LOG_TABLE_NAME
-if (!AGENTCORE_LOG_TABLE_NAME) {
-  throw new Error("AGENTCORE_LOG_TABLE_NAME is not defined")
-}
-
 export const LogModel = dynamoose.model(
   "LogModel",
   {
@@ -268,5 +263,5 @@ export const LogModel = dynamoose.model(
       type: String,
     },
   },
-  { tableName: AGENTCORE_LOG_TABLE_NAME },
+  { tableName: SERVER_ENV.AGENTCORE_LOG_TABLE_NAME },
 )

@@ -79,8 +79,8 @@ export class ApiGwConstruct extends Construct {
         environment: {
           POWERTOOLS_SERVICE_NAME: apiGwBufferedRouterLambdaName,
           AGENT_RUNTIME_ARN: props.runtime.agentRuntimeArn,
-
           AGENTCORE_LOG_TABLE_NAME: props.agentCoreLogTable.tableName,
+          HISTORY_ITEM_LIMIT: props.apiGwConfig.historyItemLimit.toString(),
         },
       },
     )
@@ -109,6 +109,7 @@ export class ApiGwConstruct extends Construct {
         environment: {
           POWERTOOLS_SERVICE_NAME: apiGwStreamRouterLambdaName,
           AGENT_RUNTIME_ARN: props.runtime.agentRuntimeArn,
+          HISTORY_ITEM_LIMIT: props.apiGwConfig.historyItemLimit.toString(),
           AGENTCORE_LOG_TABLE_NAME: props.agentCoreLogTable.tableName,
         },
       },

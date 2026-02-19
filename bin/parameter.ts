@@ -22,6 +22,7 @@ export type ApiGwConfig = {
   stageName: string
   timeoutSeconds: { buffered: Duration; stream: Duration }
   referer: string
+  historyItemLimit: number
 }
 
 export interface StackParameters extends cdk.StackProps {
@@ -61,5 +62,6 @@ export const defaultStackParameters: StackParameters = {
       stream: Duration.seconds(300),
     },
     referer: "7aed273c-ec57-9ab8-269a-ca4b23e627d8",
+    historyItemLimit: 30,
   },
 }

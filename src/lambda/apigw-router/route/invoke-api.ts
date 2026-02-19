@@ -7,6 +7,7 @@ import { createRoute, OpenAPIHono } from "@hono/zod-openapi"
 import type { APIGatewayProxyEvent } from "aws-lambda"
 import type { SSEStreamingApi } from "hono/streaming"
 import { streamSSE } from "hono/streaming"
+import { SERVER_ENV } from "../env"
 import { EventTypeSchema, InputSchema, OutputSchema } from "../schema"
 import { logger, nanoid } from "../utils"
 
@@ -58,7 +59,7 @@ const invokeCommandFactory = ({
     traceId,
   })
   return new InvokeAgentRuntimeCommand({
-    agentRuntimeArn: AGENT_RUNTIME_ARN,
+    agentRuntimeArn: SERVER_ENV.AGENT_RUNTIME_ARN,
     payload: new TextEncoder().encode(
       JSON.stringify({
         prompt: prompt,
@@ -117,11 +118,6 @@ const responseSse = async (
       }
     }
   }
-}
-
-const AGENT_RUNTIME_ARN = process.env.AGENT_RUNTIME_ARN
-if (!AGENT_RUNTIME_ARN) {
-  throw new Error("AGENT_RUNTIME_ARN is not defined")
 }
 
 const invokeRouteHandler: RouteHandler<
