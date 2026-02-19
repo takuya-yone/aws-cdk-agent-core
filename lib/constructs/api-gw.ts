@@ -23,6 +23,7 @@ type ApiGwConstructProps = {
 
 export class ApiGwConstruct extends Construct {
   public readonly restApi: apigw.RestApi
+  public readonly streamApi: apigw.RestApi
   constructor(scope: Construct, id: string, props: ApiGwConstructProps) {
     super(scope, id)
 
@@ -81,6 +82,7 @@ export class ApiGwConstruct extends Construct {
     )
     props.runtime.grantInvoke(apigwRouterLambda)
 
+    ////////////////////////////////////////////
     const cognitoAuthorizer = new apigw.CognitoUserPoolsAuthorizer(
       this,
       "CognitoAuthorizer",
@@ -90,7 +92,6 @@ export class ApiGwConstruct extends Construct {
       },
     )
 
-    const restApiName = "AgentCoreRestApi"
     const apigwResource = "execute-api:/*"
     const apigwResourcePolicy = new iam.PolicyDocument({
       statements: [
@@ -113,7 +114,11 @@ export class ApiGwConstruct extends Construct {
         }),
       ],
     })
+    ////////////////////////////////////////////
+    // Rest API
+    ////////////////////////////////////////////
 
+    const restApiName = "AgentCoreRestApi"
     this.restApi = new apigw.RestApi(this, restApiName, {
       restApiName: restApiName,
       policy: apigwResourcePolicy,
@@ -176,6 +181,56 @@ export class ApiGwConstruct extends Construct {
             .CORS_ALLOW_ALL_ORIGINS_WITH_PREFLIGHT,
       },
     )
+
+    ////////////////////////////////////////////
+    // Stream API
+    ////////////////////////////////////////////
+    const streamApiName = "AgentCoreStreamApi"
+    this.streamApi = new apigw.RestApi(this, streamApiName, {
+      restApiName: streamApiName,
+      policy: apigwResourcePolicy,
+      deployOptions: {
+        stageName: props.apiGwConfig.stageName,
+        tracingEnabled: true,
+        metricsEnabled: true,
+        dataTraceEnabled: true,
+        accessLogDestination: new apigw.LogGroupLogDestination(
+          new logs.LogGroup(this, "ApiGwStreamAccessLogGroup", {
+            logGroupName: `/aws/apigateway/${streamApiName}-AccessLogs`,
+            retention: logs.RetentionDays.ONE_WEEK,
+            removalPolicy: RemovalPolicy.DESTROY,
+          }),
+        ),
+        accessLogFormat: apigw.AccessLogFormat.jsonWithStandardFields(),
+      },
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigw.Cors.ALL_ORIGINS,
+        allowMethods: apigw.Cors.ALL_METHODS,
+      },
+      defaultIntegration: new apigw.LambdaIntegration(apigwRouterLambda, {
+        responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
+        timeout: props.apiGwConfig.timeoutSeconds.buffered,
+        proxy: true,
+      }),
+      defaultMethodOptions: {
+        authorizer: cognitoAuthorizer,
+      },
+    })
+
+    const _streamApiRoot = this.streamApi.root.addProxy({
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigw.Cors.ALL_ORIGINS,
+        allowMethods: apigw.Cors.ALL_METHODS,
+      },
+      defaultIntegration: new apigw.LambdaIntegration(apigwRouterLambda, {
+        responseTransferMode: apigw.ResponseTransferMode.STREAM,
+        timeout: props.apiGwConfig.timeoutSeconds.stream,
+        proxy: true,
+      }),
+      defaultMethodOptions: {
+        authorizer: cognitoAuthorizer,
+      },
+    })
 
     // const _restApiRoot = restApi.root.addProxy({
     //   defaultIntegration,
