@@ -166,21 +166,6 @@ export class ApiGwConstruct extends Construct {
         ),
         accessLogFormat: apigw.AccessLogFormat.jsonWithStandardFields(),
       },
-      // defaultCorsPreflightOptions: {
-      //   allowOrigins: apigw.Cors.ALL_ORIGINS,
-      //   allowMethods: apigw.Cors.ALL_METHODS,
-      // },
-      // defaultIntegration: new apigw.LambdaIntegration(
-      //   apigwBufferedRouterLambda,
-      //   {
-      //     responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
-      //     timeout: props.apiGwConfig.timeoutSeconds.buffered,
-      //     proxy: true,
-      //   },
-      // ),
-      // defaultMethodOptions: {
-      //   authorizer: cognitoRestAuthorizer,
-      // },
     })
 
     const _restApiRoot = this.restApi.root.addProxy({
@@ -230,18 +215,6 @@ export class ApiGwConstruct extends Construct {
         ),
         accessLogFormat: apigw.AccessLogFormat.jsonWithStandardFields(),
       },
-      // defaultCorsPreflightOptions: {
-      //   allowOrigins: apigw.Cors.ALL_ORIGINS,
-      //   allowMethods: apigw.Cors.ALL_METHODS,
-      // },
-      // defaultIntegration: new apigw.LambdaIntegration(apigwStreamRouterLambda, {
-      //   responseTransferMode: apigw.ResponseTransferMode.STREAM,
-      //   timeout: props.apiGwConfig.timeoutSeconds.stream,
-      //   proxy: true,
-      // }),
-      // defaultMethodOptions: {
-      //   authorizer: cognitoStreamAuthorizer,
-      // },
     })
 
     const _streamApiRoot = this.streamApi.root.addProxy({
@@ -264,9 +237,9 @@ export class ApiGwConstruct extends Construct {
     ////////////////////////////////////////////
 
     props.distribution.addBehavior(
-      "/api/*",
-      new cloudfront_origins.RestApiOrigin(this.restApi, {
-        customHeaders: { Referer: props.apiGwConfig.referer },
+      "/api/invoke*",
+      new cloudfront_origins.RestApiOrigin(this.streamApi, {
+        // customHeaders: { Referer: props.apiGwConfig.referer },
       }),
       {
         allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
@@ -280,84 +253,21 @@ export class ApiGwConstruct extends Construct {
       },
     )
 
-    // const _restApiRoot = restApi.root.addProxy({
-    //   defaultIntegration,
-    //   defaultMethodOptions,
-    // })
-    // defaultMethodOptions,
-
-    // const restApiInvoke = restApi.root.addResource("invoke")
-
-    // const invokeRequestModel: apigw.Model = restApi.addModel(
-    //   "InvokeRequestModel",
-    //   {
-    //     modelName: "InvokeRequestModel",
-    //     schema: {
-    //       type: apigw.JsonSchemaType.OBJECT,
-    //       properties: {
-    //         prompt: {
-    //           type: apigw.JsonSchemaType.STRING,
-    //         },
-    //       },
-    //       required: ["prompt"],
-    //     },
-    //   },
-    // )
-
-    // const invokeResponseModel: apigw.Model = restApi.addModel(
-    //   "InvokeResponseModel",
-    //   {
-    //     modelName: "InvokeResponseModel",
-    //     schema: {
-    //       type: apigw.JsonSchemaType.OBJECT,
-    //       properties: {},
-    //     },
-    //   },
-    // )
-
-    // restApi.root.addMethod(
-    //   "ANY",
-    //   new apigw.LambdaIntegration(apigwRouterLambda, {
-    //     responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
-    //     timeout: props.apiGwConfig.timeoutSeconds,
-    //     proxy: true,
-    //   }),
-    //   {
-    //     authorizer: cognitoAuthorizer,
-    //     // requestModels: {
-    //     //   "application/json": invokeRequestModel,
-    //     // },
-    //     // methodResponses: [
-    //     //   {
-    //     //     statusCode: "200",
-    //     //     responseModels: {
-    //     //       "text/event-stream": invokeResponseModel,
-    //     //     },
-    //     //   },
-    //     // ],
-    //   },
-    // )
-
-    // restApiInvoke.addMethod(
-    //   "POST",
-    //   new apigw.LambdaIntegration(agentCoreProxyLambda, {
-    //     responseTransferMode: apigw.ResponseTransferMode.STREAM,
-    //     timeout: props.apiGwConfig.timeoutSeconds,
-    //   }),
-    //   {
-    //     authorizer: props.cognitoAuthorizer,
-    //     requestModels: {
-    //       "application/json": invokeRequestModel,
-    //     },
-    //     methodResponses: [
-    //       {
-    //         statusCode: "200",
-    //         responseModels: {
-    //           "text/event-stream": invokeResponseModel,
-    //         },
-    //       },
-    //     ],
-    //   },
-    // )
+    props.distribution.addBehavior(
+      "/api*",
+      new cloudfront_origins.RestApiOrigin(this.restApi, {
+        // customHeaders: { Referer: props.apiGwConfig.referer },
+      }),
+      {
+        allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
+        cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.HTTPS_ONLY,
+        originRequestPolicy:
+          cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+        responseHeadersPolicy:
+          cloudfront.ResponseHeadersPolicy
+            .CORS_ALLOW_ALL_ORIGINS_WITH_PREFLIGHT,
+      },
+    )
   }
 }
