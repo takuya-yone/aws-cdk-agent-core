@@ -51,7 +51,11 @@ app.onError((err, c) => {
  * Lambda entry point
  * Note: This will be used in the deployed Lambda environment
  */
-let handler: Handler
+let _localHandler: Handler
+
+export const handler: Handler = handle(app)
+
+export const streamHandler: Handler = streamHandle(app)
 
 /**
  * Local development entry point
@@ -59,13 +63,13 @@ let handler: Handler
  */
 if (!process.env.AWS_LAMBDA_FUNCTION_NAME) {
   logger.info("Running in local development mode")
-  handler = handle(app)
+  _localHandler = handle(app)
   serve(app, (info) => {
     console.log(`Listening on http://localhost:${info.port}`)
   })
 } else {
   logger.info("Running in Lambda environment")
-  handler = streamHandle(app)
+  _localHandler = streamHandle(app)
 }
 
-export { handler }
+// export { handler }

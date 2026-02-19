@@ -54,20 +54,20 @@ export class ApiGwConstruct extends Construct {
     // )
     // props.runtime.grantInvoke(agentCoreProxyLambda)
 
-    const apiGwRouterLambdaName = "ApiGwRouterLambda"
-    const apigwRouterLambda = new lambda_nodejs.NodejsFunction(
+    const apiGwBufferedRouterLambdaName = "ApiGwBufferedRouterLambda"
+    const apigwBufferedRouterLambda = new lambda_nodejs.NodejsFunction(
       this,
-      apiGwRouterLambdaName,
+      apiGwBufferedRouterLambdaName,
       {
         runtime: lambda.Runtime.NODEJS_24_X,
-        functionName: apiGwRouterLambdaName,
+        functionName: apiGwBufferedRouterLambdaName,
         entry: "src/lambda/apigw-router/index.ts",
         handler: "handler",
         timeout: Duration.seconds(900),
         memorySize: 256,
         tracing: lambda.Tracing.ACTIVE,
-        logGroup: new logs.LogGroup(this, "ApiGwRouterLambdaLogGroup", {
-          logGroupName: `/aws/lambda/${apiGwRouterLambdaName}`,
+        logGroup: new logs.LogGroup(this, "ApiGwBufferedRouterLambdaLogGroup", {
+          logGroupName: `/aws/lambda/${apiGwBufferedRouterLambdaName}`,
           retention: logs.RetentionDays.ONE_WEEK,
           removalPolicy: RemovalPolicy.DESTROY,
         }),
@@ -75,12 +75,40 @@ export class ApiGwConstruct extends Construct {
           bundleAwsSDK: true,
         },
         environment: {
-          POWERTOOLS_SERVICE_NAME: apiGwRouterLambdaName,
+          POWERTOOLS_SERVICE_NAME: apiGwBufferedRouterLambdaName,
           AGENT_RUNTIME_ARN: props.runtime.agentRuntimeArn,
         },
       },
     )
-    props.runtime.grantInvoke(apigwRouterLambda)
+    props.runtime.grantInvoke(apigwBufferedRouterLambda)
+
+    const apiGwStreamRouterLambdaName = "ApiGwStreamRouterLambda"
+    const apigwStreamRouterLambda = new lambda_nodejs.NodejsFunction(
+      this,
+      apiGwStreamRouterLambdaName,
+      {
+        runtime: lambda.Runtime.NODEJS_24_X,
+        functionName: apiGwStreamRouterLambdaName,
+        entry: "src/lambda/apigw-router/index.ts",
+        handler: "streamHandler",
+        timeout: Duration.seconds(900),
+        memorySize: 256,
+        tracing: lambda.Tracing.ACTIVE,
+        logGroup: new logs.LogGroup(this, "ApiGwStreamRouterLambdaLogGroup", {
+          logGroupName: `/aws/lambda/${apiGwStreamRouterLambdaName}`,
+          retention: logs.RetentionDays.ONE_WEEK,
+          removalPolicy: RemovalPolicy.DESTROY,
+        }),
+        bundling: {
+          bundleAwsSDK: true,
+        },
+        environment: {
+          POWERTOOLS_SERVICE_NAME: apiGwStreamRouterLambdaName,
+          AGENT_RUNTIME_ARN: props.runtime.agentRuntimeArn,
+        },
+      },
+    )
+    props.runtime.grantInvoke(apigwStreamRouterLambda)
 
     ////////////////////////////////////////////
 
@@ -140,11 +168,14 @@ export class ApiGwConstruct extends Construct {
         allowOrigins: apigw.Cors.ALL_ORIGINS,
         allowMethods: apigw.Cors.ALL_METHODS,
       },
-      defaultIntegration: new apigw.LambdaIntegration(apigwRouterLambda, {
-        responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
-        timeout: props.apiGwConfig.timeoutSeconds.buffered,
-        proxy: true,
-      }),
+      defaultIntegration: new apigw.LambdaIntegration(
+        apigwBufferedRouterLambda,
+        {
+          responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
+          timeout: props.apiGwConfig.timeoutSeconds.buffered,
+          proxy: true,
+        },
+      ),
       defaultMethodOptions: {
         authorizer: cognitoRestAuthorizer,
       },
@@ -155,32 +186,18 @@ export class ApiGwConstruct extends Construct {
         allowOrigins: apigw.Cors.ALL_ORIGINS,
         allowMethods: apigw.Cors.ALL_METHODS,
       },
-      defaultIntegration: new apigw.LambdaIntegration(apigwRouterLambda, {
-        responseTransferMode: apigw.ResponseTransferMode.STREAM,
-        timeout: props.apiGwConfig.timeoutSeconds.stream,
-        proxy: true,
-      }),
+      defaultIntegration: new apigw.LambdaIntegration(
+        apigwBufferedRouterLambda,
+        {
+          responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
+          timeout: props.apiGwConfig.timeoutSeconds.buffered,
+          proxy: true,
+        },
+      ),
       defaultMethodOptions: {
         authorizer: cognitoRestAuthorizer,
       },
     })
-
-    props.distribution.addBehavior(
-      "/api/*",
-      new cloudfront_origins.RestApiOrigin(this.restApi, {
-        customHeaders: { Referer: props.apiGwConfig.referer },
-      }),
-      {
-        allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
-        cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
-        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.HTTPS_ONLY,
-        originRequestPolicy:
-          cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
-        responseHeadersPolicy:
-          cloudfront.ResponseHeadersPolicy
-            .CORS_ALLOW_ALL_ORIGINS_WITH_PREFLIGHT,
-      },
-    )
 
     ////////////////////////////////////////////
     // Stream API
@@ -215,9 +232,9 @@ export class ApiGwConstruct extends Construct {
         allowOrigins: apigw.Cors.ALL_ORIGINS,
         allowMethods: apigw.Cors.ALL_METHODS,
       },
-      defaultIntegration: new apigw.LambdaIntegration(apigwRouterLambda, {
-        responseTransferMode: apigw.ResponseTransferMode.BUFFERED,
-        timeout: props.apiGwConfig.timeoutSeconds.buffered,
+      defaultIntegration: new apigw.LambdaIntegration(apigwStreamRouterLambda, {
+        responseTransferMode: apigw.ResponseTransferMode.STREAM,
+        timeout: props.apiGwConfig.timeoutSeconds.stream,
         proxy: true,
       }),
       defaultMethodOptions: {
@@ -230,7 +247,7 @@ export class ApiGwConstruct extends Construct {
         allowOrigins: apigw.Cors.ALL_ORIGINS,
         allowMethods: apigw.Cors.ALL_METHODS,
       },
-      defaultIntegration: new apigw.LambdaIntegration(apigwRouterLambda, {
+      defaultIntegration: new apigw.LambdaIntegration(apigwStreamRouterLambda, {
         responseTransferMode: apigw.ResponseTransferMode.STREAM,
         timeout: props.apiGwConfig.timeoutSeconds.stream,
         proxy: true,
@@ -239,6 +256,27 @@ export class ApiGwConstruct extends Construct {
         authorizer: cognitoStreamAuthorizer,
       },
     })
+
+    ////////////////////////////////////////////
+    // CloudFront Distribution
+    ////////////////////////////////////////////
+
+    props.distribution.addBehavior(
+      "/api/*",
+      new cloudfront_origins.RestApiOrigin(this.restApi, {
+        customHeaders: { Referer: props.apiGwConfig.referer },
+      }),
+      {
+        allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
+        cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.HTTPS_ONLY,
+        originRequestPolicy:
+          cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+        responseHeadersPolicy:
+          cloudfront.ResponseHeadersPolicy
+            .CORS_ALLOW_ALL_ORIGINS_WITH_PREFLIGHT,
+      },
+    )
 
     // const _restApiRoot = restApi.root.addProxy({
     //   defaultIntegration,
