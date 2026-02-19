@@ -32,6 +32,11 @@ type HistoryRouteResponse200 = z.infer<
   (typeof historyRoute.responses)["200"]["content"]["application/json"]["schema"]
 >
 
+const AGENTCORE_LOG_TABLE_NAME = process.env.AGENTCORE_LOG_TABLE_NAME
+if (!AGENTCORE_LOG_TABLE_NAME) {
+  throw new Error("AGENTCORE_LOG_TABLE_NAME is not defined")
+}
+
 const historyRouteHandler: RouteHandler<
   typeof historyRoute,
   { Bindings: Bindings }

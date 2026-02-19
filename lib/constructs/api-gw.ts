@@ -5,6 +5,7 @@ import {
   aws_cloudfront_origins as cloudfront_origins,
   type aws_cognito as cognito,
   Duration,
+  type aws_dynamodb as dynamodb,
   aws_iam as iam,
   aws_lambda as lambda,
   aws_lambda_nodejs as lambda_nodejs,
@@ -18,6 +19,7 @@ type ApiGwConstructProps = {
   runtime: agentcore.Runtime
   userPool: cognito.UserPool
   distribution: cloudfront.Distribution
+  agentCoreLogTable: dynamodb.TableV2
   apiGwConfig: ApiGwConfig
 }
 
@@ -76,11 +78,11 @@ export class ApiGwConstruct extends Construct {
         },
         environment: {
           POWERTOOLS_SERVICE_NAME: apiGwBufferedRouterLambdaName,
-          AGENT_RUNTIME_ARN: props.runtime.agentRuntimeArn,
+          AGENTCORE_LOG_TABLE_NAME: props.agentCoreLogTable.tableName,
         },
       },
     )
-    props.runtime.grantInvoke(apigwBufferedRouterLambda)
+    props.agentCoreLogTable.grantReadData(apigwBufferedRouterLambda)
 
     const apiGwStreamRouterLambdaName = "ApiGwStreamRouterLambda"
     const apigwStreamRouterLambda = new lambda_nodejs.NodejsFunction(

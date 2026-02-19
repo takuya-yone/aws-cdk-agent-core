@@ -40,11 +40,6 @@ export const invokeRoute = createRoute({
 
 const agentCoreClient = new BedrockAgentCoreClient({})
 
-const AGENT_RUNTIME_ARN = process.env.AGENT_RUNTIME_ARN
-if (!AGENT_RUNTIME_ARN) {
-  throw new Error("AGENT_RUNTIME_ARN is not defined")
-}
-
 const invokeCommandFactory = ({
   prompt,
   actorId,
@@ -122,6 +117,11 @@ const responseSse = async (
       }
     }
   }
+}
+
+const AGENT_RUNTIME_ARN = process.env.AGENT_RUNTIME_ARN
+if (!AGENT_RUNTIME_ARN) {
+  throw new Error("AGENT_RUNTIME_ARN is not defined")
 }
 
 const invokeRouteHandler: RouteHandler<
