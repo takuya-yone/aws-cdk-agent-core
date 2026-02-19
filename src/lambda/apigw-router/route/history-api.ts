@@ -15,7 +15,7 @@ const outputSchema = z.object({
     z.object({
       ActorId: z.string(),
       Timestamp: z.string(),
-      SessionId: z.string().optional(),
+      SessionId: z.string(),
       Input: z.string(),
     }),
   ),
