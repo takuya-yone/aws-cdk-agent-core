@@ -83,23 +83,6 @@ export class ApiGwConstruct extends Construct {
     props.runtime.grantInvoke(apigwRouterLambda)
 
     ////////////////////////////////////////////
-    const cognitoRestAuthorizer = new apigw.CognitoUserPoolsAuthorizer(
-      this,
-      "CognitoRestAuthorizer",
-      {
-        authorizerName: "CognitoRestAuthorizer",
-        cognitoUserPools: [props.userPool],
-      },
-    )
-
-    const cognitoStreamAuthorizer = new apigw.CognitoUserPoolsAuthorizer(
-      this,
-      "CognitoStreamAuthorizer",
-      {
-        authorizerName: "CognitoStreamAuthorizer",
-        cognitoUserPools: [props.userPool],
-      },
-    )
 
     const apigwResource = "execute-api:/*"
     const apigwResourcePolicy = new iam.PolicyDocument({
@@ -123,11 +106,19 @@ export class ApiGwConstruct extends Construct {
         }),
       ],
     })
+
     ////////////////////////////////////////////
     // Rest API
     ////////////////////////////////////////////
-
     const restApiName = "AgentCoreRestApi"
+    const cognitoRestAuthorizer = new apigw.CognitoUserPoolsAuthorizer(
+      this,
+      "CognitoRestAuthorizer",
+      {
+        authorizerName: "CognitoRestAuthorizer",
+        cognitoUserPools: [props.userPool],
+      },
+    )
     this.restApi = new apigw.RestApi(this, restApiName, {
       restApiName: restApiName,
       policy: apigwResourcePolicy,
@@ -170,7 +161,7 @@ export class ApiGwConstruct extends Construct {
         proxy: true,
       }),
       defaultMethodOptions: {
-        authorizer: cognitoStreamAuthorizer,
+        authorizer: cognitoRestAuthorizer,
       },
     })
 
@@ -195,6 +186,14 @@ export class ApiGwConstruct extends Construct {
     // Stream API
     ////////////////////////////////////////////
     const streamApiName = "AgentCoreStreamApi"
+    const cognitoStreamAuthorizer = new apigw.CognitoUserPoolsAuthorizer(
+      this,
+      "CognitoStreamAuthorizer",
+      {
+        authorizerName: "CognitoStreamAuthorizer",
+        cognitoUserPools: [props.userPool],
+      },
+    )
     this.streamApi = new apigw.RestApi(this, streamApiName, {
       restApiName: streamApiName,
       policy: apigwResourcePolicy,
