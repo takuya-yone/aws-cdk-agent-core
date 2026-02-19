@@ -83,11 +83,20 @@ export class ApiGwConstruct extends Construct {
     props.runtime.grantInvoke(apigwRouterLambda)
 
     ////////////////////////////////////////////
-    const cognitoAuthorizer = new apigw.CognitoUserPoolsAuthorizer(
+    const cognitoRestAuthorizer = new apigw.CognitoUserPoolsAuthorizer(
       this,
-      "CognitoAuthorizer",
+      "CognitoRestAuthorizer",
       {
-        authorizerName: "CognitoAuthorizer",
+        authorizerName: "CognitoRestAuthorizer",
+        cognitoUserPools: [props.userPool],
+      },
+    )
+
+    const cognitoStreamAuthorizer = new apigw.CognitoUserPoolsAuthorizer(
+      this,
+      "CognitoStreamAuthorizer",
+      {
+        authorizerName: "CognitoStreamAuthorizer",
         cognitoUserPools: [props.userPool],
       },
     )
@@ -146,7 +155,7 @@ export class ApiGwConstruct extends Construct {
         proxy: true,
       }),
       defaultMethodOptions: {
-        authorizer: cognitoAuthorizer,
+        authorizer: cognitoRestAuthorizer,
       },
     })
 
@@ -161,7 +170,7 @@ export class ApiGwConstruct extends Construct {
         proxy: true,
       }),
       defaultMethodOptions: {
-        authorizer: cognitoAuthorizer,
+        authorizer: cognitoStreamAuthorizer,
       },
     })
 
@@ -213,7 +222,7 @@ export class ApiGwConstruct extends Construct {
         proxy: true,
       }),
       defaultMethodOptions: {
-        authorizer: cognitoAuthorizer,
+        authorizer: cognitoStreamAuthorizer,
       },
     })
 
@@ -228,7 +237,7 @@ export class ApiGwConstruct extends Construct {
         proxy: true,
       }),
       defaultMethodOptions: {
-        authorizer: cognitoAuthorizer,
+        authorizer: cognitoStreamAuthorizer,
       },
     })
 
