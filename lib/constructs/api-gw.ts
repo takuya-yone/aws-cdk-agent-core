@@ -5,6 +5,7 @@ import {
   aws_cloudfront_origins as cloudfront_origins,
   type aws_cognito as cognito,
   Duration,
+  aws_iam as iam,
   aws_lambda as lambda,
   aws_lambda_nodejs as lambda_nodejs,
   aws_logs as logs,
@@ -90,9 +91,32 @@ export class ApiGwConstruct extends Construct {
     )
 
     const restApiName = "AgentCoreRestApi"
+    const apigwResource = "execute-api:/*"
+    const apigwResourcePolicy = new iam.PolicyDocument({
+      statements: [
+        new iam.PolicyStatement({
+          effect: iam.Effect.DENY,
+          actions: ["execute-api:Invoke"],
+          principals: [new iam.AnyPrincipal()],
+          resources: [apigwResource],
+          conditions: {
+            StringNotEquals: {
+              "aws:Referer": props.apiGwConfig.referer,
+            },
+          },
+        }),
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          actions: ["execute-api:Invoke"],
+          principals: [new iam.AnyPrincipal()],
+          resources: [apigwResource],
+        }),
+      ],
+    })
 
     this.restApi = new apigw.RestApi(this, restApiName, {
       restApiName: restApiName,
+      policy: apigwResourcePolicy,
       deployOptions: {
         stageName: props.apiGwConfig.stageName,
         tracingEnabled: true,
@@ -139,7 +163,7 @@ export class ApiGwConstruct extends Construct {
     props.distribution.addBehavior(
       "/api/*",
       new cloudfront_origins.RestApiOrigin(this.restApi, {
-        //   customHeaders: { Referer: 'c46d2fbb-4ff3-4c34-a201-4b57bfa8bc1a' },
+        customHeaders: { Referer: props.apiGwConfig.referer },
       }),
       {
         allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
