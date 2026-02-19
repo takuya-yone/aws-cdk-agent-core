@@ -55,12 +55,9 @@ app.onError((err, c) => {
  * Lambda entry point
  * Note: This will be used in the deployed Lambda environment
  */
-
-// const handler: Handler = handle(app)
-
-// const streamHandler: Handler = streamHandle(app)
-
-// export { handler, streamHandler }
+const handler: Handler = handle(app)
+const streamHandler: Handler = streamHandle(app)
+export { handler, streamHandler }
 
 /**
  * Local development entry point
