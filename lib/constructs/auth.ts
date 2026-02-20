@@ -57,11 +57,11 @@ export class AuthConstruct extends Construct {
           ],
           callbackUrls: [
             ...props.cognitoClientConfig.callbackUrls,
-            `https://${props.distribution.distributionDomainName}`,
+            `https://${props.distribution.distributionDomainName}/callback`,
           ],
           logoutUrls: [
             ...props.cognitoClientConfig.logoutUrls,
-            `https://${props.distribution.distributionDomainName}`,
+            `https://${props.distribution.distributionDomainName}/logout`,
           ],
         },
         supportedIdentityProviders: [

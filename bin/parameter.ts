@@ -45,15 +45,13 @@ export const defaultStackParameters: StackParameters = {
   cognitoClientConfig: {
     domainPrefix: "strands-agent-core-auth-domain",
     callbackUrls: [
-      "http://localhost:3000",
-      "http://localhost:4173",
-      "http://localhost:5173",
+      "http://localhost:3000/callback",
+      "http://localhost:4173/callback",
       "http://localhost:5173/callback",
     ],
     logoutUrls: [
-      "http://localhost:3000",
-      "http://localhost:4173",
-      "http://localhost:5173",
+      "http://localhost:3000/logout",
+      "http://localhost:4173/logout",
       "http://localhost:5173/logout",
     ],
   },
