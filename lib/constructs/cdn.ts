@@ -16,6 +16,16 @@ export class CdnConstruct extends Construct {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     })
 
+    const cfRedirectFunction = new cloudfront.Function(
+      this,
+      "CfRedirectFunction",
+      {
+        code: cloudfront.FunctionCode.fromFile({
+          filePath: "src/cloudfront/index.js",
+        }),
+      },
+    )
+
     this.distribution = new cloudfront.Distribution(
       this,
       "StrandsCloudFrontDistribution",
@@ -26,6 +36,12 @@ export class CdnConstruct extends Construct {
             cloudfront_origins.S3BucketOrigin.withOriginAccessControl(
               frontendAppBucket,
             ),
+          functionAssociations: [
+            {
+              function: cfRedirectFunction,
+              eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+            },
+          ],
           allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD,
           cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
           viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.HTTPS_ONLY,
