@@ -16,17 +16,17 @@ const metadataSchema = z.object({
   TotalTokens: z.number(),
 })
 
+const historyItemSchema = z.object({
+  ActorId: z.string(),
+  Timestamp: z.string(),
+  SessionId: z.string(),
+  Input: z.string(),
+  Output: z.string().optional(),
+  Metadata: metadataSchema.optional(),
+})
+
 const outputSchema = z.object({
-  records: z.array(
-    z.object({
-      ActorId: z.string(),
-      Timestamp: z.string(),
-      SessionId: z.string(),
-      Input: z.string(),
-      // Output: z.string().optional(),
-      Metadata: metadataSchema.optional(),
-    }),
-  ),
+  records: z.array(historyItemSchema),
 })
 
 export const historyRoute = createRoute({
@@ -86,7 +86,7 @@ const historyRouteHandler: RouteHandler<
       Timestamp: record.Timestamp,
       SessionId: record.SessionId,
       Input: record.Input,
-      // Output: record.Output,
+      Output: record.Output,
       Metadata: record.Metadata,
     })),
   }
