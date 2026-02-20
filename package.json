@@ -30,17 +30,17 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
-    "@aws-cdk/aws-bedrock-agentcore-alpha": "2.238.0-alpha.0",
-    "@aws-cdk/aws-bedrock-alpha": "2.238.0-alpha.0",
+    "@aws-cdk/aws-bedrock-agentcore-alpha": "2.239.0-alpha.0",
+    "@aws-cdk/aws-bedrock-alpha": "2.239.0-alpha.0",
     "@aws-lambda-powertools/logger": "^2.31.0",
     "@aws-lambda-powertools/tracer": "^2.31.0",
-    "@aws-sdk/client-bedrock-agentcore": "^3.993.0",
+    "@aws-sdk/client-bedrock-agentcore": "^3.994.0",
     "@dotenvx/dotenvx": "^1.52.0",
     "@hono/standard-validator": "^0.2.2",
     "@hono/swagger-ui": "^0.5.3",
     "@hono/zod-openapi": "^1.2.2",
     "@middy/core": "^7.1.0",
-    "aws-cdk-lib": "^2.238.0",
+    "aws-cdk-lib": "^2.239.0",
     "aws-lambda": "^1.0.7",
     "cdk-ecr-deployment": "^4.1.0",
     "constructs": "^10.5.1",
@@ -49,5 +49,5 @@
     "nanoid": "^5.1.6",
     "zod": "^4.3.6"
   },
-  "packageManager": "pnpm@10.30.0"
+  "packageManager": "pnpm@10.30.1"
 }
