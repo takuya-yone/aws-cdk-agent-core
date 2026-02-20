@@ -262,6 +262,14 @@ export const LogModel = dynamoose.model(
     Output: {
       type: String,
     },
+    Metadata: {
+      type: Object,
+      schema: {
+        InputTokens: Number,
+        OutputTokens: Number,
+        TotalTokens: Number,
+      },
+    },
   },
   { tableName: SERVER_ENV.AGENTCORE_LOG_TABLE_NAME },
 )
