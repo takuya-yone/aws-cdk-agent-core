@@ -1,4 +1,4 @@
-async function _handler(event) {
+export async function handler(event) {
   var request = event.request
   var uri = request.uri
 
