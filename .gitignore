@@ -19,3 +19,6 @@ __pycache__/
 
 # drawio
 *.drawio.bkp
+
+# cloudfront functions
+!src/cloudfront/*.js
