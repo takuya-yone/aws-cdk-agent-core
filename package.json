@@ -17,7 +17,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.3",
+    "@biomejs/biome": "2.4.4",
     "@hono/node-server": "^1.19.9",
     "@types/aws-lambda": "^8.10.160",
     "@types/node": "^25.3.0",
@@ -34,7 +34,7 @@
     "@aws-cdk/aws-bedrock-alpha": "2.239.0-alpha.0",
     "@aws-lambda-powertools/logger": "^2.31.0",
     "@aws-lambda-powertools/tracer": "^2.31.0",
-    "@aws-sdk/client-bedrock-agentcore": "^3.994.0",
+    "@aws-sdk/client-bedrock-agentcore": "^3.995.0",
     "@dotenvx/dotenvx": "^1.52.0",
     "@hono/standard-validator": "^0.2.2",
     "@hono/swagger-ui": "^0.5.3",
