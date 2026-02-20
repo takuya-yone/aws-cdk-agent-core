@@ -9,7 +9,7 @@ import type { SSEStreamingApi } from "hono/streaming"
 import { streamSSE } from "hono/streaming"
 import { SERVER_ENV } from "../env"
 import { EventTypeSchema, InputSchema, OutputSchema } from "../schema"
-import { logger, nanoid } from "../utils"
+import { getActorIdFromEvent, logger } from "../utils"
 
 type Bindings = {
   event: APIGatewayProxyEvent
@@ -125,10 +125,7 @@ const invokeRouteHandler: RouteHandler<
 > = async (c) => {
   const { prompt, sessionId } = c.req.valid("json")
 
-  const event = c.env.event
-
-  const actorId: string | undefined =
-    event.requestContext.authorizer?.claims.sub ?? `local-user-${nanoid(10)}`
+  const actorId: string | undefined = getActorIdFromEvent(c.env.event)
 
   logger.info("invoke request inputs", { prompt, actorId, sessionId })
 

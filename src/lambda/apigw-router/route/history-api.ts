@@ -3,7 +3,7 @@ import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi"
 import type { APIGatewayProxyEvent } from "aws-lambda"
 import type { ApiGatewayRequestContext } from "hono/aws-lambda"
 import { LogModel } from "../schema"
-import { logger } from "../utils"
+import { getActorIdFromEvent, logger } from "../utils"
 
 type Bindings = {
   event: APIGatewayProxyEvent
@@ -52,9 +52,7 @@ const historyRouteHandler: RouteHandler<
   typeof historyRoute,
   { Bindings: Bindings }
 > = async (c) => {
-  const actorId: string | undefined =
-    c.env.event?.requestContext?.authorizer?.claims.sub ??
-    "f7f46ad8-a0d1-70fd-12c5-da2787200921"
+  const actorId = getActorIdFromEvent(c.env.event)
 
   if (!actorId) {
     const result: HistoryRouteResponse200 = {

@@ -1,10 +1,7 @@
 import { serve } from "@hono/node-server"
 import { swaggerUI } from "@hono/swagger-ui"
 import { OpenAPIHono } from "@hono/zod-openapi"
-import type { Handler } from "aws-lambda"
-import { handle, streamHandle } from "hono/aws-lambda"
 import { cors } from "hono/cors"
-import { SERVER_ENV } from "./env"
 import { historyApi } from "./route/history-api"
 import { invokeApi } from "./route/invoke-api"
 import { rootApi } from "./route/root-api"
@@ -51,26 +48,10 @@ app.onError((err, c) => {
 })
 
 /**
- * Lambda entry point
- * Note: This will be used in the deployed Lambda environment
- */
-const handler: Handler = handle(app)
-const streamHandler: Handler = streamHandle(app)
-export { handler, streamHandler }
-
-/**
  * Local development entry point
  * Note: This will not be used in the deployed Lambda environment
  */
-let _localHandler: Handler
-
-if (SERVER_ENV.AWS_LAMBDA_FUNCTION_NAME === "local-dev") {
-  logger.info("Running in local development mode")
-  _localHandler = handle(app)
-  serve(app, (info) => {
-    console.log(`Listening on http://localhost:${info.port}`)
-  })
-} else {
-  logger.info("Running in Lambda environment")
-  _localHandler = streamHandle(app)
-}
+logger.info("Running in local development mode")
+serve(app, (info) => {
+  console.log(`Listening on http://localhost:${info.port}`)
+})
