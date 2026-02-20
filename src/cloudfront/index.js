@@ -1,4 +1,5 @@
-export async function handler(event) {
+// biome-ignore lint/correctness/noUnusedVariables: for handler
+async function handler(event) {
   var request = event.request
   var uri = request.uri
 

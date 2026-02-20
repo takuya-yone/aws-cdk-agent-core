@@ -23,6 +23,7 @@ export class CdnConstruct extends Construct {
         code: cloudfront.FunctionCode.fromFile({
           filePath: "src/cloudfront/index.js",
         }),
+        runtime: cloudfront.FunctionRuntime.JS_2_0,
       },
     )
 
