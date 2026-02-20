@@ -7,7 +7,7 @@ from settings import log_settings
 
 
 class RssItem(BaseModel):
-    title: int = ""
+    title: str = ""
     link: str = ""
     published: str = ""
     summary: str = ""
