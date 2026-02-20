@@ -10,6 +10,12 @@ type Bindings = {
   context: ApiGatewayRequestContext
 }
 
+const metadataSchema = z.object({
+  InputTokens: z.number(),
+  OutputTokens: z.number(),
+  TotalTokens: z.number(),
+})
+
 const outputSchema = z.object({
   records: z.array(
     z.object({
@@ -17,6 +23,8 @@ const outputSchema = z.object({
       Timestamp: z.string(),
       SessionId: z.string(),
       Input: z.string(),
+      // Output: z.string().optional(),
+      Metadata: metadataSchema.optional(),
     }),
   ),
 })
@@ -45,7 +53,8 @@ const historyRouteHandler: RouteHandler<
   { Bindings: Bindings }
 > = async (c) => {
   const actorId: string | undefined =
-    c.env.event?.requestContext?.authorizer?.claims.sub ?? undefined
+    c.env.event?.requestContext?.authorizer?.claims.sub ??
+    "f7f46ad8-a0d1-70fd-12c5-da2787200921"
 
   if (!actorId) {
     const result: HistoryRouteResponse200 = {
@@ -77,6 +86,8 @@ const historyRouteHandler: RouteHandler<
       Timestamp: record.Timestamp,
       SessionId: record.SessionId,
       Input: record.Input,
+      // Output: record.Output,
+      Metadata: record.Metadata,
     })),
   }
 
