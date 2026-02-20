@@ -1,3 +1,5 @@
+from enum import Enum
+
 from pydantic import BaseModel
 from pynamodb.attributes import MapAttribute, NumberAttribute, UnicodeAttribute
 from pynamodb.models import Model
@@ -51,3 +53,23 @@ class AgentCoreInvokeLogModel(Model):
     Input = UnicodeAttribute()
     Output = UnicodeAttribute(null=True)
     Metadata = MetadataAttribute(null=True)
+
+
+class EventTypeEnum(Enum):
+    messageStart = "messageStart"  # noqa: N815
+    contentBlockStart = "contentBlockStart"  # noqa: N815
+    contentBlockDelta = "contentBlockDelta"  # noqa: N815
+    contentBlockStop = "contentBlockStop"  # noqa: N815
+    messageStop = "messageStop"  # noqa: N815
+    metadata = "metadata"
+
+
+class InvocationRequestModel(BaseModel):
+    prompt: str
+    actor_id: str | None = None
+    session_id: str | None = None
+
+
+class InvocationResponseModel(BaseModel):
+    event: EventTypeEnum
+    data: str

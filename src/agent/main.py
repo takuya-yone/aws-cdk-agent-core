@@ -5,7 +5,6 @@ Uses BedrockAgentCoreApp for simplified deployment
 
 import json
 from datetime import datetime
-from enum import Enum
 from zoneinfo import ZoneInfo
 
 from aws_lambda_powertools import Logger
@@ -15,9 +14,14 @@ from bedrock_agentcore.memory.integrations.strands.session_manager import (
 )
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from models import AgentCoreInvokeLogModel, MetadataAttribute
+from models import (
+    AgentCoreInvokeLogModel,
+    EventTypeEnum,
+    InvocationRequestModel,
+    InvocationResponseModel,
+    MetadataAttribute,
+)
 from nanoid import generate
-from pydantic import BaseModel
 from settings import memory_settings, model_settings
 from sse_starlette.sse import EventSourceResponse
 from strands import Agent, tool
@@ -127,26 +131,6 @@ def call_aws_access_agent(topic: str) -> str:
         extra={"topic": topic, "tool": "call_aws_access_agent"},
     )
     return result
-
-
-class EventTypeEnum(Enum):
-    messageStart = "messageStart"  # noqa: N815
-    contentBlockStart = "contentBlockStart"  # noqa: N815
-    contentBlockDelta = "contentBlockDelta"  # noqa: N815
-    contentBlockStop = "contentBlockStop"  # noqa: N815
-    messageStop = "messageStop"  # noqa: N815
-    metadata = "metadata"
-
-
-class InvocationRequestModel(BaseModel):
-    prompt: str
-    actor_id: str | None = None
-    session_id: str | None = None
-
-
-class InvocationResponseModel(BaseModel):
-    event: EventTypeEnum
-    data: str
 
 
 def save_invocation_log(
