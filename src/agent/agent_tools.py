@@ -20,6 +20,8 @@ tavily_mcp_client = MCPClient(
     )
 )
 
+kb_client = boto3.client("bedrock-agent-runtime")
+
 logger = Logger()
 
 
@@ -130,8 +132,6 @@ def get_frontend_best_practices(topic: str) -> str:
         f"Fetching front-end best practices for topic: {topic}",
         extra={"topic": topic, "tool": "get_frontend_best_practices"},
     )
-    kb_client = boto3.client("bedrock-agent-runtime")
-
     response = kb_client.retrieve_and_generate(
         input={"text": topic},
         retrieveAndGenerateConfiguration={
@@ -173,8 +173,6 @@ def get_estate_info(query: str) -> dict:
         f"Fetching estate information for query: {query}",
         extra={"query": query, "tool": "get_estate_info"},
     )
-    kb_client = boto3.client("bedrock-agent-runtime")
-
     response = kb_client.retrieve_and_generate(
         input={"text": query},
         retrieveAndGenerateConfiguration={
