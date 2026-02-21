@@ -284,4 +284,4 @@ async def invocations(payload: InvocationRequestModel) -> InvocationResponseMode
 
 if __name__ == "__main__":
     # AgentCore Runtime listens on port 8080 for incoming requests
-    uvicorn.run(app, host="0.0.0.0", port=8080, log_level="debug")
+    uvicorn.run(app, host="0.0.0.0", port=8080, log_config=None)
