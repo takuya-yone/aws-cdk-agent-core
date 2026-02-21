@@ -158,8 +158,6 @@ def get_frontend_best_practices(topic: str) -> str:
             "tool": "get_frontend_best_practices",
         },
     )
-    # citations
-    # logger.info
     return text
 
 
@@ -192,7 +190,6 @@ def get_estate_info(query: str) -> dict:
             },
         },
     )
-
     text = response["output"]["text"]
     citations = response["citations"]
     logger.info(
@@ -203,6 +200,4 @@ def get_estate_info(query: str) -> dict:
             "tool": "get_estate_info",
         },
     )
-    # citations
-    # logger.info
     return text

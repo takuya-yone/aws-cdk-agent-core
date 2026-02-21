@@ -57,7 +57,7 @@ estate_agent = Agent(
     name="estate_agent",
     model=model,
     system_prompt=(
-        "You are an agent that provides information about real estate. Use the get_estate_info tool to fetch real estate information based on user queries. Answer in Japanese."
+        "You are an agent that provides information about real estate. Use the get_estate_info tool to fetch real estate information based on user queries. Datasource is formatted as Markdown Table. The 'Data ID' field in referenced Markdown Table must be included. Answer in Japanese."
     ),
     tools=[get_estate_info],
 )

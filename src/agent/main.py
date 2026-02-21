@@ -211,6 +211,7 @@ async def entrypoint(invocation_id: str, payload: InvocationRequestModel):
             call_aws_rss_agent,
             call_react_agent,
             call_aws_access_agent,
+            call_estate_agent,
         ],
         system_prompt="""
             You are a kind AI assistant.
