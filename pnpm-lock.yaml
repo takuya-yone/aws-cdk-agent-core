@@ -16,10 +16,10 @@ importers:
         version: 2.239.0-alpha.0(aws-cdk-lib@2.239.0(constructs@10.5.1))(constructs@10.5.1)
       '@aws-lambda-powertools/logger':
         specifier: ^2.31.0
-        version: 2.31.0(@middy/core@7.1.0)
+        version: 2.31.0(@middy/core@7.1.1)
       '@aws-lambda-powertools/tracer':
         specifier: ^2.31.0
-        version: 2.31.0(@middy/core@7.1.0)
+        version: 2.31.0(@middy/core@7.1.1)
       '@aws-sdk/client-bedrock-agentcore':
         specifier: ^3.995.0
         version: 3.995.0
@@ -28,16 +28,16 @@ importers:
         version: 1.52.0
       '@hono/standard-validator':
         specifier: ^0.2.2
-        version: 0.2.2(@standard-schema/spec@1.1.0)(hono@4.12.0)
+        version: 0.2.2(@standard-schema/spec@1.1.0)(hono@4.12.1)
       '@hono/swagger-ui':
         specifier: ^0.5.3
-        version: 0.5.3(hono@4.12.0)
+        version: 0.5.3(hono@4.12.1)
       '@hono/zod-openapi':
         specifier: ^1.2.2
-        version: 1.2.2(hono@4.12.0)(zod@4.3.6)
+        version: 1.2.2(hono@4.12.1)(zod@4.3.6)
       '@middy/core':
-        specifier: ^7.1.0
-        version: 7.1.0
+        specifier: ^7.1.1
+        version: 7.1.1
       aws-cdk-lib:
         specifier: ^2.239.0
         version: 2.239.0(constructs@10.5.1)
@@ -54,8 +54,8 @@ importers:
         specifier: ^4.1.5
         version: 4.1.5
       hono:
-        specifier: ^4.12.0
-        version: 4.12.0
+        specifier: ^4.12.1
+        version: 4.12.1
       nanoid:
         specifier: ^5.1.6
         version: 5.1.6
@@ -68,7 +68,7 @@ importers:
         version: 2.4.4
       '@hono/node-server':
         specifier: ^1.19.9
-        version: 1.19.9(hono@4.12.0)
+        version: 1.19.9(hono@4.12.1)
       '@types/aws-lambda':
         specifier: ^8.10.160
         version: 8.10.160
@@ -577,8 +577,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
-  '@middy/core@7.1.0':
-    resolution: {integrity: sha512-fihJkSckBB1DJkOLlv5FcdmnH5jEFP3xRCPHsKITToQrrQVfjPFDf/ZZPqisvndy/e3DnA16Cvec1gBtP+PAIg==}
+  '@middy/core@7.1.1':
+    resolution: {integrity: sha512-+gMtHe2cmPUwV0ytGoao9oTKfhxbY16CZgepSTuxKWI3IhDH8+pYG+siaPh4G3fbHDrJ3I72q6TpbF/ormrqpg==}
     engines: {node: '>=22'}
     peerDependencies:
       '@aws/durable-execution-sdk-js': ^1.0.0
@@ -1258,8 +1258,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  hono@4.12.0:
-    resolution: {integrity: sha512-NekXntS5M94pUfiVZ8oXXK/kkri+5WpX2/Ik+LVsl+uvw+soj4roXIsPqO+XsWrAw20mOzaXOZf3Q7PfB9A/IA==}
+  hono@4.12.1:
+    resolution: {integrity: sha512-hi9afu8g0lfJVLolxElAZGANCTTl6bewIdsRNhaywfP9K8BPf++F2z6OLrYGIinUwpRKzbZHMhPwvc0ZEpAwGw==}
     engines: {node: '>=16.9.0'}
 
   human-signals@2.1.0:
@@ -1710,19 +1710,19 @@ snapshots:
     dependencies:
       '@aws/lambda-invoke-store': 0.2.3
 
-  '@aws-lambda-powertools/logger@2.31.0(@middy/core@7.1.0)':
+  '@aws-lambda-powertools/logger@2.31.0(@middy/core@7.1.1)':
     dependencies:
       '@aws-lambda-powertools/commons': 2.31.0
       '@aws/lambda-invoke-store': 0.2.3
     optionalDependencies:
-      '@middy/core': 7.1.0
+      '@middy/core': 7.1.1
 
-  '@aws-lambda-powertools/tracer@2.31.0(@middy/core@7.1.0)':
+  '@aws-lambda-powertools/tracer@2.31.0(@middy/core@7.1.1)':
     dependencies:
       '@aws-lambda-powertools/commons': 2.31.0
       aws-xray-sdk-core: 3.12.0
     optionalDependencies:
-      '@middy/core': 7.1.0
+      '@middy/core': 7.1.1
 
   '@aws-sdk/client-bedrock-agentcore@3.995.0':
     dependencies:
@@ -2293,30 +2293,30 @@ snapshots:
   '@esbuild/win32-x64@0.27.3':
     optional: true
 
-  '@hono/node-server@1.19.9(hono@4.12.0)':
+  '@hono/node-server@1.19.9(hono@4.12.1)':
     dependencies:
-      hono: 4.12.0
+      hono: 4.12.1
 
-  '@hono/standard-validator@0.2.2(@standard-schema/spec@1.1.0)(hono@4.12.0)':
+  '@hono/standard-validator@0.2.2(@standard-schema/spec@1.1.0)(hono@4.12.1)':
     dependencies:
       '@standard-schema/spec': 1.1.0
-      hono: 4.12.0
+      hono: 4.12.1
 
-  '@hono/swagger-ui@0.5.3(hono@4.12.0)':
+  '@hono/swagger-ui@0.5.3(hono@4.12.1)':
     dependencies:
-      hono: 4.12.0
+      hono: 4.12.1
 
-  '@hono/zod-openapi@1.2.2(hono@4.12.0)(zod@4.3.6)':
+  '@hono/zod-openapi@1.2.2(hono@4.12.1)(zod@4.3.6)':
     dependencies:
       '@asteasolutions/zod-to-openapi': 8.4.1(zod@4.3.6)
-      '@hono/zod-validator': 0.7.6(hono@4.12.0)(zod@4.3.6)
-      hono: 4.12.0
+      '@hono/zod-validator': 0.7.6(hono@4.12.1)(zod@4.3.6)
+      hono: 4.12.1
       openapi3-ts: 4.5.0
       zod: 4.3.6
 
-  '@hono/zod-validator@0.7.6(hono@4.12.0)(zod@4.3.6)':
+  '@hono/zod-validator@0.7.6(hono@4.12.1)(zod@4.3.6)':
     dependencies:
-      hono: 4.12.0
+      hono: 4.12.1
       zod: 4.3.6
 
   '@jridgewell/resolve-uri@3.1.2': {}
@@ -2328,7 +2328,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@middy/core@7.1.0': {}
+  '@middy/core@7.1.1': {}
 
   '@noble/ciphers@1.3.0': {}
 
@@ -3079,7 +3079,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.12.0: {}
+  hono@4.12.1: {}
 
   human-signals@2.1.0: {}
 
