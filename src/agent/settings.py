@@ -48,15 +48,17 @@ class AgentCoreMemorySettings(BaseSettings):
 
 class KnowledgeBaseSettings(BaseSettings):
     model_id: str
+    kb_model_id: str
     bedrock_kb_id: str
-    kb_result_nums: int = 10
+    kb_result_nums: int = 5
 
 
 class EstateKnowledgeBaseSettings(BaseSettings):
     model_id: str
+    kb_model_id: str
     bedrock_kb_id: str
     bedrock_estate_kb_id: str
-    estate_kb_result_nums: int = 50
+    estate_kb_result_nums: int = 5
 
 
 class LogSettings(BaseSettings):

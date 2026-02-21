@@ -25,11 +25,19 @@ export type ApiGwConfig = {
   historyItemLimit: number
 }
 
+export type AgentCoreConfig = {
+  modelId: string
+  kbModelId: string
+  kbResultNums: number
+  estateKbResultNums: number
+}
+
 export interface StackParameters extends cdk.StackProps {
   githubRepoConfig: GithubRepoConfig
   slackChannelConfig: SlackChannelConfig
   cognitoClientConfig: CognitoClientConfig
   apiGwConfig: ApiGwConfig
+  agentCoreConfig: AgentCoreConfig
 }
 
 export const defaultStackParameters: StackParameters = {
@@ -63,5 +71,11 @@ export const defaultStackParameters: StackParameters = {
     },
     referer: "7aed273c-ec57-9ab8-269a-ca4b23e627d8",
     historyItemLimit: 30,
+  },
+  agentCoreConfig: {
+    modelId: "global.amazon.nova-2-lite-v1:0",
+    kbModelId: "global.amazon.nova-2-lite-v1:0",
+    kbResultNums: 5,
+    estateKbResultNums: 5,
   },
 }

@@ -1,5 +1,4 @@
 import * as agentcore from "@aws-cdk/aws-bedrock-agentcore-alpha"
-import * as bedrock from "@aws-cdk/aws-bedrock-alpha"
 import * as cdk from "aws-cdk-lib"
 import {
   type aws_bedrock,
@@ -8,8 +7,10 @@ import {
   aws_secretsmanager as secretsmanager,
 } from "aws-cdk-lib"
 import { Construct } from "constructs"
+import type { AgentCoreConfig } from "../../bin/parameter"
 
 export type AgentCoreConstructProps = {
+  agentCoreConfig: AgentCoreConfig
   knowledgeBase: aws_bedrock.CfnKnowledgeBase
   estateKnowledgeBase: aws_bedrock.CfnKnowledgeBase
   agentCoreLogTable: dynamodb.TableV2
@@ -18,37 +19,6 @@ export class AgentCoreConstruct extends Construct {
   public readonly runtime: agentcore.Runtime
   constructor(scope: Construct, id: string, props: AgentCoreConstructProps) {
     super(scope, id)
-
-    const kbAccessPolicyStatement = new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ["bedrock:RetrieveAndGenerate", "bedrock:Retrieve"],
-      resources: [
-        props.knowledgeBase.attrKnowledgeBaseArn,
-        props.estateKnowledgeBase.attrKnowledgeBaseArn,
-      ],
-    })
-
-    // CrossRegionInferenceProfileの作成(Anthropic Claude Sonnet 4.5 Japanリージョン)
-    const inferenceProfileSonnet =
-      bedrock.CrossRegionInferenceProfile.fromConfig({
-        geoRegion: bedrock.CrossRegionInferenceProfileRegion.JP,
-        model: bedrock.BedrockFoundationModel.ANTHROPIC_CLAUDE_SONNET_4_5_V1_0,
-      })
-
-    // CrossRegionInferenceProfileの作成(Amazon Nova Pro APACリージョン)
-    const inferenceProfileNova = bedrock.CrossRegionInferenceProfile.fromConfig(
-      {
-        geoRegion: bedrock.CrossRegionInferenceProfileRegion.APAC,
-        model: bedrock.BedrockFoundationModel.AMAZON_NOVA_PRO_V1,
-      },
-    )
-
-    // CrossRegionInferenceProfileの作成(Amazon Nova Pro USリージョン)
-    const inferenceProfileNovaUs =
-      bedrock.CrossRegionInferenceProfile.fromConfig({
-        geoRegion: bedrock.CrossRegionInferenceProfileRegion.US,
-        model: bedrock.BedrockFoundationModel.AMAZON_NOVA_PRO_V1,
-      })
 
     // Secrets Managerの作成(Tavily API Key)
     const tavilySecret = new secretsmanager.Secret(this, "TavilySecret", {
@@ -96,23 +66,32 @@ export class AgentCoreConstruct extends Construct {
       environmentVariables: {
         AWS_DEFAULT_REGION: cdk.Stack.of(this).region,
         POWERTOOLS_SERVICE_NAME: "StrandsAgentRuntime",
-        // MODEL_ID: "jp.anthropic.claude-sonnet-4-5-20250929-v1:0",
-        MODEL_ID: "apac.amazon.nova-pro-v1:0",
-        // MODEL_ID: "us.amazon.nova-pro-v1:0",
+        MODEL_ID: props.agentCoreConfig.modelId,
+        KB_MODEL_ID: props.agentCoreConfig.kbModelId,
         TAVILY_SECRET_NAME: tavilySecret.secretName,
         MEMORY_ID: memory.memoryId,
         BEDROCK_KB_ID: props.knowledgeBase.ref,
         BEDROCK_ESTATE_KB_ID: props.estateKnowledgeBase.ref,
         LOG_TABLE_NAME: props.agentCoreLogTable.tableName,
-        KB_RESULT_NUMS: "10",
-        ESTATE_KB_RESULT_NUMS: "50",
+        KB_RESULT_NUMS: props.agentCoreConfig.kbResultNums.toString(),
+        ESTATE_KB_RESULT_NUMS:
+          props.agentCoreConfig.estateKbResultNums.toString(),
       },
     })
 
+    const kbAccessPolicyStatement = new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["bedrock:RetrieveAndGenerate", "bedrock:Retrieve"],
+      resources: [
+        props.knowledgeBase.attrKnowledgeBaseArn,
+        props.estateKnowledgeBase.attrKnowledgeBaseArn,
+      ],
+    })
+
     // Runtimeへの権限付与
-    inferenceProfileSonnet.grantInvoke(this.runtime)
-    inferenceProfileNova.grantInvoke(this.runtime)
-    inferenceProfileNovaUs.grantInvoke(this.runtime)
+    this.runtime.role.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonBedrockLimitedAccess"),
+    )
     tavilySecret.grantRead(this.runtime)
     memory.grantWrite(this.runtime)
     memory.grantRead(this.runtime)

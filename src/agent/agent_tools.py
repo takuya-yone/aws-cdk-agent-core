@@ -138,7 +138,7 @@ def get_frontend_best_practices(topic: str) -> str:
             "type": "KNOWLEDGE_BASE",
             "knowledgeBaseConfiguration": {
                 "knowledgeBaseId": knowledge_base_settings.bedrock_kb_id,  # ナレッジベースID
-                "modelArn": knowledge_base_settings.model_id,  # 回答を行うモデルのARN（詳細は補足に記載）
+                "modelArn": knowledge_base_settings.kb_model_id,  # 回答を行うモデルのARN（詳細は補足に記載）
                 "retrievalConfiguration": {
                     "vectorSearchConfiguration": {
                         "numberOfResults": knowledge_base_settings.kb_result_nums,  # ナレッジベースから取得する関連情報の数
@@ -181,7 +181,7 @@ def get_estate_info(query: str) -> dict:
             "type": "KNOWLEDGE_BASE",
             "knowledgeBaseConfiguration": {
                 "knowledgeBaseId": estate_knowledge_base_settings.bedrock_estate_kb_id,  # ナレッジベースID
-                "modelArn": estate_knowledge_base_settings.model_id,  # 回答を行うモデルのARN（詳細は補足に記載）
+                "modelArn": estate_knowledge_base_settings.kb_model_id,  # 回答を行うモデルのARN（詳細は補足に記載）
                 "retrievalConfiguration": {
                     "vectorSearchConfiguration": {
                         "numberOfResults": estate_knowledge_base_settings.estate_kb_result_nums,  # ナレッジベースから取得する関連情報の数

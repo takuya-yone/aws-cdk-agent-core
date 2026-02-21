@@ -34,6 +34,7 @@ export class AgentCoreStack extends cdk.Stack {
       this,
       "AgentCoreConstruct",
       {
+        agentCoreConfig: props.agentCoreConfig,
         knowledgeBase: knowledgeBaseConstruct.knowledgeBase,
         estateKnowledgeBase: estateKnowledgeBaseConstruct.knowledgeBase,
         agentCoreLogTable: datastoreConstruct.agentCoreLogTable,
