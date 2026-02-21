@@ -1,6 +1,5 @@
 import boto3
 import feedparser
-from aws_lambda_powertools import Logger
 from mcp.client.streamable_http import streamable_http_client
 from models import RssItem
 from settings import (
@@ -12,6 +11,7 @@ from settings import (
 from strands import tool
 from strands.tools.mcp import MCPClient
 from tavily import TavilyClient
+from utils import logger
 
 tavily_client = TavilyClient(api_key=tavily_settings.tavily_api_key)
 tavily_mcp_client = MCPClient(
@@ -21,8 +21,6 @@ tavily_mcp_client = MCPClient(
 )
 
 kb_client = boto3.client("bedrock-agent-runtime")
-
-logger = Logger()
 
 
 # @tool

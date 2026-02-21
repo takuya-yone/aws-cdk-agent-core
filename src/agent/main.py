@@ -7,7 +7,7 @@ import json
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from aws_lambda_powertools import Logger
+import uvicorn
 from bedrock_agentcore.memory.integrations.strands.config import AgentCoreMemoryConfig
 from bedrock_agentcore.memory.integrations.strands.session_manager import (
     AgentCoreMemorySessionManager,
@@ -33,6 +33,7 @@ from sub_agents import (
     search_agent,
     weather_agent,
 )
+from utils import logger
 
 # Initialize the AgentCore app
 # app = BedrockAgentCoreApp()
@@ -46,7 +47,6 @@ app.add_middleware(
 )
 
 model = model_settings.get_model()
-logger = Logger()
 
 
 @tool
@@ -283,7 +283,5 @@ async def invocations(payload: InvocationRequestModel) -> InvocationResponseMode
 
 
 if __name__ == "__main__":
-    import uvicorn
-
     # AgentCore Runtime listens on port 8080 for incoming requests
     uvicorn.run(app, host="0.0.0.0", port=8080, log_level="debug")
