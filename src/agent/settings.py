@@ -52,6 +52,13 @@ class KnowledgeBaseSettings(BaseSettings):
     kb_result_nums: int = 10
 
 
+class EstateKnowledgeBaseSettings(BaseSettings):
+    model_id: str
+    bedrock_kb_id: str
+    bedrock_estate_kb_id: str
+    estate_kb_result_nums: int = 50
+
+
 class LogSettings(BaseSettings):
     log_table_name: str
 
@@ -61,4 +68,5 @@ tavily_settings = TavilySettings()
 aws_rss_settings = AwsRssSettings()
 memory_settings = AgentCoreMemorySettings()
 knowledge_base_settings = KnowledgeBaseSettings()
+estate_knowledge_base_settings = EstateKnowledgeBaseSettings()
 log_settings = LogSettings()

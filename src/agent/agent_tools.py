@@ -3,7 +3,12 @@ import feedparser
 from aws_lambda_powertools import Logger
 from mcp.client.streamable_http import streamable_http_client
 from models import RssItem
-from settings import aws_rss_settings, knowledge_base_settings, tavily_settings
+from settings import (
+    aws_rss_settings,
+    estate_knowledge_base_settings,
+    knowledge_base_settings,
+    tavily_settings,
+)
 from strands import tool
 from strands.tools.mcp import MCPClient
 from tavily import TavilyClient
@@ -151,6 +156,51 @@ def get_frontend_best_practices(topic: str) -> str:
             "text": text,
             "citations_count": len(citations),
             "tool": "get_frontend_best_practices",
+        },
+    )
+    # citations
+    # logger.info
+    return text
+
+
+@tool
+def get_estate_info(query: str) -> dict:
+    """Provide information about real estate based on user queries.
+    Args:
+        query: The query string related to estate information
+    Returns:
+        The retrieval results as a dictionary
+    """
+    logger.info(
+        f"Fetching estate information for query: {query}",
+        extra={"query": query, "tool": "get_estate_info"},
+    )
+    kb_client = boto3.client("bedrock-agent-runtime")
+
+    response = kb_client.retrieve_and_generate(
+        input={"text": query},
+        retrieveAndGenerateConfiguration={
+            "type": "KNOWLEDGE_BASE",
+            "knowledgeBaseConfiguration": {
+                "knowledgeBaseId": estate_knowledge_base_settings.bedrock_estate_kb_id,  # ナレッジベースID
+                "modelArn": estate_knowledge_base_settings.model_id,  # 回答を行うモデルのARN（詳細は補足に記載）
+                "retrievalConfiguration": {
+                    "vectorSearchConfiguration": {
+                        "numberOfResults": estate_knowledge_base_settings.estate_kb_result_nums,  # ナレッジベースから取得する関連情報の数
+                    }
+                },
+            },
+        },
+    )
+
+    text = response["output"]["text"]
+    citations = response["citations"]
+    logger.info(
+        f"Retrieved {len(citations)} citations from knowledge base",
+        extra={
+            "text": text,
+            "citations_count": len(citations),
+            "tool": "get_estate_info",
         },
     )
     # citations

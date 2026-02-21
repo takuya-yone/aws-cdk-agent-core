@@ -28,6 +28,7 @@ from strands import Agent, tool
 from sub_agents import (
     aws_access_agent,
     aws_rss_agent,
+    estate_agent,
     react_agent,
     search_agent,
     weather_agent,
@@ -117,6 +118,23 @@ def call_react_agent(topic: str) -> str:
 
 
 @tool
+def call_estate_agent(query: str) -> dict:
+    """Call agent to perform estate knowledge base retrieval using the estate_agent.
+    Args:
+        query: The query string related to estate information
+    Returns:
+        The retrieval results as a dictionary
+    """
+
+    result = estate_agent(f"Retrieve estate information for {query}")
+    logger.info(
+        f"Estate agent called for query: {query}",
+        extra={"query": query, "tool": "call_estate_agent"},
+    )
+    return result
+
+
+@tool
 def call_aws_access_agent(topic: str) -> str:
     """Call agent to fetch AWS access guidance using the aws_access_agent.
     Args:
@@ -197,6 +215,7 @@ async def entrypoint(invocation_id: str, payload: InvocationRequestModel):
         system_prompt="""
             You are a kind AI assistant.
             Please answer user questions politely.
+            If real estate information is needed, use call_estate_agent to retrieve it.
             If front-end/React/Next.js best practices are needed, use call_react_agent to provide guidance.
             If weather information is needed, please use the call_weather_agent.
             If information is unknown, use call_search_agent to search.

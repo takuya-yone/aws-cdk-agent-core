@@ -7,6 +7,7 @@ import {
   AuthConstruct,
   CdnConstruct,
   DatastoreConstruct,
+  EstateKnowledgeBaseConstruct,
   KnowledgeBaseConstruct,
 } from "../constructs"
 
@@ -24,11 +25,17 @@ export class AgentCoreStack extends cdk.Stack {
       "KnowledgeBaseConstruct",
     )
 
+    const estateKnowledgeBaseConstruct = new EstateKnowledgeBaseConstruct(
+      this,
+      "EstateKnowledgeBaseConstruct",
+    )
+
     const agentCoreConstruct = new AgentCoreConstruct(
       this,
       "AgentCoreConstruct",
       {
         knowledgeBase: knowledgeBaseConstruct.knowledgeBase,
+        estateKnowledgeBase: estateKnowledgeBaseConstruct.knowledgeBase,
         agentCoreLogTable: datastoreConstruct.agentCoreLogTable,
       },
     )

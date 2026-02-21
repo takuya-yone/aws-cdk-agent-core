@@ -1,5 +1,6 @@
 from agent_tools import (
     get_aws_rss_feed,
+    get_estate_info,
     get_frontend_best_practices,
     get_weather,
     tavily_mcp_client,
@@ -49,6 +50,16 @@ react_agent = Agent(
         "You are an agent that provides best practices for front-end applications, familiar with React and Next.js. Use the get_frontend_best_practices tool to provide guidance. Answer in Japanese."
     ),
     tools=[get_frontend_best_practices],
+)
+
+
+estate_agent = Agent(
+    name="estate_agent",
+    model=model,
+    system_prompt=(
+        "You are an agent that provides information about real estate. Use the get_estate_info tool to fetch real estate information based on user queries. Answer in Japanese."
+    ),
+    tools=[get_estate_info],
 )
 
 

@@ -11,6 +11,7 @@ import { Construct } from "constructs"
 
 export type AgentCoreConstructProps = {
   knowledgeBase: aws_bedrock.CfnKnowledgeBase
+  estateKnowledgeBase: aws_bedrock.CfnKnowledgeBase
   agentCoreLogTable: dynamodb.TableV2
 }
 export class AgentCoreConstruct extends Construct {
@@ -21,7 +22,10 @@ export class AgentCoreConstruct extends Construct {
     const kbAccessPolicyStatement = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       actions: ["bedrock:RetrieveAndGenerate", "bedrock:Retrieve"],
-      resources: [props.knowledgeBase.attrKnowledgeBaseArn],
+      resources: [
+        props.knowledgeBase.attrKnowledgeBaseArn,
+        props.estateKnowledgeBase.attrKnowledgeBaseArn,
+      ],
     })
 
     // CrossRegionInferenceProfileの作成(Anthropic Claude Sonnet 4.5 Japanリージョン)
@@ -98,8 +102,10 @@ export class AgentCoreConstruct extends Construct {
         TAVILY_SECRET_NAME: tavilySecret.secretName,
         MEMORY_ID: memory.memoryId,
         BEDROCK_KB_ID: props.knowledgeBase.ref,
+        BEDROCK_ESTATE_KB_ID: props.estateKnowledgeBase.ref,
         LOG_TABLE_NAME: props.agentCoreLogTable.tableName,
         KB_RESULT_NUMS: "10",
+        ESTATE_KB_RESULT_NUMS: "50",
       },
     })
 
