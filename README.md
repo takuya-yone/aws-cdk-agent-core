@@ -18,10 +18,26 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 * `pnpm cdk diff`    compare deployed stack with current state
 * `pnpm cdk synth`   emits the synthesized CloudFormation template
 
-### Application
+### Application（Lambda Proxy, Port:3000）
+
+Local Lambda Proxy to AgentCore×FastAPI (on AWS)
+
 * `pnpm dev`         run lambda proxy with Hono
 * `pnpm biome:fix`   apply format/lint on TypeScript files
 * `pnpm ruff:fix`    apply format/lint on Python files
+
+
+
+### Application（AgentCore+FastAPI, Port:8080）
+
+Local AgentCore×FastAPI with AWS Environment
+
+```bash
+cd src/agent
+uv sync
+source .venv/bin/activate
+python main.py
+```
 
 
 ## Cognito Opration
