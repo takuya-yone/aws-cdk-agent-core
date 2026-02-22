@@ -10,7 +10,7 @@ type Bindings = {
   context: ApiGatewayRequestContext
 }
 
-const metadataSchema = z.object({
+const usageSchema = z.object({
   InputTokens: z.number(),
   OutputTokens: z.number(),
   TotalTokens: z.number(),
@@ -22,7 +22,7 @@ const historyItemSchema = z.object({
   SessionId: z.string(),
   Input: z.string(),
   Output: z.string().optional(),
-  Metadata: metadataSchema.optional(),
+  Usage: usageSchema.optional(),
 })
 
 const outputSchema = z.object({
@@ -85,7 +85,7 @@ const historyRouteHandler: RouteHandler<
       SessionId: record.SessionId,
       Input: record.Input,
       Output: record.Output,
-      Metadata: record.Metadata,
+      Usage: record.Usage,
     })),
   }
 
