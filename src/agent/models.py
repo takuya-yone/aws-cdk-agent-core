@@ -54,6 +54,7 @@ class AgentCoreInvokeLogModel(Model):
     Input = UnicodeAttribute()
     Output = UnicodeAttribute(null=True)
     Usage = UsageAttribute(null=True)
+    Latency = NumberAttribute(null=True)
 
 
 class EventTypeEnum(Enum):

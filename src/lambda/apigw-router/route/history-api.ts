@@ -23,6 +23,7 @@ const historyItemSchema = z.object({
   Input: z.string(),
   Output: z.string().optional(),
   Usage: usageSchema.optional(),
+  Latency: z.number().optional(),
 })
 
 const outputSchema = z.object({
@@ -86,6 +87,7 @@ const historyRouteHandler: RouteHandler<
       Input: record.Input,
       Output: record.Output,
       Usage: record.Usage,
+      Latency: record.Latency,
     })),
   }
 

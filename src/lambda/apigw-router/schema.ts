@@ -270,6 +270,9 @@ export const LogModel = dynamoose.model(
         TotalTokens: Number,
       },
     },
+    Latency: {
+      type: Number,
+    },
   },
   { tableName: SERVER_ENV.AGENTCORE_LOG_TABLE_NAME },
 )
