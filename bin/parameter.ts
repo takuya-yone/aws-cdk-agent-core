@@ -25,9 +25,14 @@ export type ApiGwConfig = {
   historyItemLimit: number
 }
 
+type ModelIdType =
+  | "jp.anthropic.claude-sonnet-4-5-20250929-v1:0"
+  | "global.amazon.nova-2-lite-v1:0"
+  | "apac.amazon.nova-pro-v1:0"
+
 export type AgentCoreConfig = {
-  modelId: string
-  kbModelId: string
+  modelId: ModelIdType
+  kbModelId: ModelIdType
   kbResultNums: number
   estateKbResultNums: number
 }
@@ -73,7 +78,7 @@ export const defaultStackParameters: StackParameters = {
     historyItemLimit: 30,
   },
   agentCoreConfig: {
-    modelId: "global.amazon.nova-2-lite-v1:0",
+    modelId: "apac.amazon.nova-pro-v1:0",
     kbModelId: "global.amazon.nova-2-lite-v1:0",
     kbResultNums: 5,
     estateKbResultNums: 5,

@@ -63,6 +63,7 @@ export class ApiGwConstruct extends Construct {
       {
         runtime: lambda.Runtime.NODEJS_24_X,
         functionName: apiGwBufferedRouterLambdaName,
+        description: "Buffered Router Lambda for Strands Agent Core",
         entry: "src/lambda/apigw-router/index.ts",
         handler: "handler",
         timeout: Duration.seconds(900),
@@ -93,6 +94,7 @@ export class ApiGwConstruct extends Construct {
       {
         runtime: lambda.Runtime.NODEJS_24_X,
         functionName: apiGwStreamRouterLambdaName,
+        description: "Stream Router Lambda for Strands Agent Core",
         entry: "src/lambda/apigw-router/index.ts",
         handler: "streamHandler",
         timeout: Duration.seconds(900),
@@ -155,6 +157,7 @@ export class ApiGwConstruct extends Construct {
     )
     this.restApi = new apigw.RestApi(this, restApiName, {
       restApiName: restApiName,
+      description: "Buffered API Gateway for Strands Agent Core",
       // policy: apigwResourcePolicy,
       deployOptions: {
         stageName: props.apiGwConfig.stageName,
@@ -208,6 +211,7 @@ export class ApiGwConstruct extends Construct {
     )
     this.streamApi = new apigw.RestApi(this, streamApiName, {
       restApiName: streamApiName,
+      description: "Stream API Gateway for Strands Agent Core",
       // policy: apigwResourcePolicy,
       deployOptions: {
         stageName: props.apiGwConfig.stageName,

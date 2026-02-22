@@ -62,7 +62,7 @@ export class AgentCoreConstruct extends Construct {
       runtimeName: "StrandsAgentRuntime",
       agentRuntimeArtifact:
         agentcore.AgentRuntimeArtifact.fromAsset("src/agent"),
-      description: "Simple Strands Agent",
+      description: "StrandsAgentRuntime",
       environmentVariables: {
         AWS_DEFAULT_REGION: cdk.Stack.of(this).region,
         POWERTOOLS_SERVICE_NAME: "StrandsAgentRuntime",
