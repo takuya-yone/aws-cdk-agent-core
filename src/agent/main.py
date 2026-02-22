@@ -189,6 +189,25 @@ def save_invocation_log(
     log_entry.save()
 
 
+def parse_event_message(msg: dict):
+    event = msg.get("event")
+    event_type = list(event.keys())[0]
+    event_type_enum = EventTypeEnum[event_type]
+    response_model = InvocationResponseModel(
+        event=event_type_enum, data=json.dumps(event, ensure_ascii=False)
+    )
+    return response_model
+
+
+def parse_result_message(msg: dict):
+    result: AgentResult = msg["result"]
+
+    total_usage = result.metrics.accumulated_usage
+    total_latency = result.metrics.accumulated_metrics.get("latencyMs")
+    output_message = result.message.get("content")[0].get("text")
+    return total_usage, total_latency, output_message
+
+
 async def entrypoint(invocation_id: str, payload: InvocationRequestModel):
     """
     Entry point for handling agent invocations.
@@ -235,30 +254,18 @@ async def entrypoint(invocation_id: str, payload: InvocationRequestModel):
     )
 
     # Stream responses back to the caller
-    msg_list = []
     stream_messages: AsyncIterator[dict] = main_agent.stream_async(payload.prompt)
     async for msg in stream_messages:
-        msg_list.append(msg)
         event_key = list(msg.keys())[0]
 
         # Depending on the event type, construct the appropriate response
         if event_key == "event":
-            event = msg.get("event")
-            event_type = list(event.keys())[0]
-            event_type_enum = EventTypeEnum[event_type]
-            response = InvocationResponseModel(
-                event=event_type_enum, data=json.dumps(event, ensure_ascii=False)
-            )
+            response = parse_event_message(msg)
             yield response.model_dump(mode="json")
 
         # Save the invocation log when the final result is received
         if event_key == "result":
-            result: AgentResult = msg["result"]
-
-            total_usage = result.metrics.accumulated_usage
-            total_latency = result.metrics.accumulated_metrics.get("latencyMs")
-            output_message = result.message.get("content")[0].get("text")
-
+            total_usage, total_latency, output_message = parse_result_message(msg)
             save_invocation_log(
                 invocation_id, payload, total_usage, total_latency, output_message
             )
