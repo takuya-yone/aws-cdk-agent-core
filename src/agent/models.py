@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from pynamodb.attributes import MapAttribute, NumberAttribute, UnicodeAttribute
 from pynamodb.models import Model
 from settings import log_settings
+from strands.types.event_loop import Usage
 
 
 class RssItem(BaseModel):
@@ -23,18 +24,18 @@ class RssItem(BaseModel):
         )
 
 
-class MetadataAttribute(MapAttribute):
+class UsageAttribute(MapAttribute):
     InputTokens = NumberAttribute()
     OutputTokens = NumberAttribute()
     TotalTokens = NumberAttribute()
 
     @classmethod
-    def from_dict(cls, data: dict):
-        """Create a MetadataAttribute instance from a dictionary."""
+    def from_usage(cls, usage: Usage):
+        """Create a MetadataAttribute instance from a Usage object."""
         return cls(
-            InputTokens=data.get("inputTokens", 0),
-            OutputTokens=data.get("outputTokens", 0),
-            TotalTokens=data.get("totalTokens", 0),
+            InputTokens=usage.get("inputTokens", 0),
+            OutputTokens=usage.get("outputTokens", 0),
+            TotalTokens=usage.get("totalTokens", 0),
         )
 
 
@@ -52,7 +53,7 @@ class AgentCoreInvokeLogModel(Model):
     SessionId = UnicodeAttribute()
     Input = UnicodeAttribute()
     Output = UnicodeAttribute(null=True)
-    Metadata = MetadataAttribute(null=True)
+    Usage = UsageAttribute(null=True)
 
 
 class EventTypeEnum(Enum):

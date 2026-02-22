@@ -262,7 +262,7 @@ export const LogModel = dynamoose.model(
     Output: {
       type: String,
     },
-    Metadata: {
+    Usage: {
       type: Object,
       schema: {
         InputTokens: Number,
