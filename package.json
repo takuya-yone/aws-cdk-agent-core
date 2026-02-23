@@ -12,9 +12,10 @@
     "cdk": "cdk",
     "biome:dry": "biome check --unsafe bin lib src tests",
     "biome:fix": "biome check --write --unsafe bin lib src tests",
-    "ruff:dry": "uv run ruff format --check src tools && uv run ruff check src tools",
-    "ruff:fix": "uv run ruff format src tools && uv run ruff check src tools --fix",
-    "prepare": "husky"
+    "ruff:dry": "uv run ruff format --check src tools tests && uv run ruff check src tools tests",
+    "ruff:fix": "uv run ruff format src tools tests && uv run ruff check src tools tests --fix",
+    "prepare": "husky",
+    "pytest": "uv run python -m pytest tests --cov"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.4",
