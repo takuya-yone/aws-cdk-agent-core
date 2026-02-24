@@ -32,6 +32,7 @@ from sub_agents import (
     aws_access_agent,
     aws_rss_agent,
     estate_agent,
+    goverment_data_agent,
     react_agent,
     search_agent,
     weather_agent,
@@ -83,6 +84,23 @@ def call_search_agent(query: str) -> dict:
     logger.info(
         f"Search agent called for query: {query}",
         extra={"query": query, "tool": "call_search_agent"},
+    )
+    return result
+
+
+@tool
+def call_goverment_data_agent(query: str) -> dict:
+    """Call agent to fetch government data using the goverment_data_agent.
+    Args:
+        query: The query string related to government data
+    Returns:
+        The government data results as a dictionary
+    """
+
+    result = goverment_data_agent(f"Fetch government data for {query}")
+    logger.info(
+        f"Goverment data agent called for query: {query}",
+        extra={"query": query, "tool": "call_goverment_data_agent"},
     )
     return result
 
@@ -239,11 +257,13 @@ async def entrypoint(invocation_id: str, payload: InvocationRequestModel):
             call_react_agent,
             call_aws_access_agent,
             call_estate_agent,
+            call_goverment_data_agent,
         ],
         system_prompt="""
             You are a kind AI assistant.
             Please answer user questions politely.
             If real estate information is needed, use call_estate_agent to retrieve it.
+            If government data is needed, use call_goverment_data_agent to fetch it.
             If front-end/React/Next.js best practices are needed, use call_react_agent to provide guidance.
             If weather information is needed, please use the call_weather_agent.
             If information is unknown, use call_search_agent to search.

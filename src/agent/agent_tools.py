@@ -22,6 +22,18 @@ tavily_mcp_client = MCPClient(
     )
 )
 
+goverment_mcp_client = MCPClient(
+    lambda: streamable_http_client(
+        "https://mcp.n-3.ai/mcp?tools=e-stat-get-stats-list,e-stat-get-meta-info,e-stat-get-data-catalog"
+    )
+)
+
+real_estate_mcp_client = MCPClient(
+    lambda: streamable_http_client(
+        "https://mcp.n-3.ai/mcp?tools=get-time,reinfolib-real-estate-price,reinfolib-city-list"
+    )
+)
+
 kb_client = boto3.client("bedrock-agent-runtime")
 geolocator = Nominatim(user_agent="time-weather-agent", timeout=10)
 

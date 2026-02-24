@@ -3,6 +3,8 @@ from agent_tools import (
     get_estate_info,
     get_frontend_best_practices,
     get_weather,
+    goverment_mcp_client,
+    # real_estate_mcp_client,
     tavily_mcp_client,
 )
 from settings import model_settings
@@ -30,6 +32,15 @@ search_agent = Agent(
         "You are a web search agent. Use the tavily_mcp_client tool to perform searches on the web. Answer in Japanese."
     ),
     tools=[tavily_mcp_client],
+)
+
+goverment_data_agent = Agent(
+    name="goverment_data_agent",
+    model=model,
+    system_prompt=(
+        "You are an agent that provides government data. Use the goverment_mcp_client tool to fetch government data. Answer in Japanese."
+    ),
+    tools=[goverment_mcp_client],
 )
 
 
@@ -60,6 +71,7 @@ estate_agent = Agent(
         "You are an agent that provides information about real estate. Use the get_estate_info tool to fetch real estate information based on user queries. Datasource is formatted as Markdown Table. The 'Data ID' field in referenced Markdown Table must be included. Answer in Japanese."
     ),
     tools=[get_estate_info],
+    # tools=[real_estate_mcp_client],
 )
 
 
