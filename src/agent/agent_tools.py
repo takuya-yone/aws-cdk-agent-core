@@ -1,5 +1,7 @@
 import boto3
 import feedparser
+import requests
+from geopy.geocoders import Nominatim
 from mcp.client.streamable_http import streamable_http_client
 from models import RssItem
 from settings import (
@@ -21,6 +23,7 @@ tavily_mcp_client = MCPClient(
 )
 
 kb_client = boto3.client("bedrock-agent-runtime")
+geolocator = Nominatim(user_agent="time-weather-agent", timeout=10)
 
 
 # @tool
@@ -95,27 +98,52 @@ def get_aws_rss_feed(
 
 
 @tool
-def get_weather(city: str) -> str:
-    """Get the current weather for a specified city.
-    Args:
-        city: The name of the city
-    Returns:
-        A string describing the weather
-    """
-    logger.info(
-        f"Fetching weather for city: {city}",
-        extra={"city": city, "tool": "get_weather"},
-    )
-    weather_data = {
-        "Tokyo": "晴れ、気温25度",
-        "東京": "晴れ、気温25度",
-        "Osaka": "曇り、気温22度",
-        "大阪": "曇り、気温22度",
-        "New York": "Rainy, 18°C",
-        "London": "Foggy, 15°C",
-    }
+def get_weather(location: str) -> str:
+    """Get the current weather for a location.
 
-    return weather_data.get(city, f"{city}の天気情報は現在利用できません")
+    Args:
+        location: The city or location name to get the weather for
+    """
+    try:
+        location_data = geolocator.geocode(location)
+        if not location_data:
+            return "Location not found"
+
+        lat, lon = location_data.latitude, location_data.longitude
+        url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,weather_code&timezone=auto"
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            data = response.json()
+            temp = data.get("current", {}).get("temperature_2m", "N/A")
+            code = data.get("current", {}).get("weather_code", "N/A")
+
+            weather_codes = {
+                0: "Clear sky",
+                1: "Mainly clear",
+                2: "Partly cloudy",
+                3: "Overcast",
+                45: "Fog",
+                48: "Depositing rime fog",
+                51: "Light drizzle",
+                53: "Moderate drizzle",
+                55: "Dense drizzle",
+                61: "Light rain",
+                63: "Moderate rain",
+                65: "Heavy rain",
+                71: "Light snow",
+                73: "Moderate snow",
+                75: "Heavy snow",
+                95: "Thunderstorm",
+            }
+            weather_desc = weather_codes.get(code, f"Unknown (code {code})")
+
+            return f"{weather_desc}, {temp}°C"
+
+        return "Weather data currently unavailable"
+    except Exception as e:
+        print(f"Weather error: {e}")
+        return "Weather service is currently unavailable"
 
 
 @tool
