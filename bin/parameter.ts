@@ -80,7 +80,7 @@ export const defaultStackParameters: StackParameters = {
     historyItemLimit: 30,
   },
   agentCoreConfig: {
-    modelId: "openai.gpt-oss-120b-1:0",
+    modelId: "apac.amazon.nova-pro-v1:0",
     kbModelId: "global.amazon.nova-2-lite-v1:0",
     kbResultNums: 10,
     estateKbResultNums: 10,
