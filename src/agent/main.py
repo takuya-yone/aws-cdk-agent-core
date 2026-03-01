@@ -13,6 +13,8 @@ from bedrock_agentcore.memory.integrations.strands.config import AgentCoreMemory
 from bedrock_agentcore.memory.integrations.strands.session_manager import (
     AgentCoreMemorySessionManager,
 )
+
+# from bedrock_agentcore.runtime import BedrockAgentCoreApp
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models import (
