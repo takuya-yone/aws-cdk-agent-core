@@ -29,6 +29,8 @@ type ModelIdType =
   | "jp.anthropic.claude-sonnet-4-5-20250929-v1:0"
   | "global.amazon.nova-2-lite-v1:0"
   | "apac.amazon.nova-pro-v1:0"
+  | "openai.gpt-oss-120b-1:0"
+  | "openai.gpt-oss-20b-1:0"
 
 export type AgentCoreConfig = {
   modelId: ModelIdType
@@ -78,9 +80,9 @@ export const defaultStackParameters: StackParameters = {
     historyItemLimit: 30,
   },
   agentCoreConfig: {
-    modelId: "apac.amazon.nova-pro-v1:0",
+    modelId: "openai.gpt-oss-120b-1:0",
     kbModelId: "global.amazon.nova-2-lite-v1:0",
-    kbResultNums: 5,
-    estateKbResultNums: 5,
+    kbResultNums: 10,
+    estateKbResultNums: 10,
   },
 }

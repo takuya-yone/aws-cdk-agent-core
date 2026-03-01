@@ -23,7 +23,7 @@ from models import (
     UsageAttribute,
 )
 from nanoid import generate
-from settings import memory_settings, model_settings
+from settings import is_local, memory_settings, model_settings
 from sse_starlette.sse import EventSourceResponse
 from strands import Agent, tool
 from strands.agent.agent_result import AgentResult
@@ -257,13 +257,12 @@ async def entrypoint(invocation_id: str, payload: InvocationRequestModel):
             call_react_agent,
             call_aws_access_agent,
             call_estate_agent,
-            call_goverment_data_agent,
+            # call_goverment_data_agent,
         ],
         system_prompt="""
             You are a kind AI assistant.
             Please answer user questions politely.
             If real estate information is needed, use call_estate_agent to retrieve it.
-            If government data is needed, use call_goverment_data_agent to fetch it.
             If front-end/React/Next.js best practices are needed, use call_react_agent to provide guidance.
             If weather information is needed, please use the call_weather_agent.
             If information is unknown, use call_search_agent to search.
@@ -316,4 +315,4 @@ async def invocations(payload: InvocationRequestModel) -> InvocationResponseMode
 
 if __name__ == "__main__":
     # AgentCore Runtime listens on port 8080 for incoming requests
-    uvicorn.run(app, host="0.0.0.0", port=8080, log_config=None)
+    uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=is_local)
