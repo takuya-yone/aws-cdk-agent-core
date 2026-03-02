@@ -26,34 +26,34 @@ export class AgentCoreConstruct extends Construct {
     })
 
     // AgentCore Memoryの作成
-    const memory = new agentcore.Memory(this, "AgentCoreMemory1", {
-      memoryName: "AgentCoreMemory1",
+    const memory = new agentcore.Memory(this, "AgentCoreMemory", {
+      memoryName: "AgentCoreMemory",
       description: "Memory for Strands Agent",
       expirationDuration: cdk.Duration.days(7),
       memoryStrategies: [
-        agentcore.MemoryStrategy.usingSummarization({
-          name: "SummarizationStrategy",
-          namespaces: [
-            "/strategies/summary/actors/{actorId}/sessions/{sessionId}",
-          ],
-        }),
-        agentcore.MemoryStrategy.usingSemantic({
-          name: "SemanticStrategy",
-          namespaces: ["/strategies/semantic/actors/{actorId}"],
-        }),
-        agentcore.MemoryStrategy.usingUserPreference({
-          name: "UserPreferenceStrategy",
-          namespaces: ["/strategies/preference/actors/{actorId}"],
-        }),
-        agentcore.MemoryStrategy.usingEpisodic({
-          name: "EpisodicStrategy",
-          namespaces: [
-            "/strategies/episodic/actors/{actorId}/session/{sessionId}",
-          ],
-          reflectionConfiguration: {
-            namespaces: ["/strategies/episodic/actors/{actorId}"],
-          },
-        }),
+        // agentcore.MemoryStrategy.usingSummarization({
+        //   name: "SummarizationStrategy",
+        //   namespaces: [
+        //     "/strategies/summary/actors/{actorId}/sessions/{sessionId}",
+        //   ],
+        // }),
+        // agentcore.MemoryStrategy.usingSemantic({
+        //   name: "SemanticStrategy",
+        //   namespaces: ["/strategies/semantic/actors/{actorId}"],
+        // }),
+        // agentcore.MemoryStrategy.usingUserPreference({
+        //   name: "UserPreferenceStrategy",
+        //   namespaces: ["/strategies/preference/actors/{actorId}"],
+        // }),
+        // agentcore.MemoryStrategy.usingEpisodic({
+        //   name: "EpisodicStrategy",
+        //   namespaces: [
+        //     "/strategies/episodic/actors/{actorId}/session/{sessionId}",
+        //   ],
+        //   reflectionConfiguration: {
+        //     namespaces: ["/strategies/episodic/actors/{actorId}"],
+        //   },
+        // }),
       ],
     })
 
