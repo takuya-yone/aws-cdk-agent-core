@@ -1,7 +1,8 @@
 # Dockerfile for AgentCore Runtime
 # Must be ARM64 architecture for AgentCore Runtime
 
-FROM python:3.14-alpine
+# FROM python:3.14-alpine
+FROM public.ecr.aws/docker/library/python:3.14-alpine
 
 WORKDIR /app
 
