@@ -56,6 +56,7 @@ app.onError((err, c) => {
  */
 const handler: Handler = handle(app)
 const streamHandler: Handler = streamHandle(app)
+
 export { handler, streamHandler }
 
 /**
