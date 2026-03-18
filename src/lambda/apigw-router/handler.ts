@@ -3,10 +3,13 @@ import { handle, streamHandle } from "hono/aws-lambda"
 import { app } from "./app"
 
 /**
- * Lambda entry point
- * Note: This will be used in the deployed Lambda environment
+ * Lambda entry point for  buffered
  */
 const handler: Handler = handle(app)
+
+/**
+ * Lambda entry point for streaming
+ */
 const streamHandler: Handler = streamHandle(app)
 
 export { handler, streamHandler }

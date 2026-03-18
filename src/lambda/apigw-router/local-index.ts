@@ -8,5 +8,5 @@ import { logger } from "./utils"
  */
 logger.info("Running in local development mode")
 serve(app, (info) => {
-  console.log(`Listening on http://localhost:${info.port}`)
+  logger.info(`Listening on http://localhost:${info.port}`)
 })
