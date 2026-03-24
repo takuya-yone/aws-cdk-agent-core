@@ -9,6 +9,7 @@ import {
   DatastoreConstruct,
   EstateKnowledgeBaseConstruct,
   KnowledgeBaseConstruct,
+  RssRetrieverConstruct,
 } from "../constructs"
 
 export class AgentCoreStack extends cdk.Stack {
@@ -18,6 +19,14 @@ export class AgentCoreStack extends cdk.Stack {
     const datastoreConstruct = new DatastoreConstruct(
       this,
       "DatastoreConstruct",
+    )
+
+    const _rssRetrieverConstruct = new RssRetrieverConstruct(
+      this,
+      "RssRetrieverConstruct",
+      {
+        whatsNewFeedTable: datastoreConstruct.whatsNewFeedTable,
+      },
     )
 
     const knowledgeBaseConstruct = new KnowledgeBaseConstruct(

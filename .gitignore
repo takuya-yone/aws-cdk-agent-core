@@ -22,3 +22,6 @@ __pycache__/
 
 # cloudfront functions
 !src/cloudfront/*.js
+
+# vitest coverage
+coverage/

@@ -3,6 +3,7 @@ import { Construct } from "constructs"
 
 export class DatastoreConstruct extends Construct {
   public readonly agentCoreLogTable: dynamodb.TableV2
+  public readonly whatsNewFeedTable: dynamodb.TableV2
   constructor(scope: Construct, id: string) {
     super(scope, id)
 
@@ -17,6 +18,20 @@ export class DatastoreConstruct extends Construct {
         type: dynamodb.AttributeType.STRING,
       },
       timeToLiveAttribute: "ExpireAt",
+      billing: dynamodb.Billing.onDemand(),
+      removalPolicy: RemovalPolicy.DESTROY,
+    })
+
+    this.whatsNewFeedTable = new dynamodb.TableV2(this, "WhatsNewFeedTable", {
+      tableName: "WhatsNewFeedTable",
+      partitionKey: {
+        name: "YearMonth",
+        type: dynamodb.AttributeType.STRING,
+      },
+      sortKey: {
+        name: "IsoDate",
+        type: dynamodb.AttributeType.STRING,
+      },
       billing: dynamodb.Billing.onDemand(),
       removalPolicy: RemovalPolicy.DESTROY,
     })
