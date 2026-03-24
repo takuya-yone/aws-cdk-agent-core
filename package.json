@@ -8,7 +8,7 @@
     "dev": "dotenvx run -f .env -- tsx watch src/lambda/apigw-router/local-index.ts",
     "build": "tsc --noEmit",
     "watch": "tsc --noEmit  -w",
-    "test": "vitest",
+    "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "cdk": "cdk",
     "biome:dry": "biome check --unsafe bin lib src tests",

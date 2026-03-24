@@ -33,7 +33,7 @@ const WhatsNewFeedSchema = z.object({
   content: z.string(),
   contentSnippet: z.string(),
   guid: z.string(),
-  categories: z.array(z.string()),
+  categories: z.array(z.string()).length(1),
   isoDate: z.iso.datetime(),
   pubDate: z.string(),
 })
@@ -47,9 +47,13 @@ const WhatsNewFeedModel = dynamoose.model(
       type: String,
       hashKey: true,
     },
-    IsoDate: {
+    DateGuid: {
       type: String,
       rangeKey: true,
+    },
+    IsoDate: {
+      type: String,
+      required: true,
     },
     Title: {
       type: String,
@@ -88,37 +92,50 @@ const WhatsNewFeedModel = dynamoose.model(
   { tableName: ENV.WHATSNEW_FEED_TABLE },
 )
 
-const saveFeedItem = async (item: WhatsNewFeedItem) => {
-  const feedItem = new WhatsNewFeedModel({
-    YearMonth: item.isoDate.substring(0, 7),
-    IsoDate: item.isoDate,
-    Title: item.title,
-    Link: item.link,
-    Author: item.author,
-    Content: item.content,
-    ContentSnippet: item.contentSnippet,
-    Guid: item.guid,
-    Categories: item.categories,
-    PubDate: item.pubDate,
+const saveFeedItems = async (items: WhatsNewFeedItem[]) => {
+  items.forEach((item) => {
+    const yearMonth = item.isoDate.substring(0, 7)
+    const dateGuid = `${item.isoDate}#${item.guid}`
+    const categories = item.categories[0]
+      .split(",")
+      .map((category) => category.trim())
+      .filter((category) => category.length > 0)
+
+    const record = new WhatsNewFeedModel({
+      YearMonth: yearMonth,
+      DateGuid: dateGuid,
+      IsoDate: item.isoDate,
+      Title: item.title,
+      Link: item.link,
+      Author: item.author,
+      Content: item.content,
+      ContentSnippet: item.contentSnippet,
+      Guid: item.guid,
+      Categories: categories,
+      PubDate: item.pubDate,
+    })
+
+    try {
+      record.save()
+    } catch (err) {
+      logger.error("Error saving feed item", { error: err, guid: item.guid })
+    }
   })
-  //   console.log(feedItem.toJSON())
-  const aaa = await WhatsNewFeedModel.create(feedItem.toJSON())
-  //   const aaa = await feedItem.save()
-  console.log(aaa)
 }
 
 export const lambdaHandler = async () => {
   const feed = await parser.parseURL(ENV.FEED_URL)
+  const inputItems: WhatsNewFeedItem[] = []
 
   feed.items.forEach(async (item) => {
     const result = WhatsNewFeedSchema.safeParse(item)
     if (result.success) {
-      await saveFeedItem(result.data)
+      inputItems.push(result.data)
     } else {
       logger.error(String(result.error))
     }
   })
-  return
+  await saveFeedItems(inputItems)
 }
 
 export const handler = middy(lambdaHandler).use(captureLambdaHandler(tracer))
