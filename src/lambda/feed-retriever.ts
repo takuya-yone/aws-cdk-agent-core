@@ -1,5 +1,7 @@
 import { Logger } from "@aws-lambda-powertools/logger"
 import { Tracer } from "@aws-lambda-powertools/tracer"
+import { captureLambdaHandler } from "@aws-lambda-powertools/tracer/middleware"
+import middy from "@middy/core"
 import * as dynamoose from "dynamoose"
 import Parser from "rss-parser"
 
@@ -13,7 +15,7 @@ const getRequiredEnv = (key: string): string => {
   return value
 }
 
-const _tracer = new Tracer({})
+const tracer = new Tracer({})
 const logger = new Logger({})
 
 const parser = new Parser()
@@ -38,7 +40,7 @@ const WhatsNewFeedSchema = z.object({
 
 type WhatsNewFeedItem = z.infer<typeof WhatsNewFeedSchema>
 
-export const WhatsNewFeedModel = dynamoose.model(
+const WhatsNewFeedModel = dynamoose.model(
   "WhatsNewFeedModel",
   {
     YearMonth: {
@@ -86,7 +88,7 @@ export const WhatsNewFeedModel = dynamoose.model(
   { tableName: ENV.WHATSNEW_FEED_TABLE },
 )
 
-export const saveFeedItem = async (item: WhatsNewFeedItem) => {
+const saveFeedItem = async (item: WhatsNewFeedItem) => {
   const feedItem = new WhatsNewFeedModel({
     YearMonth: item.isoDate.substring(0, 7),
     IsoDate: item.isoDate,
@@ -99,19 +101,24 @@ export const saveFeedItem = async (item: WhatsNewFeedItem) => {
     Categories: item.categories,
     PubDate: item.pubDate,
   })
-  await feedItem.save()
+  //   console.log(feedItem.toJSON())
+  const aaa = await WhatsNewFeedModel.create(feedItem.toJSON())
+  //   const aaa = await feedItem.save()
+  console.log(aaa)
 }
 
-export const handler = async () => {
+export const lambdaHandler = async () => {
   const feed = await parser.parseURL(ENV.FEED_URL)
 
-  feed.items.forEach((item) => {
+  feed.items.forEach(async (item) => {
     const result = WhatsNewFeedSchema.safeParse(item)
     if (result.success) {
-      saveFeedItem(result.data)
+      await saveFeedItem(result.data)
     } else {
       logger.error(String(result.error))
     }
   })
   return
 }
+
+export const handler = middy(lambdaHandler).use(captureLambdaHandler(tracer))
