@@ -25,7 +25,7 @@ export class AgentCoreStack extends cdk.Stack {
       this,
       "RssRetrieverConstruct",
       {
-        whatsNewFeedTable: datastoreConstruct.whatsNewFeedTable,
+        rssFeedTable: datastoreConstruct.rssFeedTable,
       },
     )
 

@@ -9,7 +9,7 @@ import {
 import { Construct } from "constructs"
 
 type RssRetrieverConstructProps = {
-  whatsNewFeedTable: dynamodb.TableV2
+  rssFeedTable: dynamodb.TableV2
 }
 
 export class RssRetrieverConstruct extends Construct {
@@ -40,10 +40,10 @@ export class RssRetrieverConstruct extends Construct {
         },
         environment: {
           FEED_URL: "https://aws.amazon.com/about-aws/whats-new/recent/feed/",
-          WHATSNEW_FEED_TABLE: props.whatsNewFeedTable.tableName,
+          WHATSNEW_FEED_TABLE: props.rssFeedTable.tableName,
         },
       },
     )
-    props.whatsNewFeedTable.grantReadWriteData(rssFeedRetrieverLambda)
+    props.rssFeedTable.grantReadWriteData(rssFeedRetrieverLambda)
   }
 }
