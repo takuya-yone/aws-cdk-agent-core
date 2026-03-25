@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { lambdaHandler } from "../../src/lambda/feed-retriever"
+import { lambdaHandler } from "../../src/lambda/rss-retriever"
 
 describe("feed-retriever", () => {
   it("should return undefined", async () => {

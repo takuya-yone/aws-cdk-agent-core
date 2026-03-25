@@ -5,6 +5,9 @@ import {
   aws_lambda_nodejs as lambda_nodejs,
   aws_logs as logs,
   RemovalPolicy,
+  aws_scheduler as scheduler,
+  TimeZone,
+  aws_scheduler_targets as targets,
 } from "aws-cdk-lib"
 import { Construct } from "constructs"
 
@@ -25,7 +28,7 @@ export class RssRetrieverConstruct extends Construct {
         functionName: rssFeedRetrieverLambdaName,
         description:
           "A Lambda function that retrieves RSS feed and stores it in DynamoDB",
-        entry: "src/lambda/feed-retriever.ts",
+        entry: "src/lambda/rss-retriever.ts",
         handler: "handler",
         timeout: Duration.seconds(300),
         memorySize: 256,
@@ -45,5 +48,23 @@ export class RssRetrieverConstruct extends Construct {
       },
     )
     props.rssFeedTable.grantReadWriteData(rssFeedRetrieverLambda)
+
+    const _rssFeedRetrieverSchedule = new scheduler.Schedule(
+      this,
+      "RssFeedRetrieverSchedule",
+      {
+        scheduleName: "RssFeedRetrieverSchedule",
+        schedule: scheduler.ScheduleExpression.cron({
+          minute: "0",
+          hour: "9",
+          day: "*",
+          month: "*",
+          year: "*",
+          timeZone: TimeZone.ASIA_TOKYO,
+        }),
+        timeWindow: scheduler.TimeWindow.off(),
+        target: new targets.LambdaInvoke(rssFeedRetrieverLambda),
+      },
+    )
   }
 }
