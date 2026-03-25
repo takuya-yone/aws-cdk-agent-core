@@ -36,13 +36,13 @@ const whatsNewFeedZodSchema = z.object({
 type WhatsNewFeedItem = z.infer<typeof whatsNewFeedZodSchema>
 
 const whatsNewFeedSchema = new dynamoose.Schema({
-  YearMonth: {
+  Guid: {
     type: String,
     hashKey: true,
   },
-  DateGuid: {
+  YearMonth: {
     type: String,
-    rangeKey: true,
+    required: true,
   },
   IsoDate: {
     type: String,
@@ -68,10 +68,6 @@ const whatsNewFeedSchema = new dynamoose.Schema({
     type: String,
     required: true,
   },
-  Guid: {
-    type: String,
-    required: true,
-  },
   Categories: {
     type: Array,
     schema: [String],
@@ -93,7 +89,8 @@ const WhatsNewFeedModel = dynamoose.model(
 
 const convertToDynamoDBItem = (item: WhatsNewFeedItem) => {
   const yearMonth = item.isoDate.substring(0, 7)
-  const dateGuid = `${item.isoDate}#${item.guid}`
+  const date = item.isoDate.substring(0, 10)
+  const dateGuid = `${date}#${item.guid}`
   const categories = item.categories[0]
     .split(",")
     .map((category) => category.trim())

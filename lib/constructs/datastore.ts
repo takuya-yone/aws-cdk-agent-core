@@ -22,16 +22,33 @@ export class DatastoreConstruct extends Construct {
       removalPolicy: RemovalPolicy.DESTROY,
     })
 
-    this.rssFeedTable = new dynamodb.TableV2(this, "RssFeedTable", {
-      tableName: "RssFeedTable",
+    this.rssFeedTable = new dynamodb.TableV2(this, "RssFeedTable2", {
+      tableName: "RssFeedTable2",
       partitionKey: {
-        name: "YearMonth",
+        name: "Guid",
         type: dynamodb.AttributeType.STRING,
       },
-      sortKey: {
-        name: "DateGuid",
-        type: dynamodb.AttributeType.STRING,
-      },
+      globalSecondaryIndexes: [
+        {
+          indexName: "YearMonthIsoDateGuidIndex",
+          partitionKeys: [
+            {
+              name: "YearMonth",
+              type: dynamodb.AttributeType.STRING,
+            },
+          ],
+          sortKeys: [
+            {
+              name: "IsoDate",
+              type: dynamodb.AttributeType.STRING,
+            },
+            {
+              name: "Guid",
+              type: dynamodb.AttributeType.STRING,
+            },
+          ],
+        },
+      ],
       billing: dynamodb.Billing.onDemand(),
       removalPolicy: RemovalPolicy.DESTROY,
     })
