@@ -89,8 +89,6 @@ const WhatsNewFeedModel = dynamoose.model(
 
 const convertToDynamoDBItem = (item: WhatsNewFeedItem) => {
   const yearMonth = item.isoDate.substring(0, 7)
-  const date = item.isoDate.substring(0, 10)
-  const dateGuid = `${date}#${item.guid}`
   const categories = item.categories[0]
     .split(",")
     .map((category) => category.trim())
@@ -98,7 +96,6 @@ const convertToDynamoDBItem = (item: WhatsNewFeedItem) => {
 
   return {
     YearMonth: yearMonth,
-    DateGuid: dateGuid,
     IsoDate: item.isoDate,
     Title: item.title,
     Link: item.link,
@@ -121,6 +118,7 @@ const saveFeedItems = async (items: WhatsNewFeedItem[]) => {
       logger.info("Batch put successful", { count: batch.length })
     } catch (err) {
       logger.error("Batch put failed", { error: err })
+      throw err
     }
   }
 }
