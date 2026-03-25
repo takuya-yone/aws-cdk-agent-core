@@ -1,6 +1,6 @@
 import {
   Duration,
-  aws_dynamodb as dynamodb,
+  type aws_dynamodb as dynamodb,
   aws_lambda as lambda,
   aws_lambda_nodejs as lambda_nodejs,
   aws_logs as logs,
@@ -15,20 +15,6 @@ type RssRetrieverConstructProps = {
 export class RssRetrieverConstruct extends Construct {
   constructor(scope: Construct, id: string, props: RssRetrieverConstructProps) {
     super(scope, id)
-
-    const usersTable = new dynamodb.TableV2(this, "UsersTable", {
-      tableName: "Users",
-      partitionKey: {
-        name: "userId",
-        type: dynamodb.AttributeType.STRING,
-      },
-      sortKey: {
-        name: "createdAt",
-        type: dynamodb.AttributeType.STRING,
-      },
-      billing: dynamodb.Billing.onDemand(),
-      removalPolicy: RemovalPolicy.DESTROY, // 開発環境では削除ポリシーをDESTROYに設定
-    })
 
     const rssFeedRetrieverLambdaName = "RssFeedRetrieverLambda"
     const rssFeedRetrieverLambda = new lambda_nodejs.NodejsFunction(
@@ -55,11 +41,9 @@ export class RssRetrieverConstruct extends Construct {
         environment: {
           FEED_URL: "https://aws.amazon.com/about-aws/whats-new/recent/feed/",
           WHATSNEW_FEED_TABLE: props.rssFeedTable.tableName,
-          DUMMY_TABLE_NAME: usersTable.tableName,
         },
       },
     )
     props.rssFeedTable.grantReadWriteData(rssFeedRetrieverLambda)
-    usersTable.grantReadWriteData(rssFeedRetrieverLambda)
   }
 }

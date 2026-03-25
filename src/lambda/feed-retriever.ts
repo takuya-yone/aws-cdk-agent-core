@@ -18,7 +18,6 @@ const getRequiredEnv = (key: string): string => {
 const ENV = {
   FEED_URL: getRequiredEnv("FEED_URL"),
   WHATSNEW_FEED_TABLE: getRequiredEnv("WHATSNEW_FEED_TABLE"),
-  DUMMY_TABLE_NAME: getRequiredEnv("DUMMY_TABLE_NAME"),
 }
 
 const whatsNewFeedZodSchema = z.object({
@@ -34,31 +33,53 @@ const whatsNewFeedZodSchema = z.object({
   pubDate: z.string(),
 })
 
-type WhatsNewFeedItem = z.infer<typeof whatsNewFeedSchema>
+type WhatsNewFeedItem = z.infer<typeof whatsNewFeedZodSchema>
 
 const whatsNewFeedSchema = new dynamoose.Schema({
-  userId: {
+  YearMonth: {
     type: String,
-    hashKey: true, // パーティションキー
+    hashKey: true,
   },
-  createdAt: {
+  DateGuid: {
     type: String,
-    rangeKey: true, // ソートキー
+    rangeKey: true,
   },
-  name: {
-    type: String,
-    required: true,
-  },
-  email: {
+  IsoDate: {
     type: String,
     required: true,
   },
-  age: {
-    type: Number,
+  Title: {
+    type: String,
+    required: true,
   },
-  isActive: {
-    type: Boolean,
-    default: true,
+  Link: {
+    type: String,
+    required: true,
+  },
+  Author: {
+    type: String,
+    required: true,
+  },
+  Content: {
+    type: String,
+    required: true,
+  },
+  ContentSnippet: {
+    type: String,
+    required: true,
+  },
+  Guid: {
+    type: String,
+    required: true,
+  },
+  Categories: {
+    type: Array,
+    schema: [String],
+    required: true,
+  },
+  PubDate: {
+    type: String,
+    required: true,
   },
 })
 
@@ -66,10 +87,62 @@ const WhatsNewFeedModel = dynamoose.model(
   "WhatsNewFeedModel",
   whatsNewFeedSchema,
   {
-    // tableName: ENV.WHATSNEW_FEED_TABLE,
-    tableName: ENV.DUMMY_TABLE_NAME,
+    tableName: ENV.WHATSNEW_FEED_TABLE,
   },
 )
+
+const convertToDynamoDBItem = (item: WhatsNewFeedItem) => {
+  const yearMonth = item.isoDate.substring(0, 7)
+  const dateGuid = `${item.isoDate}#${item.guid}`
+  const categories = item.categories[0]
+    .split(",")
+    .map((category) => category.trim())
+    .filter((category) => category.length > 0)
+
+  return {
+    YearMonth: yearMonth,
+    DateGuid: dateGuid,
+    IsoDate: item.isoDate,
+    Title: item.title,
+    Link: item.link,
+    Author: item.author,
+    Content: item.content,
+    ContentSnippet: item.contentSnippet,
+    Guid: item.guid,
+    Categories: categories,
+    PubDate: item.pubDate,
+  }
+}
+
+const saveFeedItems = async (items: WhatsNewFeedItem[]) => {
+  const dynamoDBItems = items.map(convertToDynamoDBItem)
+  // DynamoDBのBatchWriteItemは最大25アイテムまでなので、25アイテムずつに分割して保存する
+  for (let i = 0; i < dynamoDBItems.length; i += 25) {
+    const batch = dynamoDBItems.slice(i, i + 25)
+    try {
+      await WhatsNewFeedModel.batchPut(batch)
+      logger.info("Batch put successful", { count: batch.length })
+    } catch (err) {
+      logger.error("Batch put failed", { error: err })
+    }
+  }
+}
+
+const parseFeedItems = (items: Parser.Item[]): WhatsNewFeedItem[] => {
+  const validItems: WhatsNewFeedItem[] = []
+  for (const item of items) {
+    const result = whatsNewFeedZodSchema.safeParse(item)
+    if (result.success) {
+      validItems.push(result.data)
+    } else {
+      logger.error("Invalid feed item", {
+        error: String(result.error),
+        guid: item.guid,
+      })
+    }
+  }
+  return validItems
+}
 
 const tracer = new Tracer({})
 const logger = new Logger({})
@@ -78,30 +151,13 @@ const parser = new Parser()
 
 export const lambdaHandler = async () => {
   const feed = await parser.parseURL(ENV.FEED_URL)
-  const inputItems: WhatsNewFeedItem[] = []
 
-  feed.items.forEach(async (item) => {
-    const result = whatsNewFeedZodSchema.safeParse(item)
-    if (result.success) {
-      inputItems.push(result.data)
+  logger.info("Fetched feed items", { count: feed.items.length })
 
-      const ts = new Date().toISOString()
-      const newUser = new WhatsNewFeedModel({
-        userId: `user_${Date.now()}`,
-        createdAt: ts,
-        name: ts,
-        email: ts,
-        age: 0,
-      })
-      const aaa = await newUser.save()
-      console.log(aaa)
+  const inputItems: WhatsNewFeedItem[] = parseFeedItems(feed.items)
 
-      // logger.info("Feed item already exists", { guid: result.data.guid, item: aaa })
-    } else {
-      logger.error(String(result.error))
-    }
-  })
-  // await saveFeedItems(inputItems)
+  await saveFeedItems(inputItems)
+
   return
 }
 
