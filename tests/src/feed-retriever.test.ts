@@ -1,10 +1,9 @@
-import { describe, it } from "vitest"
-
-// import { handler } from "../../src/lambda/feed-retriever"
+import { describe, expect, it } from "vitest"
+import { lambdaHandler } from "../../src/lambda/feed-retriever"
 
 describe("feed-retriever", () => {
   it("should return undefined", async () => {
-    // const result = await handler({},{},{})
-    // expect(result).toBeUndefined()
+    const result = await lambdaHandler()
+    expect(result).toBeUndefined()
   })
 })

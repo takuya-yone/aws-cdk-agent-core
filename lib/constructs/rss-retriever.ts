@@ -55,7 +55,7 @@ export class RssRetrieverConstruct extends Construct {
         environment: {
           FEED_URL: "https://aws.amazon.com/about-aws/whats-new/recent/feed/",
           WHATSNEW_FEED_TABLE: props.rssFeedTable.tableName,
-          TABLE_NAME: usersTable.tableName,
+          DUMMY_TABLE_NAME: usersTable.tableName,
         },
       },
     )
