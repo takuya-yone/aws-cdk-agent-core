@@ -65,20 +65,21 @@ export const handler: Handler<
   APIGatewayProxyResult
 > = async (event) => {
   try {
-    const body = JSON.parse(event.body ?? "{}")
-    const { userId, name, email, age } = body
+    const _body = JSON.parse(event.body ?? "{}")
+    // const { userId, name, email, age } = body
 
-    if (!userId || !name || !email) {
-      return response(400, { message: "userId, name, email は必須です" })
-    }
+    // if (!userId || !name || !email) {
+    //   return response(400, { message: "userId, name, email は必須です" })
+    // }
 
     // ── 1. 単一アイテムの保存（put / upsert）─────────────────
+    const ts = new Date().toISOString()
     const newUser = new UserModel({
-      userId,
-      createdAt: new Date().toISOString(),
-      name,
-      email,
-      age,
+      userId: `user_${Date.now()}`,
+      createdAt: ts,
+      name: ts,
+      email: ts,
+      age: 0,
     })
     const saved = await newUser.save()
 
