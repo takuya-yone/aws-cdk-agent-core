@@ -32,10 +32,10 @@ const userSchema = new dynamoose.Schema(
       default: true,
     },
   },
-  {
-    timestamps: true, // createdAt / updatedAt を自動付与
-    saveUnknown: false, // スキーマ外のフィールドを拒否
-  },
+  // {
+  //   timestamps: true, // createdAt / updatedAt を自動付与
+  //   saveUnknown: false, // スキーマ外のフィールドを拒否
+  // },
 )
 
 // ─── モデル定義 ─────────────────────────────────────────────────
