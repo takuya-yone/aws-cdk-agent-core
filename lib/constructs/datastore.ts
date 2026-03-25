@@ -22,8 +22,8 @@ export class DatastoreConstruct extends Construct {
       removalPolicy: RemovalPolicy.DESTROY,
     })
 
-    this.rssFeedTable = new dynamodb.TableV2(this, "RssFeedTable2", {
-      tableName: "RssFeedTable2",
+    this.rssFeedTable = new dynamodb.TableV2(this, "RssFeedTable", {
+      tableName: "RssFeedTable",
       partitionKey: {
         name: "Guid",
         type: dynamodb.AttributeType.STRING,
@@ -42,14 +42,12 @@ export class DatastoreConstruct extends Construct {
               name: "IsoDate",
               type: dynamodb.AttributeType.STRING,
             },
-            {
-              name: "Guid",
-              type: dynamodb.AttributeType.STRING,
-            },
           ],
         },
       ],
       billing: dynamodb.Billing.onDemand(),
+      pointInTimeRecoverySpecification: { pointInTimeRecoveryEnabled: true },
+      timeToLiveAttribute: "ExpiredAt",
       removalPolicy: RemovalPolicy.DESTROY,
     })
   }
