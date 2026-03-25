@@ -5,7 +5,7 @@ export default defineConfig({
     include: ['**/tests/**/*.{spec,test}.ts'],
     env: {
         FEED_URL: 'https://aws.amazon.com/about-aws/whats-new/recent/feed/',
-        WHATSNEW_FEED_TABLE: 'WhatsNewFeedTable',
+        WHATSNEW_FEED_TABLE: 'RssFeedTable',
     },
   },
 });
