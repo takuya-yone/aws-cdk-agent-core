@@ -7,6 +7,11 @@ import Parser from "rss-parser"
 
 import { z } from "zod"
 
+const tracer = new Tracer({})
+const logger = new Logger({})
+
+const parser = new Parser()
+
 const getRequiredEnv = (key: string): string => {
   const value = process.env[key]
   if (!value) {
@@ -21,7 +26,6 @@ const ENV = {
 }
 
 const whatsNewFeedZodSchema = z.object({
-  creator: z.string(),
   title: z.string(),
   link: z.url(),
   author: z.string(),
@@ -139,11 +143,6 @@ const parseFeedItems = (items: Parser.Item[]): WhatsNewFeedItem[] => {
   return validItems
 }
 
-const tracer = new Tracer({})
-const logger = new Logger({})
-
-const parser = new Parser()
-
 export const lambdaHandler = async () => {
   const feed = await parser.parseURL(ENV.FEED_URL)
 
@@ -153,7 +152,7 @@ export const lambdaHandler = async () => {
 
   await saveFeedItems(inputItems)
 
-  return
+  return "Success"
 }
 
 export const handler = middy(lambdaHandler).use(captureLambdaHandler(tracer))
