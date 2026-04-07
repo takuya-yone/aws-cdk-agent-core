@@ -21,20 +21,20 @@ importers:
         specifier: ^2.32.0
         version: 2.32.0(@middy/core@7.2.1)
       '@aws-sdk/client-bedrock-agentcore':
-        specifier: ^3.1024.0
-        version: 3.1024.0
+        specifier: ^3.1025.0
+        version: 3.1025.0
       '@dotenvx/dotenvx':
-        specifier: ^1.59.1
-        version: 1.59.1
+        specifier: ^1.60.1
+        version: 1.60.1
       '@hono/standard-validator':
         specifier: ^0.2.2
-        version: 0.2.2(@standard-schema/spec@1.1.0)(hono@4.12.10)
+        version: 0.2.2(@standard-schema/spec@1.1.0)(hono@4.12.12)
       '@hono/swagger-ui':
         specifier: ^0.6.1
-        version: 0.6.1(hono@4.12.10)
+        version: 0.6.1(hono@4.12.12)
       '@hono/zod-openapi':
         specifier: ^1.2.4
-        version: 1.2.4(hono@4.12.10)(zod@4.3.6)
+        version: 1.2.4(hono@4.12.12)(zod@4.3.6)
       '@middy/core':
         specifier: ^7.2.1
         version: 7.2.1
@@ -54,8 +54,8 @@ importers:
         specifier: ^4.1.5
         version: 4.1.5
       hono:
-        specifier: ^4.12.10
-        version: 4.12.10
+        specifier: ^4.12.12
+        version: 4.12.12
       nanoid:
         specifier: ^5.1.7
         version: 5.1.7
@@ -70,8 +70,8 @@ importers:
         specifier: 2.4.10
         version: 2.4.10
       '@hono/node-server':
-        specifier: ^1.19.12
-        version: 1.19.12(hono@4.12.10)
+        specifier: ^1.19.13
+        version: 1.19.13(hono@4.12.12)
       '@types/aws-lambda':
         specifier: ^8.10.161
         version: 8.10.161
@@ -177,8 +177,8 @@ packages:
       '@middy/core':
         optional: true
 
-  '@aws-sdk/client-bedrock-agentcore@3.1024.0':
-    resolution: {integrity: sha512-vcC8SrXYHurvk15ahOiEZpgBj4ncRO4M6GCx+BtdK1CU9kHq5C9daoR6BHc7ZOGfuCAYr/I6J6qWXnKzzxMIpw==}
+  '@aws-sdk/client-bedrock-agentcore@3.1025.0':
+    resolution: {integrity: sha512-YfKkxWxiyljTLeiwzBg2UwjtpI11SqSiRBimDz283HX7rEScnAFD/iHE4+ZWbWEG73GNj49svR0cM8BioL66bg==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/client-dynamodb@3.993.0':
@@ -442,8 +442,8 @@ packages:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
 
-  '@dotenvx/dotenvx@1.59.1':
-    resolution: {integrity: sha512-Qg+meC+XFxliuVSDlEPkKnaUjdaJKK6FNx/Wwl2UxhQR8pyPIuLhMavsF7ePdB9qFZUWV1jEK3ckbJir/WmF4w==}
+  '@dotenvx/dotenvx@1.60.1':
+    resolution: {integrity: sha512-pPKqhE/HiaPDfbSf6doJnxeqzLszWP4eLICB89wRDZGaBaLzGpa3RgahVYIauBonaEWT8oxqAyacWKHtD+n3hQ==}
     hasBin: true
 
   '@ecies/ciphers@0.2.5':
@@ -764,8 +764,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@hono/node-server@1.19.12':
-    resolution: {integrity: sha512-txsUW4SQ1iilgE0l9/e9VQWmELXifEFvmdA1j6WFh/aFPj99hIntrSsq/if0UWyGVkmrRPKA1wCeP+UCr1B9Uw==}
+  '@hono/node-server@1.19.13':
+    resolution: {integrity: sha512-TsQLe4i2gvoTtrHje625ngThGBySOgSK3Xo2XRYOdqGN1teR8+I7vchQC46uLJi8OF62YTYA3AhSpumtkhsaKQ==}
     engines: {node: '>=18.14.1'}
     peerDependencies:
       hono: ^4
@@ -1563,8 +1563,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  hono@4.12.10:
-    resolution: {integrity: sha512-mx/p18PLy5og9ufies2GOSUqep98Td9q4i/EF6X7yJgAiIopxqdfIO3jbqsi3jRgTgw88jMDEzVKi+V2EF+27w==}
+  hono@4.12.12:
+    resolution: {integrity: sha512-p1JfQMKaceuCbpJKAPKVqyqviZdS0eUxH9v82oWo1kb9xjQ5wA6iP3FNVAPDFlz5/p7d45lO+BpSk1tuSZMF4Q==}
     engines: {node: '>=16.9.0'}
 
   html-escaper@2.0.2:
@@ -1997,6 +1997,14 @@ packages:
     resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
     engines: {node: '>=6'}
 
+  yocto-spinner@1.1.0:
+    resolution: {integrity: sha512-/BY0AUXnS7IKO354uLLA2eRcWiqDifEbd6unXCsOxkFDAkhgUL3PH9X2bFoaU0YchnDXsF+iKleeTLJGckbXfA==}
+    engines: {node: '>=18.19'}
+
+  yoctocolors@2.1.2:
+    resolution: {integrity: sha512-CzhO+pFNo8ajLM2d2IW/R93ipy99LWjtwblvC1RsoSUMZgyLbYFr221TnSNT7GjGdYui6P459mw9JH/g/zW2ug==}
+    engines: {node: '>=18'}
+
   zod@4.3.6:
     resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
 
@@ -2074,7 +2082,7 @@ snapshots:
     optionalDependencies:
       '@middy/core': 7.2.1
 
-  '@aws-sdk/client-bedrock-agentcore@3.1024.0':
+  '@aws-sdk/client-bedrock-agentcore@3.1025.0':
     dependencies:
       '@aws-crypto/sha256-browser': 5.2.0
       '@aws-crypto/sha256-js': 5.2.0
@@ -2710,7 +2718,7 @@ snapshots:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
 
-  '@dotenvx/dotenvx@1.59.1':
+  '@dotenvx/dotenvx@1.60.1':
     dependencies:
       commander: 11.1.0
       dotenv: 17.3.1
@@ -2721,6 +2729,7 @@ snapshots:
       object-treeify: 1.1.33
       picomatch: 4.0.4
       which: 4.0.0
+      yocto-spinner: 1.1.0
 
   '@ecies/ciphers@0.2.5(@noble/ciphers@1.3.0)':
     dependencies:
@@ -2882,30 +2891,30 @@ snapshots:
   '@esbuild/win32-x64@0.28.0':
     optional: true
 
-  '@hono/node-server@1.19.12(hono@4.12.10)':
+  '@hono/node-server@1.19.13(hono@4.12.12)':
     dependencies:
-      hono: 4.12.10
+      hono: 4.12.12
 
-  '@hono/standard-validator@0.2.2(@standard-schema/spec@1.1.0)(hono@4.12.10)':
+  '@hono/standard-validator@0.2.2(@standard-schema/spec@1.1.0)(hono@4.12.12)':
     dependencies:
       '@standard-schema/spec': 1.1.0
-      hono: 4.12.10
+      hono: 4.12.12
 
-  '@hono/swagger-ui@0.6.1(hono@4.12.10)':
+  '@hono/swagger-ui@0.6.1(hono@4.12.12)':
     dependencies:
-      hono: 4.12.10
+      hono: 4.12.12
 
-  '@hono/zod-openapi@1.2.4(hono@4.12.10)(zod@4.3.6)':
+  '@hono/zod-openapi@1.2.4(hono@4.12.12)(zod@4.3.6)':
     dependencies:
       '@asteasolutions/zod-to-openapi': 8.5.0(zod@4.3.6)
-      '@hono/zod-validator': 0.7.6(hono@4.12.10)(zod@4.3.6)
-      hono: 4.12.10
+      '@hono/zod-validator': 0.7.6(hono@4.12.12)(zod@4.3.6)
+      hono: 4.12.12
       openapi3-ts: 4.5.0
       zod: 4.3.6
 
-  '@hono/zod-validator@0.7.6(hono@4.12.10)(zod@4.3.6)':
+  '@hono/zod-validator@0.7.6(hono@4.12.12)(zod@4.3.6)':
     dependencies:
-      hono: 4.12.10
+      hono: 4.12.12
       zod: 4.3.6
 
   '@jridgewell/resolve-uri@3.1.2': {}
@@ -3839,7 +3848,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.12.10: {}
+  hono@4.12.12: {}
 
   html-escaper@2.0.2: {}
 
@@ -4215,5 +4224,11 @@ snapshots:
   yaml@2.8.3: {}
 
   yn@3.1.1: {}
+
+  yocto-spinner@1.1.0:
+    dependencies:
+      yoctocolors: 2.1.2
+
+  yoctocolors@2.1.2: {}
 
   zod@4.3.6: {}

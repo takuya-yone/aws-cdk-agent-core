@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.10",
-    "@hono/node-server": "^1.19.12",
+    "@hono/node-server": "^1.19.13",
     "@types/aws-lambda": "^8.10.161",
     "@types/node": "^25.5.2",
     "@vitest/coverage-v8": "4.1.2",
@@ -37,8 +37,8 @@
     "@aws-cdk/aws-bedrock-alpha": "2.248.0-alpha.0",
     "@aws-lambda-powertools/logger": "^2.32.0",
     "@aws-lambda-powertools/tracer": "^2.32.0",
-    "@aws-sdk/client-bedrock-agentcore": "^3.1024.0",
-    "@dotenvx/dotenvx": "^1.59.1",
+    "@aws-sdk/client-bedrock-agentcore": "^3.1025.0",
+    "@dotenvx/dotenvx": "^1.60.1",
     "@hono/standard-validator": "^0.2.2",
     "@hono/swagger-ui": "^0.6.1",
     "@hono/zod-openapi": "^1.2.4",
@@ -48,7 +48,7 @@
     "cdk-ecr-deployment": "^4.1.4",
     "constructs": "^10.6.0",
     "dynamoose": "^4.1.5",
-    "hono": "^4.12.10",
+    "hono": "^4.12.12",
     "nanoid": "^5.1.7",
     "rss-parser": "^3.13.0",
     "zod": "^4.3.6"
