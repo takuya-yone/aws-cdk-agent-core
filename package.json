@@ -37,7 +37,7 @@
     "@aws-cdk/aws-bedrock-alpha": "2.248.0-alpha.0",
     "@aws-lambda-powertools/logger": "^2.32.0",
     "@aws-lambda-powertools/tracer": "^2.32.0",
-    "@aws-sdk/client-bedrock-agentcore": "^3.1028.0",
+    "@aws-sdk/client-bedrock-agentcore": "^3.1029.0",
     "@dotenvx/dotenvx": "^1.61.0",
     "@hono/standard-validator": "^0.2.2",
     "@hono/swagger-ui": "^0.6.1",
