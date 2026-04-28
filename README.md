@@ -1,36 +1,133 @@
-# Welcome to your CDK TypeScript project
+# AWS CDK Agent Core
 
-This is a blank project for CDK development with TypeScript.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+Amazon Bedrock AgentCore と Strands Agents SDK を活用したマルチエージェントシステムの CDK プロジェクトです。
+CloudFront + API Gateway + AgentCore Runtime 上で動作する AI エージェントを、Knowledge Base・メモリ・各種ツール連携とともにデプロイします。
 
 ## Architecture
 
 ![](./docs/Architecture.drawio.png)
 
-## Useful commands
+## プロジェクト構成
+
+```
+.
+├── bin/                        # CDK エントリポイント・パラメータ定義
+│   └── parameter.ts            # スタックパラメータ（モデルID、Cognito、API GW設定等）
+├── lib/
+│   ├── constructs/             # CDK コンストラクト
+│   │   ├── agent-core.ts       # AgentCore Runtime / Memory / Secrets Manager
+│   │   ├── api-gw.ts           # API Gateway（Buffered / Stream）+ CloudFront 連携
+│   │   ├── auth.ts             # Cognito UserPool / Client
+│   │   ├── cdn.ts              # CloudFront + S3（フロントエンドホスティング）
+│   │   ├── datastore.ts        # DynamoDB（ログテーブル / RSSフィードテーブル）
+│   │   ├── knowledge-base.ts   # Bedrock Knowledge Base（S3 Vectors）
+│   │   ├── estate-knowledge-base.ts  # 不動産ナレッジベース
+│   │   └── rss-retriever.ts    # RSS取得 Lambda + EventBridge Scheduler
+│   ├── stack/
+│   │   ├── agent-core-stack.ts # メインスタック（全コンストラクトの統合）
+│   │   └── sample-stack.ts     # サンプルスタック
+│   ├── pipeline-stack.ts       # CodePipeline + Slack通知
+│   └── pipeline-app-stage.ts   # パイプラインステージ定義
+├── src/
+│   ├── agent/                  # AgentCore Runtime アプリケーション（Python / FastAPI）
+│   │   ├── main.py             # FastAPI エントリポイント（SSE ストリーミング対応）
+│   │   ├── sub_agents.py       # サブエージェント定義
+│   │   ├── agent_tools.py      # ツール実装（天気、検索、RSS、KB検索等）
+│   │   ├── models.py           # Pydantic / PynamoDB モデル
+│   │   └── settings.py         # 環境変数ベースの設定
+│   ├── lambda/
+│   │   ├── apigw-router/       # API Gateway → AgentCore プロキシ Lambda
+│   │   └── rss-retriever.ts    # RSS フィード取得 Lambda
+│   └── cloudfront/
+│       └── index.js            # CloudFront Functions（リダイレクト処理）
+├── tests/                      # テスト（Vitest / pytest）
+└── tools/                      # ユーティリティスクリプト
+```
+
+## 主要コンポーネント
+
+### エージェント構成（Strands Agents）
+
+メインエージェントが以下のサブエージェントをツールとして呼び出すマルチエージェント構成:
+
+| サブエージェント | 機能 | ツール |
+|---|---|---|
+| weather_agent | 天気情報取得 | Open-Meteo API / geopy |
+| search_agent | Web検索 | Tavily MCP |
+| aws_rss_agent | AWS最新ニュース取得 | RSS フィード解析 |
+| react_agent | フロントエンド ベストプラクティス | Bedrock Knowledge Base |
+| estate_agent | 不動産情報検索 | Bedrock Knowledge Base（不動産） |
+| aws_access_agent | AWS環境調査 | strands-tools use_aws |
+
+### AWSリソース
+
+- Amazon Bedrock AgentCore Runtime（コンテナベースのエージェント実行環境）
+- Amazon Bedrock Knowledge Base × 2（S3 Vectors / Titan Embed V2）
+- Amazon Bedrock AgentCore Memory（セッション管理）
+- Amazon API Gateway（Buffered API + Stream API）
+- Amazon CloudFront + S3（フロントエンド配信）
+- Amazon Cognito（認証）
+- Amazon DynamoDB（ログ / RSSフィード）
+- AWS Lambda（API ルーター / RSS取得）
+- Amazon EventBridge Scheduler（RSS定期取得）
+- AWS CodePipeline（CI/CD）
+- AWS Chatbot + SNS（Slack通知）
+
+## 技術スタック
+
+- IaC: AWS CDK (TypeScript)
+- Agent: Strands Agents SDK (Python) + FastAPI
+- LLM: Amazon Nova Pro / Nova Lite
+- Embedding: Amazon Titan Embed Text V2
+- Runtime: Node.js 24.x / Python 3.14
+- パッケージ管理: pnpm (TypeScript) / uv (Python)
+- Lint/Format: Biome (TypeScript) / Ruff (Python)
+- テスト: Vitest (TypeScript) / pytest (Python)
+
+## セットアップ
+
+### 前提条件
+
+- Node.js (`.node-version` 参照)
+- Python 3.14+
+- pnpm
+- uv
+- AWS CLI（認証設定済み）
+
+### インストール
+
+```bash
+pnpm install
+```
+
+### デプロイ
+
+```bash
+pnpm cdk deploy
+```
+
+## 開発コマンド
 
 ### CDK
-* `pnpm run build`   compile typescript to js
-* `pnpm run watch`   watch for changes and compile
-* `pnpm run test`    perform the vitest unit tests
-* `pnpm cdk deploy`  deploy this stack to your default AWS account/region
-* `pnpm cdk diff`    compare deployed stack with current state
-* `pnpm cdk synth`   emits the synthesized CloudFormation template
 
-### Application（Lambda Proxy, Port:3000）
+| コマンド | 説明 |
+|---|---|
+| `pnpm run build` | TypeScript 型チェック |
+| `pnpm run test` | Vitest ユニットテスト実行 |
+| `pnpm cdk synth` | CloudFormation テンプレート生成 |
+| `pnpm cdk deploy` | スタックデプロイ |
+| `pnpm cdk diff` | デプロイ済みスタックとの差分確認 |
 
-Local Lambda Proxy to AgentCore×FastAPI (on AWS)
+### アプリケーション
 
-* `pnpm dev`         run lambda proxy with Hono
-* `pnpm biome:fix`   apply format/lint on TypeScript files
-* `pnpm ruff:fix`    apply format/lint on Python files
+| コマンド | 説明 |
+|---|---|
+| `pnpm dev` | Lambda プロキシ ローカル起動（Port:3000） |
+| `pnpm biome:fix` | TypeScript フォーマット/リント適用 |
+| `pnpm ruff:fix` | Python フォーマット/リント適用 |
+| `pnpm pytest` | Python テスト実行 |
 
-
-
-### Application（AgentCore+FastAPI, Port:8080）
-
-Local AgentCore×FastAPI with AWS Environment
+### AgentCore ローカル起動（Port:8080）
 
 ```bash
 cd src/agent
@@ -39,51 +136,39 @@ source .venv/bin/activate
 python main.py
 ```
 
-
-## Cognito Opration
+## Cognito 操作
 
 ```bash
 export USER_POOL_ID="ap-northeast-1_xxxxxxxxx"
 export CLIENT_ID="xxxxxxxxxxxxxxxxxxxxxx"
 export COGNITO_USER_NAME="xxxxxxxxxxx"
 export COGNITO_PASSWORD="xxxxxxxxxxxx"
-export COGNITO_CONFIRMATION_CODE="xxxxxxx"
 
-# Set cognito user's password by admin
+# パスワード設定（管理者）
 aws cognito-idp admin-set-user-password \
   --user-pool-id ${USER_POOL_ID} \
   --username ${COGNITO_USER_NAME} \
   --password ${COGNITO_PASSWORD} \
   --permanent
 
-# Signup by user
-aws cognito-idp confirm-sign-up \
-  --client-id ${CLIENT_ID} \
-  --username ${COGNITO_USER_NAME} \
-  --confirmation-code ${COGNITO_CONFIRMATION_CODE}
-
-# Enable cognito user by user
+# ユーザー有効化
 aws cognito-idp admin-enable-user \
   --user-pool-id ${USER_POOL_ID} \
   --username ${COGNITO_USER_NAME}
 
-# Initiate cognito user  auth by admin
+# 認証トークン取得
 aws cognito-idp admin-initiate-auth \
   --user-pool-id ${USER_POOL_ID} \
   --client-id ${CLIENT_ID} \
   --auth-flow "ADMIN_USER_PASSWORD_AUTH" \
   --auth-parameters USERNAME=${COGNITO_USER_NAME},PASSWORD=${COGNITO_PASSWORD}
-
-
-# Initiate cognito user  auth by admin
-aws cognito-idp initiate-auth \
-  --client-id ${CLIENT_ID} \
-  --auth-flow "USER_PASSWORD_AUTH" \
-  --auth-parameters USERNAME=${COGNITO_USER_NAME},PASSWORD=${COGNITO_PASSWORD}
 ```
 
-## Endpoints
+## エンドポイント
 
-- http://localhost:8080/invocations
-- http://localhost:3000/invoke
-- https://xxxxxxx.execute-api.ap-northeast-1.amazonaws.com/v1/invoke
+| エンドポイント | 用途 |
+|---|---|
+| `http://localhost:8080/invocations` | AgentCore ローカル（SSE） |
+| `http://localhost:3000/invoke` | Lambda プロキシ ローカル |
+| `https://<distribution>.cloudfront.net/api/invoke` | 本番（Stream API） |
+| `https://<distribution>.cloudfront.net/api/*` | 本番（Buffered API） |
