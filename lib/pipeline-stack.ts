@@ -2,6 +2,7 @@ import * as cdk from "aws-cdk-lib"
 import {
   aws_chatbot as chatbot,
   aws_codepipeline as codepipeline,
+  aws_iam as iam,
   aws_logs as logs,
   aws_sns as sns,
 } from "aws-cdk-lib"
@@ -18,9 +19,15 @@ export class PipelineStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: StackParameters) {
     super(scope, id, props)
 
+    const pipelineRole = new iam.Role(this, "PipelineRole", {
+      roleName: "AwsCdkAgentCorePipelineRole",
+      assumedBy: new iam.ServicePrincipal("codepipeline.amazonaws.com"),
+    })
+
     const pipeline = new CodePipeline(this, "AwsCdkAgentCorePipeline", {
       pipelineName: "AwsCdkAgentCorePipeline",
       pipelineType: cdk.aws_codepipeline.PipelineType.V2,
+      role: pipelineRole,
       codeBuildDefaults: {
         buildEnvironment: {
           computeType: cdk.aws_codebuild.ComputeType.SMALL,
