@@ -40,6 +40,7 @@ export class PipelineStack extends cdk.Stack {
           props.githubRepoConfig.repoBranch,
         ),
         commands: [
+          "n 24.13.0",
           "corepack enable",
           "pnpm install --frozen-lockfile",
           "pnpm run build",
