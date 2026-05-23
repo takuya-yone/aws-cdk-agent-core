@@ -1,3 +1,6 @@
 allowBuilds:
   aws-sdk: true
   esbuild: true
+minimumReleaseAgeExclude:
+  - '@aws-sdk/client-bedrock-agentcore@3.1053.0'
+minimumReleaseAgeStrict: false
