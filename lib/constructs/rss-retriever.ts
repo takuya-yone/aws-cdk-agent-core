@@ -28,7 +28,7 @@ export class RssRetrieverConstruct extends Construct {
         functionName: rssFeedRetrieverLambdaName,
         description:
           "A Lambda function that retrieves RSS feed and stores it in DynamoDB",
-        entry: "src/lambda/rss-retriever.ts",
+        entry: "src/lambda/rss-retriever/index.ts",
         handler: "handler",
         timeout: Duration.seconds(300),
         memorySize: 256,
