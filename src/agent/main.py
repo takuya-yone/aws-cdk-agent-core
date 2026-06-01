@@ -37,6 +37,7 @@ from sub_agents import (
     goverment_data_agent,
     react_agent,
     search_agent,
+    tagosaku_agent,
     weather_agent,
 )
 from utils import logger
@@ -69,6 +70,45 @@ def call_weather_agent(city: str) -> str:
     logger.info(
         f"Weather agent called for city: {city}",
         extra={"city": city, "tool": "call_weather_agent"},
+    )
+    return result
+
+
+@tool
+def call_tagosaku_agent(
+    theme: str,
+    speaker: str = "Claude",
+    source: str = "スズキタゴサク",
+    count: int = 7,
+    region: str = "ap-northeast-1",
+) -> str:
+    """
+    Amazon Bedrock 経由でタゴサク構文を生成する。
+
+    Args:
+        theme:   構文のテーマ（例: "AWS Cognito", "朝会", "育児"）
+        speaker: 語り手の名前（デフォルト: "Claude"）
+        source:  情報源・黒幕の名前（デフォルト: "スズキタゴサク"）
+        count:   生成する件数（デフォルト: 7）
+        region:  AWS リージョン（デフォルト: "ap-northeast-1"）
+
+    Returns:
+        生成されたタゴサク構文の文字列
+    """
+
+    result = tagosaku_agent(
+        f"Generate Tagosaku text for {theme} with speaker {speaker}, source {source}, count {count}, region {region}"
+    )
+    logger.info(
+        f"Tagosaku agent called for theme: {theme}, speaker: {speaker}, source: {source}, count: {count}, region: {region}",
+        extra={
+            "theme": theme,
+            "speaker": speaker,
+            "source": source,
+            "count": count,
+            "region": region,
+            "tool": "call_tagosaku_agent",
+        },
     )
     return result
 
@@ -259,11 +299,13 @@ async def entrypoint(invocation_id: str, payload: InvocationRequestModel):
             call_react_agent,
             call_aws_access_agent,
             call_estate_agent,
+            call_tagosaku_agent,
             # call_goverment_data_agent,
         ],
         system_prompt="""
             You are a kind AI assistant.
             Please answer user questions politely.
+            If Tagosaku-style text generation is needed, use call_tagosaku_agent to generate it.
             If real estate information is needed, use call_estate_agent to retrieve it.
             If front-end/React/Next.js best practices are needed, use call_react_agent to provide guidance.
             If weather information is needed, please use the call_weather_agent.

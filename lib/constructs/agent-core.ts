@@ -68,6 +68,7 @@ export class AgentCoreConstruct extends Construct {
         POWERTOOLS_SERVICE_NAME: "StrandsAgentRuntime",
         MODEL_ID: props.agentCoreConfig.modelId,
         KB_MODEL_ID: props.agentCoreConfig.kbModelId,
+        TAGOSAKU_MODEL_ID: props.agentCoreConfig.tagosakuModelId,
         TAVILY_SECRET_NAME: tavilySecret.secretName,
         MEMORY_ID: memory.memoryId,
         BEDROCK_KB_ID: props.knowledgeBase.ref,

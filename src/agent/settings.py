@@ -27,6 +27,11 @@ class ModelSettings(BaseSettings):
         )
 
 
+class TagosakuAgentSettings(BaseSettings):
+    tagosaku_model_id: str
+    tagosaku_max_tokens: int = 1024
+
+
 class TavilySettings(BaseSettings):
     tavily_secret_name: str
 
@@ -72,3 +77,4 @@ memory_settings = AgentCoreMemorySettings()
 knowledge_base_settings = KnowledgeBaseSettings()
 estate_knowledge_base_settings = EstateKnowledgeBaseSettings()
 log_settings = LogSettings()
+tagosaku_agent_settings = TagosakuAgentSettings()

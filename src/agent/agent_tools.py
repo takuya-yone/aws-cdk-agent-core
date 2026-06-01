@@ -1,3 +1,5 @@
+import json
+
 import boto3
 import feedparser
 import requests
@@ -8,11 +10,13 @@ from settings import (
     aws_rss_settings,
     estate_knowledge_base_settings,
     knowledge_base_settings,
+    tagosaku_agent_settings,
     tavily_settings,
 )
 from strands import tool
 from strands.tools.mcp import MCPClient
 from tavily import TavilyClient
+from templates import TAGOSAKU_SYSTEM_PROMPT, TAGOSAKU_USER_PROMPT
 from utils import logger
 
 tavily_client = TavilyClient(api_key=tavily_settings.tavily_api_key)
@@ -237,3 +241,54 @@ def get_estate_info(query: str) -> dict:
         },
     )
     return text
+
+
+@tool
+def generate_tagosaku_text(
+    theme: str,
+    speaker: str = "Claude",
+    source: str = "スズキタゴサク",
+    count: int = 7,
+    region: str = "ap-northeast-1",
+) -> str:
+    """
+    Amazon Bedrock 経由でタゴサク構文を生成する。
+
+    Args:
+        theme:   構文のテーマ（例: "AWS Cognito", "朝会", "育児"）
+        speaker: 語り手の名前（デフォルト: "Claude"）
+        source:  情報源・黒幕の名前（デフォルト: "スズキタゴサク"）
+        count:   生成する件数（デフォルト: 7）
+        region:  AWS リージョン（デフォルト: "ap-northeast-1"）
+
+    Returns:
+        生成されたタゴサク構文の文字列
+    """
+    client = boto3.client("bedrock-runtime", region_name=region)
+
+    system = TAGOSAKU_SYSTEM_PROMPT.format(speaker=speaker, source=source)
+    user = TAGOSAKU_USER_PROMPT.format(
+        theme=theme,
+        speaker=speaker,
+        source=source,
+        count=count,
+    )
+
+    body = json.dumps(
+        {
+            "anthropic_version": "bedrock-2023-05-31",
+            "max_tokens": tagosaku_agent_settings.tagosaku_max_tokens,
+            "system": system,
+            "messages": [{"role": "user", "content": user}],
+        }
+    )
+
+    response = client.invoke_model(
+        modelId=tagosaku_agent_settings.tagosaku_model_id,
+        contentType="application/json",
+        accept="application/json",
+        body=body,
+    )
+
+    result = json.loads(response["body"].read())
+    return result["content"][0]["text"]

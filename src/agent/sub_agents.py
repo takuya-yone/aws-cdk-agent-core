@@ -1,4 +1,5 @@
 from agent_tools import (
+    generate_tagosaku_text,
     get_aws_rss_feed,
     get_estate_info,
     get_frontend_best_practices,
@@ -22,6 +23,16 @@ weather_agent = Agent(
         "You are an agent that provides weather information. You will also tell the current time along with the weather. Use the get_weather tool to get the current weather for a specified city, and the current_time tool to get the current time. Timezone is Asia/Tokyo. Answer in Japanese."
     ),
     tools=[get_weather, current_time],
+)
+
+
+tagosaku_agent = Agent(
+    name="tagosaku_agent",
+    model=model,
+    system_prompt=(
+        "You are an agent that generates Tagosaku-style text based on user input. Use the generate_tagosaku_text tool to create Tagosaku text. Answer in Japanese."
+    ),
+    tools=[generate_tagosaku_text],
 )
 
 

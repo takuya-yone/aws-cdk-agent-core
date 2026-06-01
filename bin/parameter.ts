@@ -31,10 +31,12 @@ type ModelIdType =
   | "apac.amazon.nova-pro-v1:0"
   | "openai.gpt-oss-120b-1:0"
   | "openai.gpt-oss-20b-1:0"
+  | "global.anthropic.claude-sonnet-4-6"
 
 export type AgentCoreConfig = {
   modelId: ModelIdType
   kbModelId: ModelIdType
+  tagosakuModelId: ModelIdType
   kbResultNums: number
   estateKbResultNums: number
 }
@@ -82,6 +84,7 @@ export const defaultStackParameters: StackParameters = {
   agentCoreConfig: {
     modelId: "apac.amazon.nova-pro-v1:0",
     kbModelId: "global.amazon.nova-2-lite-v1:0",
+    tagosakuModelId: "global.anthropic.claude-sonnet-4-6",
     kbResultNums: 10,
     estateKbResultNums: 10,
   },
