@@ -246,8 +246,8 @@ def get_estate_info(query: str) -> dict:
 @tool
 def generate_tagosaku_text(
     theme: str,
-    speaker: str,
-    source: str,
+    speaker: str = "スズキタゴサク",
+    location: str = "中野区野方警察署",
     count: int = 7,
     region: str = "ap-northeast-1",
 ) -> str:
@@ -256,8 +256,8 @@ def generate_tagosaku_text(
 
     Args:
         theme:   構文のテーマ（例: "AWS Cognito", "朝会", "育児"）
-        speaker: 語り手の名前（デフォルト: "Claude"）
-        source:  情報源・黒幕の名前（デフォルト: "スズキタゴサク"）
+        speaker: 語り手の名前（デフォルト: "スズキタゴサク"）
+        location:  撮影場所（デフォルト: "中野区野方警察署"）
         count:   生成する件数（デフォルト: 7）
         region:  AWS リージョン（デフォルト: "ap-northeast-1"）
 
@@ -266,11 +266,11 @@ def generate_tagosaku_text(
     """
     client = boto3.client("bedrock-runtime", region_name=region)
 
-    system = TAGOSAKU_SYSTEM_PROMPT.format(speaker=speaker, source=source)
+    system = TAGOSAKU_SYSTEM_PROMPT.format(speaker=speaker, location=location)
     user = TAGOSAKU_USER_PROMPT.format(
         theme=theme,
         speaker=speaker,
-        source=source,
+        location=location,
         count=count,
     )
 

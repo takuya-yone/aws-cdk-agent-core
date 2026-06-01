@@ -77,8 +77,8 @@ def call_weather_agent(city: str) -> str:
 @tool
 def call_tagosaku_agent(
     theme: str,
-    speaker: str = "Claude",
-    source: str = "スズキタゴサク",
+    speaker: str = "スズキタゴサク",
+    location: str = "中野区野方警察署",
     count: int = 7,
     region: str = "ap-northeast-1",
 ) -> str:
@@ -87,8 +87,8 @@ def call_tagosaku_agent(
 
     Args:
         theme:   構文のテーマ（例: "AWS Cognito", "朝会", "育児"）
-        speaker: 語り手の名前（デフォルト: "Claude"）
-        source:  情報源・黒幕の名前（デフォルト: "スズキタゴサク"）
+        speaker: 語り手の名前（デフォルト: "スズキタゴサク"）
+        location:  撮影場所（デフォルト: "中野区野方警察署"）
         count:   生成する件数（デフォルト: 7）
         region:  AWS リージョン（デフォルト: "ap-northeast-1"）
 
@@ -97,14 +97,14 @@ def call_tagosaku_agent(
     """
 
     result = tagosaku_agent(
-        f"Generate Tagosaku text for {theme} with speaker {speaker}, source {source}, count {count}, region {region}"
+        f"Generate Tagosaku text for {theme} with speaker {speaker}, location {location}, count {count}, region {region}"
     )
     logger.info(
-        f"Tagosaku agent called for theme: {theme}, speaker: {speaker}, source: {source}, count: {count}, region: {region}",
+        f"Tagosaku agent called for theme: {theme}, speaker: {speaker}, location: {location}, count: {count}, region: {region}",
         extra={
             "theme": theme,
             "speaker": speaker,
-            "source": source,
+            "location": location,
             "count": count,
             "region": region,
             "tool": "call_tagosaku_agent",
