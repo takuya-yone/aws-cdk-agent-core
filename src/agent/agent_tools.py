@@ -246,8 +246,8 @@ def get_estate_info(query: str) -> dict:
 @tool
 def generate_tagosaku_text(
     theme: str,
-    speaker: str = "Claude",
-    source: str = "スズキタゴサク",
+    speaker: str,
+    source: str,
     count: int = 7,
     region: str = "ap-northeast-1",
 ) -> str:
