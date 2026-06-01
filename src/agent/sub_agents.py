@@ -30,7 +30,7 @@ tagosaku_agent = Agent(
     name="tagosaku_agent",
     model=model,
     system_prompt=(
-        "You are an agent that generates Tagosaku-style text based on user input. Use the generate_tagosaku_text tool to create Tagosaku text. Answer in Japanese."
+        "You are an agent that generates tagosaku text. Use the generate_tagosaku_text tool to create tagosaku text based on user input. Answer in Japanese. If the user's input is unclear, please perform an internet search with the tavily_mcp_client tool."
     ),
     tools=[generate_tagosaku_text, tavily_mcp_client],
 )
