@@ -14,15 +14,7 @@ TAGOSAKU_SYSTEM_PROMPT = """あなたはスズキタゴサク構文ジェネレ�
 TAGOSAKU_USER_PROMPT = """以下の条件でタゴサク構文を生成してください。
 
 テーマ：{theme}
-語り手名：{speaker}
-撮影場所：{location}
-件数：{count}件
-"""
-
-
-TAGOSAKU_USER_PROMPT = """以下の条件でタゴサク構文を生成してください。
-
-テーマ：{theme}
+テーマに関する追加情報：{additional_theme_info}
 語り手名：{speaker}
 撮影場所：{location}
 件数：{count}件
