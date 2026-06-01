@@ -32,7 +32,7 @@ tagosaku_agent = Agent(
     system_prompt=(
         "You are an agent that generates Tagosaku-style text based on user input. Use the generate_tagosaku_text tool to create Tagosaku text. Answer in Japanese."
     ),
-    tools=[generate_tagosaku_text],
+    tools=[generate_tagosaku_text, tavily_mcp_client],
 )
 
 
