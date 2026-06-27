@@ -1,0 +1,3781 @@
+{
+ "Resources": {
+  "DatastoreConstructAgentCoreLogTable339C8E21": {
+   "Type": "AWS::DynamoDB::GlobalTable",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "ActorId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "Timestamp",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "ActorId",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "Timestamp",
+      "KeyType": "RANGE"
+     }
+    ],
+    "Replicas": [
+     {
+      "Region": {
+       "Ref": "AWS::Region"
+      },
+      "Tags": [
+       {
+        "Key": "Project",
+        "Value": "AwsCdkAgentCore"
+       }
+      ]
+     }
+    ],
+    "TableName": "AgentCoreLogTable",
+    "TimeToLiveSpecification": {
+     "AttributeName": "ExpireAt",
+     "Enabled": true
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/DatastoreConstruct/AgentCoreLogTable/Resource"
+   }
+  },
+  "DatastoreConstructRssFeedTable343D4487": {
+   "Type": "AWS::DynamoDB::GlobalTable",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "Guid",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "YearMonth",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "IsoDate",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "YearMonthIsoDateGuidIndex",
+      "KeySchema": [
+       {
+        "AttributeName": "YearMonth",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "IsoDate",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "Guid",
+      "KeyType": "HASH"
+     }
+    ],
+    "Replicas": [
+     {
+      "GlobalSecondaryIndexes": [
+       {
+        "IndexName": "YearMonthIsoDateGuidIndex"
+       }
+      ],
+      "PointInTimeRecoverySpecification": {
+       "PointInTimeRecoveryEnabled": true
+      },
+      "Region": {
+       "Ref": "AWS::Region"
+      },
+      "Tags": [
+       {
+        "Key": "Project",
+        "Value": "AwsCdkAgentCore"
+       }
+      ]
+     }
+    ],
+    "TableName": "RssFeedTable",
+    "TimeToLiveSpecification": {
+     "AttributeName": "ExpiredAt",
+     "Enabled": true
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/DatastoreConstruct/RssFeedTable/Resource"
+   }
+  },
+  "RssRetrieverConstructRssFeedRetrieverLambdaLogGroup0EB017E1": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/lambda/RssFeedRetrieverLambda",
+    "RetentionInDays": 7,
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/RssRetrieverConstruct/RssFeedRetrieverLambdaLogGroup/Resource"
+   }
+  },
+  "RssRetrieverConstructRssFeedRetrieverLambdaServiceRole5338EAA8": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/RssRetrieverConstruct/RssFeedRetrieverLambda/ServiceRole/Resource"
+   }
+  },
+  "RssRetrieverConstructRssFeedRetrieverLambdaServiceRoleDefaultPolicy8612F8F5": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "xray:PutTelemetryRecords",
+        "xray:PutTraceSegments"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DatastoreConstructRssFeedTable343D4487",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DatastoreConstructRssFeedTable343D4487",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "RssRetrieverConstructRssFeedRetrieverLambdaServiceRoleDefaultPolicy8612F8F5",
+    "Roles": [
+     {
+      "Ref": "RssRetrieverConstructRssFeedRetrieverLambdaServiceRole5338EAA8"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/RssRetrieverConstruct/RssFeedRetrieverLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "RssRetrieverConstructRssFeedRetrieverLambdaC1D8E0E0": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "7a7449373b7f41543c3a065b583a31622e8bce238f567d2ccbc1e80f29077a52.zip"
+    },
+    "Description": "A Lambda function that retrieves RSS feed and stores it in DynamoDB",
+    "Environment": {
+     "Variables": {
+      "FEED_URL": "https://aws.amazon.com/about-aws/whats-new/recent/feed/",
+      "WHATSNEW_FEED_TABLE": {
+       "Ref": "DatastoreConstructRssFeedTable343D4487"
+      }
+     }
+    },
+    "FunctionName": "RssFeedRetrieverLambda",
+    "Handler": "index.handler",
+    "LoggingConfig": {
+     "LogGroup": {
+      "Ref": "RssRetrieverConstructRssFeedRetrieverLambdaLogGroup0EB017E1"
+     }
+    },
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "RssRetrieverConstructRssFeedRetrieverLambdaServiceRole5338EAA8",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs24.x",
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ],
+    "Timeout": 300,
+    "TracingConfig": {
+     "Mode": "Active"
+    }
+   },
+   "DependsOn": [
+    "RssRetrieverConstructRssFeedRetrieverLambdaServiceRoleDefaultPolicy8612F8F5",
+    "RssRetrieverConstructRssFeedRetrieverLambdaServiceRole5338EAA8"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/RssRetrieverConstruct/RssFeedRetrieverLambda/Resource",
+    "aws:asset:path": "../asset.7a7449373b7f41543c3a065b583a31622e8bce238f567d2ccbc1e80f29077a52",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "RssRetrieverConstructRssFeedRetrieverScheduleD188118D": {
+   "Type": "AWS::Scheduler::Schedule",
+   "Properties": {
+    "FlexibleTimeWindow": {
+     "Mode": "OFF"
+    },
+    "Name": "RssFeedRetrieverSchedule",
+    "ScheduleExpression": "cron(0 9 * * ? *)",
+    "ScheduleExpressionTimezone": "Asia/Tokyo",
+    "State": "ENABLED",
+    "Target": {
+     "Arn": {
+      "Fn::GetAtt": [
+       "RssRetrieverConstructRssFeedRetrieverLambdaC1D8E0E0",
+       "Arn"
+      ]
+     },
+     "RetryPolicy": {
+      "MaximumEventAgeInSeconds": 86400,
+      "MaximumRetryAttempts": 185
+     },
+     "RoleArn": {
+      "Fn::GetAtt": [
+       "SchedulerRoleForTargetc4aad0D1BB691B",
+       "Arn"
+      ]
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/RssRetrieverConstruct/RssFeedRetrieverSchedule/Resource"
+   }
+  },
+  "SchedulerRoleForTargetc4aad0D1BB691B": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Condition": {
+        "StringEquals": {
+         "aws:SourceAccount": {
+          "Ref": "AWS::AccountId"
+         },
+         "aws:SourceArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":scheduler:",
+            {
+             "Ref": "AWS::Region"
+            },
+            ":",
+            {
+             "Ref": "AWS::AccountId"
+            },
+            ":schedule-group/default"
+           ]
+          ]
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "scheduler.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/SchedulerRoleForTarget-c4aad0/Resource"
+   }
+  },
+  "SchedulerRoleForTargetc4aad0DefaultPolicy209A5473": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "RssRetrieverConstructRssFeedRetrieverLambdaC1D8E0E0",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "RssRetrieverConstructRssFeedRetrieverLambdaC1D8E0E0",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SchedulerRoleForTargetc4aad0DefaultPolicy209A5473",
+    "Roles": [
+     {
+      "Ref": "SchedulerRoleForTargetc4aad0D1BB691B"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/SchedulerRoleForTarget-c4aad0/DefaultPolicy/Resource"
+   }
+  },
+  "KnowledgeBaseConstructKnowledgeBaseVectorStoreBucket01B363C4": {
+   "Type": "AWS::S3Vectors::VectorBucket",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ],
+    "VectorBucketName": "knowledge-base-vector-store-bucket"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/KnowledgeBaseConstruct/KnowledgeBaseVectorStoreBucket"
+   }
+  },
+  "KnowledgeBaseConstructVectorStoreBucketIndexAE81DB77": {
+   "Type": "AWS::S3Vectors::Index",
+   "Properties": {
+    "DataType": "float32",
+    "Dimension": 1024,
+    "DistanceMetric": "euclidean",
+    "MetadataConfiguration": {
+     "NonFilterableMetadataKeys": [
+      "AMAZON_BEDROCK_TEXT",
+      "AMAZON_BEDROCK_METADATA"
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ],
+    "VectorBucketArn": {
+     "Fn::GetAtt": [
+      "KnowledgeBaseConstructKnowledgeBaseVectorStoreBucket01B363C4",
+      "VectorBucketArn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/KnowledgeBaseConstruct/VectorStoreBucketIndex"
+   }
+  },
+  "KnowledgeBaseConstructKnowledgeBaseDataSourceBucket06256F3C": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "aws-cdk:auto-delete-objects",
+      "Value": "true"
+     },
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/KnowledgeBaseConstruct/KnowledgeBaseDataSourceBucket/Resource"
+   }
+  },
+  "KnowledgeBaseConstructKnowledgeBaseDataSourceBucketPolicyEF6DDBC9": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "KnowledgeBaseConstructKnowledgeBaseDataSourceBucket06256F3C"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:DeleteObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:PutBucketPolicy"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::GetAtt": [
+          "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+          "Arn"
+         ]
+        }
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "KnowledgeBaseConstructKnowledgeBaseDataSourceBucket06256F3C",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "KnowledgeBaseConstructKnowledgeBaseDataSourceBucket06256F3C",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/KnowledgeBaseConstruct/KnowledgeBaseDataSourceBucket/Policy/Resource"
+   }
+  },
+  "KnowledgeBaseConstructKnowledgeBaseDataSourceBucketAutoDeleteObjectsCustomResource461ECE52": {
+   "Type": "Custom::S3AutoDeleteObjects",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+      "Arn"
+     ]
+    },
+    "BucketName": {
+     "Ref": "KnowledgeBaseConstructKnowledgeBaseDataSourceBucket06256F3C"
+    }
+   },
+   "DependsOn": [
+    "KnowledgeBaseConstructKnowledgeBaseDataSourceBucketPolicyEF6DDBC9"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/KnowledgeBaseConstruct/KnowledgeBaseDataSourceBucket/AutoDeleteObjectsCustomResource/Default"
+   }
+  },
+  "KnowledgeBaseConstructKnowledgeBaseRoleBFD69278": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "bedrock.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Policies": [
+     {
+      "PolicyDocument": {
+       "Statement": [
+        {
+         "Action": [
+          "aws-marketplace:Subscribe",
+          "aws-marketplace:Unsubscribe",
+          "aws-marketplace:ViewSubscriptions"
+         ],
+         "Effect": "Allow",
+         "Resource": "*"
+        }
+       ],
+       "Version": "2012-10-17"
+      },
+      "PolicyName": "MarketPlacePolicy"
+     },
+     {
+      "PolicyDocument": {
+       "Statement": [
+        {
+         "Action": "bedrock:InvokeModel",
+         "Effect": "Allow",
+         "Resource": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":bedrock:",
+            {
+             "Ref": "AWS::Region"
+            },
+            "::foundation-model/amazon.titan-embed-text-v2:0"
+           ]
+          ]
+         }
+        }
+       ],
+       "Version": "2012-10-17"
+      },
+      "PolicyName": "BedrockInvokePolicy"
+     },
+     {
+      "PolicyDocument": {
+       "Statement": [
+        {
+         "Action": [
+          "s3vectors:DeleteVectors",
+          "s3vectors:GetIndex",
+          "s3vectors:GetVectors",
+          "s3vectors:PutVectors",
+          "s3vectors:QueryVectors"
+         ],
+         "Effect": "Allow",
+         "Resource": [
+          {
+           "Fn::GetAtt": [
+            "KnowledgeBaseConstructKnowledgeBaseVectorStoreBucket01B363C4",
+            "VectorBucketArn"
+           ]
+          },
+          {
+           "Fn::Join": [
+            "",
+            [
+             {
+              "Fn::GetAtt": [
+               "KnowledgeBaseConstructKnowledgeBaseVectorStoreBucket01B363C4",
+               "VectorBucketArn"
+              ]
+             },
+             "/*"
+            ]
+           ]
+          }
+         ]
+        }
+       ],
+       "Version": "2012-10-17"
+      },
+      "PolicyName": "VectorStoreBucketPolicy"
+     }
+    ],
+    "RoleName": "BedrockKnowledgeBaseRole",
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/KnowledgeBaseConstruct/KnowledgeBaseRole/Resource"
+   }
+  },
+  "KnowledgeBaseConstructKnowledgeBaseRoleDefaultPolicyE0403BC7": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "KnowledgeBaseConstructKnowledgeBaseDataSourceBucket06256F3C",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "KnowledgeBaseConstructKnowledgeBaseDataSourceBucket06256F3C",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "KnowledgeBaseConstructKnowledgeBaseRoleDefaultPolicyE0403BC7",
+    "Roles": [
+     {
+      "Ref": "KnowledgeBaseConstructKnowledgeBaseRoleBFD69278"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/KnowledgeBaseConstruct/KnowledgeBaseRole/DefaultPolicy/Resource"
+   }
+  },
+  "KnowledgeBaseConstructBedrockKnowledgeBase2A00021A": {
+   "Type": "AWS::Bedrock::KnowledgeBase",
+   "Properties": {
+    "KnowledgeBaseConfiguration": {
+     "Type": "VECTOR",
+     "VectorKnowledgeBaseConfiguration": {
+      "EmbeddingModelArn": {
+       "Fn::Join": [
+        "",
+        [
+         "arn:",
+         {
+          "Ref": "AWS::Partition"
+         },
+         ":bedrock:",
+         {
+          "Ref": "AWS::Region"
+         },
+         "::foundation-model/amazon.titan-embed-text-v2:0"
+        ]
+       ]
+      },
+      "EmbeddingModelConfiguration": {
+       "BedrockEmbeddingModelConfiguration": {
+        "Dimensions": 1024
+       }
+      }
+     }
+    },
+    "Name": "BedrockKnowledgeBase",
+    "RoleArn": {
+     "Fn::GetAtt": [
+      "KnowledgeBaseConstructKnowledgeBaseRoleBFD69278",
+      "Arn"
+     ]
+    },
+    "StorageConfiguration": {
+     "S3VectorsConfiguration": {
+      "IndexArn": {
+       "Fn::GetAtt": [
+        "KnowledgeBaseConstructVectorStoreBucketIndexAE81DB77",
+        "IndexArn"
+       ]
+      },
+      "VectorBucketArn": {
+       "Fn::GetAtt": [
+        "KnowledgeBaseConstructKnowledgeBaseVectorStoreBucket01B363C4",
+        "VectorBucketArn"
+       ]
+      }
+     },
+     "Type": "S3_VECTORS"
+    },
+    "Tags": {
+     "Project": "AwsCdkAgentCore"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/KnowledgeBaseConstruct/BedrockKnowledgeBase"
+   }
+  },
+  "KnowledgeBaseConstructBedrockKnowledgeBaseDataStore48EDC7FE": {
+   "Type": "AWS::Bedrock::DataSource",
+   "Properties": {
+    "DataSourceConfiguration": {
+     "S3Configuration": {
+      "BucketArn": {
+       "Fn::GetAtt": [
+        "KnowledgeBaseConstructKnowledgeBaseDataSourceBucket06256F3C",
+        "Arn"
+       ]
+      }
+     },
+     "Type": "S3"
+    },
+    "KnowledgeBaseId": {
+     "Ref": "KnowledgeBaseConstructBedrockKnowledgeBase2A00021A"
+    },
+    "Name": {
+     "Ref": "KnowledgeBaseConstructKnowledgeBaseDataSourceBucket06256F3C"
+    },
+    "VectorIngestionConfiguration": {
+     "ChunkingConfiguration": {
+      "ChunkingStrategy": "SEMANTIC",
+      "SemanticChunkingConfiguration": {
+       "BreakpointPercentileThreshold": 95,
+       "BufferSize": 0,
+       "MaxTokens": 500
+      }
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/KnowledgeBaseConstruct/BedrockKnowledgeBaseDataStore"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ]
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip"
+    },
+    "Timeout": 900,
+    "MemorySize": 128,
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs24.x",
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Lambda function for auto-deleting objects in ",
+       {
+        "Ref": "KnowledgeBaseConstructKnowledgeBaseDataSourceBucket06256F3C"
+       },
+       " S3 bucket."
+      ]
+     ]
+    }
+   },
+   "DependsOn": [
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler",
+    "aws:asset:path": "../asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6",
+    "aws:asset:property": "Code"
+   }
+  },
+  "EstateKnowledgeBaseConstructEstateKnowledgeBaseVectorStoreBucket67CC693C": {
+   "Type": "AWS::S3Vectors::VectorBucket",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ],
+    "VectorBucketName": "estate-knowledge-base-vector-store-bucket"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/EstateKnowledgeBaseConstruct/EstateKnowledgeBaseVectorStoreBucket"
+   }
+  },
+  "EstateKnowledgeBaseConstructEstateKnowledgeBaseVectorStoreBucketIndex7AE722EC": {
+   "Type": "AWS::S3Vectors::Index",
+   "Properties": {
+    "DataType": "float32",
+    "Dimension": 1024,
+    "DistanceMetric": "euclidean",
+    "MetadataConfiguration": {
+     "NonFilterableMetadataKeys": [
+      "AMAZON_BEDROCK_TEXT",
+      "AMAZON_BEDROCK_METADATA"
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ],
+    "VectorBucketArn": {
+     "Fn::GetAtt": [
+      "EstateKnowledgeBaseConstructEstateKnowledgeBaseVectorStoreBucket67CC693C",
+      "VectorBucketArn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/EstateKnowledgeBaseConstruct/EstateKnowledgeBaseVectorStoreBucketIndex"
+   }
+  },
+  "EstateKnowledgeBaseConstructEstateKnowledgeBaseDataSourceBucket5DCF17B7": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "aws-cdk:auto-delete-objects",
+      "Value": "true"
+     },
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/EstateKnowledgeBaseConstruct/EstateKnowledgeBaseDataSourceBucket/Resource"
+   }
+  },
+  "EstateKnowledgeBaseConstructEstateKnowledgeBaseDataSourceBucketPolicy10974773": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "EstateKnowledgeBaseConstructEstateKnowledgeBaseDataSourceBucket5DCF17B7"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:DeleteObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:PutBucketPolicy"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::GetAtt": [
+          "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+          "Arn"
+         ]
+        }
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "EstateKnowledgeBaseConstructEstateKnowledgeBaseDataSourceBucket5DCF17B7",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "EstateKnowledgeBaseConstructEstateKnowledgeBaseDataSourceBucket5DCF17B7",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/EstateKnowledgeBaseConstruct/EstateKnowledgeBaseDataSourceBucket/Policy/Resource"
+   }
+  },
+  "EstateKnowledgeBaseConstructEstateKnowledgeBaseDataSourceBucketAutoDeleteObjectsCustomResourceD4ACD8F3": {
+   "Type": "Custom::S3AutoDeleteObjects",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+      "Arn"
+     ]
+    },
+    "BucketName": {
+     "Ref": "EstateKnowledgeBaseConstructEstateKnowledgeBaseDataSourceBucket5DCF17B7"
+    }
+   },
+   "DependsOn": [
+    "EstateKnowledgeBaseConstructEstateKnowledgeBaseDataSourceBucketPolicy10974773"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/EstateKnowledgeBaseConstruct/EstateKnowledgeBaseDataSourceBucket/AutoDeleteObjectsCustomResource/Default"
+   }
+  },
+  "EstateKnowledgeBaseConstructEstateKnowledgeBaseRoleD701B645": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "bedrock.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Policies": [
+     {
+      "PolicyDocument": {
+       "Statement": [
+        {
+         "Action": [
+          "aws-marketplace:Subscribe",
+          "aws-marketplace:Unsubscribe",
+          "aws-marketplace:ViewSubscriptions"
+         ],
+         "Effect": "Allow",
+         "Resource": "*"
+        }
+       ],
+       "Version": "2012-10-17"
+      },
+      "PolicyName": "MarketPlacePolicy"
+     },
+     {
+      "PolicyDocument": {
+       "Statement": [
+        {
+         "Action": "bedrock:InvokeModel",
+         "Effect": "Allow",
+         "Resource": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":bedrock:",
+            {
+             "Ref": "AWS::Region"
+            },
+            "::foundation-model/amazon.titan-embed-text-v2:0"
+           ]
+          ]
+         }
+        }
+       ],
+       "Version": "2012-10-17"
+      },
+      "PolicyName": "BedrockInvokePolicy"
+     },
+     {
+      "PolicyDocument": {
+       "Statement": [
+        {
+         "Action": [
+          "s3vectors:DeleteVectors",
+          "s3vectors:GetIndex",
+          "s3vectors:GetVectors",
+          "s3vectors:PutVectors",
+          "s3vectors:QueryVectors"
+         ],
+         "Effect": "Allow",
+         "Resource": [
+          {
+           "Fn::GetAtt": [
+            "EstateKnowledgeBaseConstructEstateKnowledgeBaseVectorStoreBucket67CC693C",
+            "VectorBucketArn"
+           ]
+          },
+          {
+           "Fn::Join": [
+            "",
+            [
+             {
+              "Fn::GetAtt": [
+               "EstateKnowledgeBaseConstructEstateKnowledgeBaseVectorStoreBucket67CC693C",
+               "VectorBucketArn"
+              ]
+             },
+             "/*"
+            ]
+           ]
+          }
+         ]
+        }
+       ],
+       "Version": "2012-10-17"
+      },
+      "PolicyName": "VectorStoreBucketPolicy"
+     }
+    ],
+    "RoleName": "EstateKnowledgeBaseRole",
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/EstateKnowledgeBaseConstruct/EstateKnowledgeBaseRole/Resource"
+   }
+  },
+  "EstateKnowledgeBaseConstructEstateKnowledgeBaseRoleDefaultPolicy106C8FCC": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "EstateKnowledgeBaseConstructEstateKnowledgeBaseDataSourceBucket5DCF17B7",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "EstateKnowledgeBaseConstructEstateKnowledgeBaseDataSourceBucket5DCF17B7",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EstateKnowledgeBaseConstructEstateKnowledgeBaseRoleDefaultPolicy106C8FCC",
+    "Roles": [
+     {
+      "Ref": "EstateKnowledgeBaseConstructEstateKnowledgeBaseRoleD701B645"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/EstateKnowledgeBaseConstruct/EstateKnowledgeBaseRole/DefaultPolicy/Resource"
+   }
+  },
+  "EstateKnowledgeBaseConstructEstateKnowledgeBase24B3E073": {
+   "Type": "AWS::Bedrock::KnowledgeBase",
+   "Properties": {
+    "KnowledgeBaseConfiguration": {
+     "Type": "VECTOR",
+     "VectorKnowledgeBaseConfiguration": {
+      "EmbeddingModelArn": {
+       "Fn::Join": [
+        "",
+        [
+         "arn:",
+         {
+          "Ref": "AWS::Partition"
+         },
+         ":bedrock:",
+         {
+          "Ref": "AWS::Region"
+         },
+         "::foundation-model/amazon.titan-embed-text-v2:0"
+        ]
+       ]
+      },
+      "EmbeddingModelConfiguration": {
+       "BedrockEmbeddingModelConfiguration": {
+        "Dimensions": 1024
+       }
+      }
+     }
+    },
+    "Name": "EstateKnowledgeBase",
+    "RoleArn": {
+     "Fn::GetAtt": [
+      "EstateKnowledgeBaseConstructEstateKnowledgeBaseRoleD701B645",
+      "Arn"
+     ]
+    },
+    "StorageConfiguration": {
+     "S3VectorsConfiguration": {
+      "IndexArn": {
+       "Fn::GetAtt": [
+        "EstateKnowledgeBaseConstructEstateKnowledgeBaseVectorStoreBucketIndex7AE722EC",
+        "IndexArn"
+       ]
+      },
+      "VectorBucketArn": {
+       "Fn::GetAtt": [
+        "EstateKnowledgeBaseConstructEstateKnowledgeBaseVectorStoreBucket67CC693C",
+        "VectorBucketArn"
+       ]
+      }
+     },
+     "Type": "S3_VECTORS"
+    },
+    "Tags": {
+     "Project": "AwsCdkAgentCore"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/EstateKnowledgeBaseConstruct/EstateKnowledgeBase"
+   }
+  },
+  "EstateKnowledgeBaseConstructEstateKnowledgeBaseDataStore86D3CF4A": {
+   "Type": "AWS::Bedrock::DataSource",
+   "Properties": {
+    "DataSourceConfiguration": {
+     "S3Configuration": {
+      "BucketArn": {
+       "Fn::GetAtt": [
+        "EstateKnowledgeBaseConstructEstateKnowledgeBaseDataSourceBucket5DCF17B7",
+        "Arn"
+       ]
+      }
+     },
+     "Type": "S3"
+    },
+    "KnowledgeBaseId": {
+     "Ref": "EstateKnowledgeBaseConstructEstateKnowledgeBase24B3E073"
+    },
+    "Name": {
+     "Ref": "EstateKnowledgeBaseConstructEstateKnowledgeBaseDataSourceBucket5DCF17B7"
+    },
+    "VectorIngestionConfiguration": {
+     "ChunkingConfiguration": {
+      "ChunkingStrategy": "SEMANTIC",
+      "SemanticChunkingConfiguration": {
+       "BreakpointPercentileThreshold": 95,
+       "BufferSize": 0,
+       "MaxTokens": 500
+      }
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/EstateKnowledgeBaseConstruct/EstateKnowledgeBaseDataStore"
+   }
+  },
+  "AgentCoreConstructTavilySecret4E5DE73D": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "GenerateSecretString": {},
+    "Name": "TavilySecret",
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/AgentCoreConstruct/TavilySecret/Resource"
+   }
+  },
+  "AgentCoreConstructAgentCoreMemoryServiceRoleA6A96DF7": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "bedrock-agentcore.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/AgentCoreConstruct/AgentCoreMemory/ServiceRole/Resource"
+   }
+  },
+  "AgentCoreConstructAgentCoreMemory6B2EDEAA": {
+   "Type": "AWS::BedrockAgentCore::Memory",
+   "Properties": {
+    "Description": "Memory for Strands Agent",
+    "EventExpiryDuration": 7,
+    "MemoryExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "AgentCoreConstructAgentCoreMemoryServiceRoleA6A96DF7",
+      "Arn"
+     ]
+    },
+    "Name": "AgentCoreMemory",
+    "Tags": {
+     "Project": "AwsCdkAgentCore"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/AgentCoreConstruct/AgentCoreMemory/Memory"
+   }
+  },
+  "AgentCoreConstructStrandsAgentRuntimeExecutionRoleAB9022AA": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "bedrock-agentcore.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "Execution role for Bedrock Agent Core Runtime",
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonBedrockLimitedAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/ReadOnlyAccess"
+       ]
+      ]
+     }
+    ],
+    "MaxSessionDuration": 28800,
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/AgentCoreConstruct/StrandsAgentRuntime/ExecutionRole/Resource"
+   }
+  },
+  "AgentCoreConstructStrandsAgentRuntimeExecutionRoleDefaultPolicy9A278EF2": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogGroup",
+        "logs:DescribeLogStreams"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":logs:",
+          {
+           "Ref": "AWS::Region"
+          },
+          ":",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":log-group:/aws/bedrock-agentcore/runtimes/*"
+         ]
+        ]
+       },
+       "Sid": "LogGroupAccess"
+      },
+      {
+       "Action": "logs:DescribeLogGroups",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":logs:",
+          {
+           "Ref": "AWS::Region"
+          },
+          ":",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":log-group:*"
+         ]
+        ]
+       },
+       "Sid": "DescribeLogGroups"
+      },
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":logs:",
+          {
+           "Ref": "AWS::Region"
+          },
+          ":",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":log-group:/aws/bedrock-agentcore/runtimes/*:log-stream:*"
+         ]
+        ]
+       },
+       "Sid": "LogStreamAccess"
+      },
+      {
+       "Action": [
+        "xray:GetSamplingRules",
+        "xray:GetSamplingTargets",
+        "xray:PutTelemetryRecords",
+        "xray:PutTraceSegments"
+       ],
+       "Effect": "Allow",
+       "Resource": "*",
+       "Sid": "XRayAccess"
+      },
+      {
+       "Action": "cloudwatch:PutMetricData",
+       "Condition": {
+        "StringEquals": {
+         "cloudwatch:namespace": "bedrock-agentcore"
+        }
+       },
+       "Effect": "Allow",
+       "Resource": "*",
+       "Sid": "CloudWatchMetrics"
+      },
+      {
+       "Action": [
+        "bedrock-agentcore:GetWorkloadAccessToken",
+        "bedrock-agentcore:GetWorkloadAccessTokenForJWT",
+        "bedrock-agentcore:GetWorkloadAccessTokenForUserId"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":bedrock-agentcore:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":workload-identity-directory/default"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":bedrock-agentcore:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":workload-identity-directory/default/workload-identity/*"
+          ]
+         ]
+        }
+       ],
+       "Sid": "GetAgentAccessToken"
+      },
+      {
+       "Action": [
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:GetSecretValue"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "AgentCoreConstructTavilySecret4E5DE73D"
+       }
+      },
+      {
+       "Action": [
+        "bedrock-agentcore:CreateEvent",
+        "bedrock-agentcore:DeleteEvent",
+        "bedrock-agentcore:DeleteMemoryRecord",
+        "bedrock-agentcore:GetEvent",
+        "bedrock-agentcore:GetMemoryRecord",
+        "bedrock-agentcore:ListActors",
+        "bedrock-agentcore:ListEvents",
+        "bedrock-agentcore:ListMemoryRecords",
+        "bedrock-agentcore:ListSessions",
+        "bedrock-agentcore:RetrieveMemoryRecords"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "AgentCoreConstructAgentCoreMemory6B2EDEAA",
+         "MemoryArn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "bedrock:Retrieve",
+        "bedrock:RetrieveAndGenerate"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "EstateKnowledgeBaseConstructEstateKnowledgeBase24B3E073",
+          "KnowledgeBaseArn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "KnowledgeBaseConstructBedrockKnowledgeBase2A00021A",
+          "KnowledgeBaseArn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "DatastoreConstructAgentCoreLogTable339C8E21",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:BatchGetImage",
+        "ecr:GetDownloadUrlForLayer"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":ecr:",
+          {
+           "Ref": "AWS::Region"
+          },
+          ":",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":repository/",
+          {
+           "Fn::Sub": "cdk-hnb659fds-container-assets-${AWS::AccountId}-${AWS::Region}"
+          }
+         ]
+        ]
+       }
+      },
+      {
+       "Action": "ecr:GetAuthorizationToken",
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "AgentCoreConstructStrandsAgentRuntimeExecutionRoleDefaultPolicy9A278EF2",
+    "Roles": [
+     {
+      "Ref": "AgentCoreConstructStrandsAgentRuntimeExecutionRoleAB9022AA"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/AgentCoreConstruct/StrandsAgentRuntime/ExecutionRole/DefaultPolicy/Resource"
+   }
+  },
+  "AgentCoreConstructStrandsAgentRuntime228AE218": {
+   "Type": "AWS::BedrockAgentCore::Runtime",
+   "Properties": {
+    "AgentRuntimeArtifact": {
+     "ContainerConfiguration": {
+      "ContainerUri": {
+       "Fn::Sub": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-${AWS::AccountId}-${AWS::Region}:e5c749769f6c1ebe9ba742fe8c79ee10dd2a43fcf92d87b52b81e7447deea77f"
+      }
+     }
+    },
+    "AgentRuntimeName": "StrandsAgentRuntime",
+    "Description": "StrandsAgentRuntime",
+    "EnvironmentVariables": {
+     "AWS_DEFAULT_REGION": {
+      "Ref": "AWS::Region"
+     },
+     "POWERTOOLS_SERVICE_NAME": "StrandsAgentRuntime",
+     "MODEL_ID": "apac.amazon.nova-pro-v1:0",
+     "KB_MODEL_ID": "global.amazon.nova-2-lite-v1:0",
+     "TAGOSAKU_MODEL_ID": "global.anthropic.claude-sonnet-4-6",
+     "TAVILY_SECRET_NAME": {
+      "Fn::Select": [
+       0,
+       {
+        "Fn::Split": [
+         "-",
+         {
+          "Fn::Select": [
+           6,
+           {
+            "Fn::Split": [
+             ":",
+             {
+              "Ref": "AgentCoreConstructTavilySecret4E5DE73D"
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     "MEMORY_ID": {
+      "Fn::GetAtt": [
+       "AgentCoreConstructAgentCoreMemory6B2EDEAA",
+       "MemoryId"
+      ]
+     },
+     "BEDROCK_KB_ID": {
+      "Ref": "KnowledgeBaseConstructBedrockKnowledgeBase2A00021A"
+     },
+     "BEDROCK_ESTATE_KB_ID": {
+      "Ref": "EstateKnowledgeBaseConstructEstateKnowledgeBase24B3E073"
+     },
+     "LOG_TABLE_NAME": {
+      "Ref": "DatastoreConstructAgentCoreLogTable339C8E21"
+     },
+     "KB_RESULT_NUMS": "10",
+     "ESTATE_KB_RESULT_NUMS": "10"
+    },
+    "LifecycleConfiguration": {},
+    "NetworkConfiguration": {
+     "NetworkMode": "PUBLIC"
+    },
+    "ProtocolConfiguration": "HTTP",
+    "RoleArn": {
+     "Fn::GetAtt": [
+      "AgentCoreConstructStrandsAgentRuntimeExecutionRoleAB9022AA",
+      "Arn"
+     ]
+    },
+    "Tags": {
+     "Project": "AwsCdkAgentCore"
+    }
+   },
+   "DependsOn": [
+    "AgentCoreConstructStrandsAgentRuntimeExecutionRoleDefaultPolicy9A278EF2",
+    "AgentCoreConstructStrandsAgentRuntimeExecutionRoleAB9022AA"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/AgentCoreConstruct/StrandsAgentRuntime/Resource"
+   }
+  },
+  "CdnConstructStrandsFrontendAppBucketC52E2D1E": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketName": "strands-frontend-app-bucket",
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/CdnConstruct/StrandsFrontendAppBucket/Resource"
+   }
+  },
+  "CdnConstructStrandsFrontendAppBucketPolicyC84AABFB": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "CdnConstructStrandsFrontendAppBucketC52E2D1E"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:GetObject",
+       "Condition": {
+        "StringEquals": {
+         "AWS:SourceArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":cloudfront::",
+            {
+             "Ref": "AWS::AccountId"
+            },
+            ":distribution/",
+            {
+             "Ref": "CdnConstructStrandsCloudFrontDistribution8DCCEF12"
+            }
+           ]
+          ]
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "cloudfront.amazonaws.com"
+       },
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "CdnConstructStrandsFrontendAppBucketC52E2D1E",
+            "Arn"
+           ]
+          },
+          "/*"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/CdnConstruct/StrandsFrontendAppBucket/Policy/Resource"
+   }
+  },
+  "CdnConstructCfRedirectFunctionC053B9A6": {
+   "Type": "AWS::CloudFront::Function",
+   "Properties": {
+    "AutoPublish": true,
+    "FunctionCode": "// biome-ignore lint/correctness/noUnusedVariables: for handler\nasync function handler(event) {\n  var request = event.request\n  var uri = request.uri\n\n  // Check whether the URI is missing a file name.\n  if (uri.endsWith(\"/\")) {\n    request.uri += \"index.html\"\n  }\n  // Check whether the URI is missing a file extension.\n  else if (!uri.includes(\".\")) {\n    request.uri += \"/index.html\"\n  }\n\n  return request\n}\n",
+    "FunctionConfig": {
+     "Comment": {
+      "Fn::Join": [
+       "",
+       [
+        {
+         "Ref": "AWS::Region"
+        },
+        "AwsCdkAgentCore-RedirectFunctionD7B6554F"
+       ]
+      ]
+     },
+     "Runtime": "cloudfront-js-2.0"
+    },
+    "Name": {
+     "Fn::Join": [
+      "",
+      [
+       {
+        "Ref": "AWS::Region"
+       },
+       "AwsCdkAgentCore-RedirectFunctionD7B6554F"
+      ]
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/CdnConstruct/CfRedirectFunction/Resource"
+   }
+  },
+  "CdnConstructStrandsCloudFrontDistributionOrigin1S3OriginAccessControl40344731": {
+   "Type": "AWS::CloudFront::OriginAccessControl",
+   "Properties": {
+    "OriginAccessControlConfig": {
+     "Name": "AwsCdkAgentCoreAgentCoreStacOrigin1S3OriginAccessControl6BBF3F7A",
+     "OriginAccessControlOriginType": "s3",
+     "SigningBehavior": "always",
+     "SigningProtocol": "sigv4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/CdnConstruct/StrandsCloudFrontDistribution/Origin1/S3OriginAccessControl/Resource"
+   }
+  },
+  "CdnConstructStrandsCloudFrontDistribution8DCCEF12": {
+   "Type": "AWS::CloudFront::Distribution",
+   "Properties": {
+    "DistributionConfig": {
+     "CacheBehaviors": [
+      {
+       "AllowedMethods": [
+        "GET",
+        "HEAD",
+        "OPTIONS",
+        "PUT",
+        "PATCH",
+        "POST",
+        "DELETE"
+       ],
+       "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+       "Compress": true,
+       "OriginRequestPolicyId": "b689b0a8-53d0-40ab-baf2-68738e2966ac",
+       "PathPattern": "/api/invoke*",
+       "ResponseHeadersPolicyId": "5cc3b908-e619-4b99-88e5-2cf7f45965bd",
+       "TargetOriginId": "PipelineStackAwsCdkAgentCoreAgentCoreStackCdnConstructStrandsCloudFrontDistributionOrigin2468FD701",
+       "ViewerProtocolPolicy": "https-only"
+      },
+      {
+       "AllowedMethods": [
+        "GET",
+        "HEAD",
+        "OPTIONS",
+        "PUT",
+        "PATCH",
+        "POST",
+        "DELETE"
+       ],
+       "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+       "Compress": true,
+       "OriginRequestPolicyId": "b689b0a8-53d0-40ab-baf2-68738e2966ac",
+       "PathPattern": "/api*",
+       "ResponseHeadersPolicyId": "5cc3b908-e619-4b99-88e5-2cf7f45965bd",
+       "TargetOriginId": "PipelineStackAwsCdkAgentCoreAgentCoreStackCdnConstructStrandsCloudFrontDistributionOrigin35DE64E2F",
+       "ViewerProtocolPolicy": "https-only"
+      }
+     ],
+     "Comment": "StrandsCloudFrontDistribution",
+     "DefaultCacheBehavior": {
+      "AllowedMethods": [
+       "GET",
+       "HEAD"
+      ],
+      "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+      "Compress": true,
+      "FunctionAssociations": [
+       {
+        "EventType": "viewer-request",
+        "FunctionARN": {
+         "Fn::GetAtt": [
+          "CdnConstructCfRedirectFunctionC053B9A6",
+          "FunctionARN"
+         ]
+        }
+       }
+      ],
+      "TargetOriginId": "PipelineStackAwsCdkAgentCoreAgentCoreStackCdnConstructStrandsCloudFrontDistributionOrigin17A17F1DE",
+      "ViewerProtocolPolicy": "https-only"
+     },
+     "DefaultRootObject": "index.html",
+     "Enabled": true,
+     "HttpVersion": "http3",
+     "IPV6Enabled": true,
+     "Origins": [
+      {
+       "DomainName": {
+        "Fn::GetAtt": [
+         "CdnConstructStrandsFrontendAppBucketC52E2D1E",
+         "RegionalDomainName"
+        ]
+       },
+       "Id": "PipelineStackAwsCdkAgentCoreAgentCoreStackCdnConstructStrandsCloudFrontDistributionOrigin17A17F1DE",
+       "OriginAccessControlId": {
+        "Fn::GetAtt": [
+         "CdnConstructStrandsCloudFrontDistributionOrigin1S3OriginAccessControl40344731",
+         "Id"
+        ]
+       },
+       "S3OriginConfig": {
+        "OriginAccessIdentity": ""
+       }
+      },
+      {
+       "CustomOriginConfig": {
+        "OriginProtocolPolicy": "https-only",
+        "OriginSSLProtocols": [
+         "TLSv1.2"
+        ]
+       },
+       "DomainName": {
+        "Fn::Select": [
+         2,
+         {
+          "Fn::Split": [
+           "/",
+           {
+            "Fn::Join": [
+             "",
+             [
+              "https://",
+              {
+               "Ref": "ApiGwConstructAgentCoreStreamApi86E0DD33"
+              },
+              ".execute-api.",
+              {
+               "Ref": "AWS::Region"
+              },
+              ".",
+              {
+               "Ref": "AWS::URLSuffix"
+              },
+              "/",
+              {
+               "Ref": "ApiGwConstructAgentCoreStreamApiDeploymentStagev1A0B17560"
+              },
+              "/"
+             ]
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "Id": "PipelineStackAwsCdkAgentCoreAgentCoreStackCdnConstructStrandsCloudFrontDistributionOrigin2468FD701",
+       "OriginPath": {
+        "Fn::Join": [
+         "",
+         [
+          "/",
+          {
+           "Fn::Select": [
+            3,
+            {
+             "Fn::Split": [
+              "/",
+              {
+               "Fn::Join": [
+                "",
+                [
+                 "https://",
+                 {
+                  "Ref": "ApiGwConstructAgentCoreStreamApi86E0DD33"
+                 },
+                 ".execute-api.",
+                 {
+                  "Ref": "AWS::Region"
+                 },
+                 ".",
+                 {
+                  "Ref": "AWS::URLSuffix"
+                 },
+                 "/",
+                 {
+                  "Ref": "ApiGwConstructAgentCoreStreamApiDeploymentStagev1A0B17560"
+                 },
+                 "/"
+                ]
+               ]
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        ]
+       }
+      },
+      {
+       "CustomOriginConfig": {
+        "OriginProtocolPolicy": "https-only",
+        "OriginSSLProtocols": [
+         "TLSv1.2"
+        ]
+       },
+       "DomainName": {
+        "Fn::Select": [
+         2,
+         {
+          "Fn::Split": [
+           "/",
+           {
+            "Fn::Join": [
+             "",
+             [
+              "https://",
+              {
+               "Ref": "ApiGwConstructAgentCoreRestApi291EECC1"
+              },
+              ".execute-api.",
+              {
+               "Ref": "AWS::Region"
+              },
+              ".",
+              {
+               "Ref": "AWS::URLSuffix"
+              },
+              "/",
+              {
+               "Ref": "ApiGwConstructAgentCoreRestApiDeploymentStagev1E2120E78"
+              },
+              "/"
+             ]
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "Id": "PipelineStackAwsCdkAgentCoreAgentCoreStackCdnConstructStrandsCloudFrontDistributionOrigin35DE64E2F",
+       "OriginPath": {
+        "Fn::Join": [
+         "",
+         [
+          "/",
+          {
+           "Fn::Select": [
+            3,
+            {
+             "Fn::Split": [
+              "/",
+              {
+               "Fn::Join": [
+                "",
+                [
+                 "https://",
+                 {
+                  "Ref": "ApiGwConstructAgentCoreRestApi291EECC1"
+                 },
+                 ".execute-api.",
+                 {
+                  "Ref": "AWS::Region"
+                 },
+                 ".",
+                 {
+                  "Ref": "AWS::URLSuffix"
+                 },
+                 "/",
+                 {
+                  "Ref": "ApiGwConstructAgentCoreRestApiDeploymentStagev1E2120E78"
+                 },
+                 "/"
+                ]
+               ]
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        ]
+       }
+      }
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/CdnConstruct/StrandsCloudFrontDistribution/Resource"
+   }
+  },
+  "AuthConstructStrandsUserPoolCC934CCC": {
+   "Type": "AWS::Cognito::UserPool",
+   "Properties": {
+    "AccountRecoverySetting": {
+     "RecoveryMechanisms": [
+      {
+       "Name": "verified_phone_number",
+       "Priority": 1
+      },
+      {
+       "Name": "verified_email",
+       "Priority": 2
+      }
+     ]
+    },
+    "AdminCreateUserConfig": {
+     "AllowAdminCreateUserOnly": true
+    },
+    "AutoVerifiedAttributes": [
+     "email"
+    ],
+    "EmailVerificationMessage": "The verification code to your new account is {####}",
+    "EmailVerificationSubject": "Verify your new account",
+    "SmsVerificationMessage": "The verification code to your new account is {####}",
+    "UserPoolName": "StrandsUserPool",
+    "UserPoolTags": {
+     "Project": "AwsCdkAgentCore"
+    },
+    "UserPoolTier": "ESSENTIALS",
+    "UsernameAttributes": [
+     "email"
+    ],
+    "VerificationMessageTemplate": {
+     "DefaultEmailOption": "CONFIRM_WITH_CODE",
+     "EmailMessage": "The verification code to your new account is {####}",
+     "EmailSubject": "Verify your new account",
+     "SmsMessage": "The verification code to your new account is {####}"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/AuthConstruct/StrandsUserPool/Resource"
+   }
+  },
+  "AuthConstructStrandsUserPoolDomainD514033D": {
+   "Type": "AWS::Cognito::UserPoolDomain",
+   "Properties": {
+    "Domain": "strands-agent-core-auth-domain",
+    "ManagedLoginVersion": 2,
+    "UserPoolId": {
+     "Ref": "AuthConstructStrandsUserPoolCC934CCC"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/AuthConstruct/StrandsUserPoolDomain/Resource"
+   }
+  },
+  "AuthConstructStrandsUserPoolClientBC02C7EE": {
+   "Type": "AWS::Cognito::UserPoolClient",
+   "Properties": {
+    "AllowedOAuthFlows": [
+     "implicit",
+     "code"
+    ],
+    "AllowedOAuthFlowsUserPoolClient": true,
+    "AllowedOAuthScopes": [
+     "email",
+     "openid",
+     "profile"
+    ],
+    "CallbackURLs": [
+     "http://localhost:3000/callback",
+     "http://localhost:4173/callback",
+     "http://localhost:5173/callback",
+     {
+      "Fn::Join": [
+       "",
+       [
+        "https://",
+        {
+         "Fn::GetAtt": [
+          "CdnConstructStrandsCloudFrontDistribution8DCCEF12",
+          "DomainName"
+         ]
+        },
+        "/callback"
+       ]
+      ]
+     }
+    ],
+    "ClientName": "StrandsUserPoolClient",
+    "ExplicitAuthFlows": [
+     "ALLOW_USER_PASSWORD_AUTH",
+     "ALLOW_ADMIN_USER_PASSWORD_AUTH",
+     "ALLOW_USER_SRP_AUTH",
+     "ALLOW_REFRESH_TOKEN_AUTH"
+    ],
+    "LogoutURLs": [
+     "http://localhost:3000/logout",
+     "http://localhost:4173/logout",
+     "http://localhost:5173/logout",
+     {
+      "Fn::Join": [
+       "",
+       [
+        "https://",
+        {
+         "Fn::GetAtt": [
+          "CdnConstructStrandsCloudFrontDistribution8DCCEF12",
+          "DomainName"
+         ]
+        },
+        "/logout"
+       ]
+      ]
+     }
+    ],
+    "SupportedIdentityProviders": [
+     "COGNITO"
+    ],
+    "UserPoolId": {
+     "Ref": "AuthConstructStrandsUserPoolCC934CCC"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/AuthConstruct/StrandsUserPoolClient/Resource"
+   }
+  },
+  "ApiGwConstructApiGwBufferedRouterLambdaLogGroup31A75657": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/lambda/ApiGwBufferedRouterLambda",
+    "RetentionInDays": 7,
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/ApiGwBufferedRouterLambdaLogGroup/Resource"
+   }
+  },
+  "ApiGwConstructApiGwBufferedRouterLambdaServiceRole7BE70515": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/ApiGwBufferedRouterLambda/ServiceRole/Resource"
+   }
+  },
+  "ApiGwConstructApiGwBufferedRouterLambdaServiceRoleDefaultPolicyE1DA7F73": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "xray:PutTelemetryRecords",
+        "xray:PutTraceSegments"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "DatastoreConstructAgentCoreLogTable339C8E21",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ApiGwConstructApiGwBufferedRouterLambdaServiceRoleDefaultPolicyE1DA7F73",
+    "Roles": [
+     {
+      "Ref": "ApiGwConstructApiGwBufferedRouterLambdaServiceRole7BE70515"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/ApiGwBufferedRouterLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ApiGwConstructApiGwBufferedRouterLambdaD5007E11": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "e3965367886dae93377db2f750acb9620eb7a169591ed52f0e942e3cd86ddcb4.zip"
+    },
+    "Description": "Buffered Router Lambda for Strands Agent Core",
+    "Environment": {
+     "Variables": {
+      "POWERTOOLS_SERVICE_NAME": "ApiGwBufferedRouterLambda",
+      "AGENT_RUNTIME_ARN": {
+       "Fn::GetAtt": [
+        "AgentCoreConstructStrandsAgentRuntime228AE218",
+        "AgentRuntimeArn"
+       ]
+      },
+      "AGENTCORE_LOG_TABLE_NAME": {
+       "Ref": "DatastoreConstructAgentCoreLogTable339C8E21"
+      },
+      "HISTORY_ITEM_LIMIT": "30"
+     }
+    },
+    "FunctionName": "ApiGwBufferedRouterLambda",
+    "Handler": "index.handler",
+    "LoggingConfig": {
+     "LogGroup": {
+      "Ref": "ApiGwConstructApiGwBufferedRouterLambdaLogGroup31A75657"
+     }
+    },
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "ApiGwConstructApiGwBufferedRouterLambdaServiceRole7BE70515",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs24.x",
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ],
+    "Timeout": 900,
+    "TracingConfig": {
+     "Mode": "Active"
+    }
+   },
+   "DependsOn": [
+    "ApiGwConstructApiGwBufferedRouterLambdaServiceRoleDefaultPolicyE1DA7F73",
+    "ApiGwConstructApiGwBufferedRouterLambdaServiceRole7BE70515"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/ApiGwBufferedRouterLambda/Resource",
+    "aws:asset:path": "../asset.e3965367886dae93377db2f750acb9620eb7a169591ed52f0e942e3cd86ddcb4",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ApiGwConstructApiGwStreamRouterLambdaLogGroup8040FDE0": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/lambda/ApiGwStreamRouterLambda",
+    "RetentionInDays": 7,
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/ApiGwStreamRouterLambdaLogGroup/Resource"
+   }
+  },
+  "ApiGwConstructApiGwStreamRouterLambdaServiceRoleE99C3A7C": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/ApiGwStreamRouterLambda/ServiceRole/Resource"
+   }
+  },
+  "ApiGwConstructApiGwStreamRouterLambdaServiceRoleDefaultPolicyD6F7C5FF": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "xray:PutTelemetryRecords",
+        "xray:PutTraceSegments"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "bedrock-agentcore:InvokeAgentRuntime",
+        "bedrock-agentcore:InvokeAgentRuntimeForUser"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "AgentCoreConstructStrandsAgentRuntime228AE218",
+          "AgentRuntimeArn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "AgentCoreConstructStrandsAgentRuntime228AE218",
+             "AgentRuntimeArn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ApiGwConstructApiGwStreamRouterLambdaServiceRoleDefaultPolicyD6F7C5FF",
+    "Roles": [
+     {
+      "Ref": "ApiGwConstructApiGwStreamRouterLambdaServiceRoleE99C3A7C"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/ApiGwStreamRouterLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ApiGwConstructApiGwStreamRouterLambda07B7D984": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "e3965367886dae93377db2f750acb9620eb7a169591ed52f0e942e3cd86ddcb4.zip"
+    },
+    "Description": "Stream Router Lambda for Strands Agent Core",
+    "Environment": {
+     "Variables": {
+      "POWERTOOLS_SERVICE_NAME": "ApiGwStreamRouterLambda",
+      "AGENT_RUNTIME_ARN": {
+       "Fn::GetAtt": [
+        "AgentCoreConstructStrandsAgentRuntime228AE218",
+        "AgentRuntimeArn"
+       ]
+      },
+      "HISTORY_ITEM_LIMIT": "30",
+      "AGENTCORE_LOG_TABLE_NAME": {
+       "Ref": "DatastoreConstructAgentCoreLogTable339C8E21"
+      }
+     }
+    },
+    "FunctionName": "ApiGwStreamRouterLambda",
+    "Handler": "index.streamHandler",
+    "LoggingConfig": {
+     "LogGroup": {
+      "Ref": "ApiGwConstructApiGwStreamRouterLambdaLogGroup8040FDE0"
+     }
+    },
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "ApiGwConstructApiGwStreamRouterLambdaServiceRoleE99C3A7C",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs24.x",
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ],
+    "Timeout": 900,
+    "TracingConfig": {
+     "Mode": "Active"
+    }
+   },
+   "DependsOn": [
+    "ApiGwConstructApiGwStreamRouterLambdaServiceRoleDefaultPolicyD6F7C5FF",
+    "ApiGwConstructApiGwStreamRouterLambdaServiceRoleE99C3A7C"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/ApiGwStreamRouterLambda/Resource",
+    "aws:asset:path": "../asset.e3965367886dae93377db2f750acb9620eb7a169591ed52f0e942e3cd86ddcb4",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ApiGwConstructCognitoRestAuthorizer4B44622A": {
+   "Type": "AWS::ApiGateway::Authorizer",
+   "Properties": {
+    "IdentitySource": "method.request.header.Authorization",
+    "Name": "CognitoRestAuthorizer",
+    "ProviderARNs": [
+     {
+      "Fn::GetAtt": [
+       "AuthConstructStrandsUserPoolCC934CCC",
+       "Arn"
+      ]
+     }
+    ],
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreRestApi291EECC1"
+    },
+    "Type": "COGNITO_USER_POOLS"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/CognitoRestAuthorizer/Resource"
+   }
+  },
+  "ApiGwConstructApiGwAccessLogGroup124C7DA9": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/apigateway/AgentCoreRestApi-AccessLogs",
+    "RetentionInDays": 7,
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/ApiGwAccessLogGroup/Resource"
+   }
+  },
+  "ApiGwConstructAgentCoreRestApi291EECC1": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "Buffered API Gateway for Strands Agent Core",
+    "Name": "AgentCoreRestApi",
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreRestApi/Resource"
+   }
+  },
+  "ApiGwConstructAgentCoreRestApiDeployment5F60E28D6b72a40d12fc8ca408b016b929f27f25": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Buffered API Gateway for Strands Agent Core",
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreRestApi291EECC1"
+    }
+   },
+   "DependsOn": [
+    "ApiGwConstructAgentCoreRestApiproxyANY9807BE16",
+    "ApiGwConstructAgentCoreRestApiproxyOPTIONSF7AFFC9F",
+    "ApiGwConstructAgentCoreRestApiproxyD535B0C7",
+    "ApiGwConstructAgentCoreRestApiANY80FE923F",
+    "ApiGwConstructAgentCoreRestApiOPTIONSDC792567",
+    "ApiGwConstructCognitoRestAuthorizer4B44622A"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreRestApi/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "ApiGwConstructAgentCoreRestApiDeploymentStagev1E2120E78": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "AccessLogSetting": {
+     "DestinationArn": {
+      "Fn::GetAtt": [
+       "ApiGwConstructApiGwAccessLogGroup124C7DA9",
+       "Arn"
+      ]
+     },
+     "Format": "{\"requestId\":\"$context.requestId\",\"ip\":\"$context.identity.sourceIp\",\"user\":\"$context.identity.user\",\"caller\":\"$context.identity.caller\",\"requestTime\":\"$context.requestTime\",\"httpMethod\":\"$context.httpMethod\",\"resourcePath\":\"$context.resourcePath\",\"status\":\"$context.status\",\"protocol\":\"$context.protocol\",\"responseLength\":\"$context.responseLength\"}"
+    },
+    "DeploymentId": {
+     "Ref": "ApiGwConstructAgentCoreRestApiDeployment5F60E28D6b72a40d12fc8ca408b016b929f27f25"
+    },
+    "MethodSettings": [
+     {
+      "DataTraceEnabled": true,
+      "HttpMethod": "*",
+      "MetricsEnabled": true,
+      "ResourcePath": "/*"
+     }
+    ],
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreRestApi291EECC1"
+    },
+    "StageName": "v1",
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ],
+    "TracingEnabled": true
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreRestApi/DeploymentStage.v1/Resource"
+   }
+  },
+  "ApiGwConstructAgentCoreRestApiOPTIONSDC792567": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "ApiGwConstructAgentCoreRestApi291EECC1",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreRestApi291EECC1"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreRestApi/Default/OPTIONS/Resource"
+   }
+  },
+  "ApiGwConstructAgentCoreRestApiproxyD535B0C7": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "ApiGwConstructAgentCoreRestApi291EECC1",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "{proxy+}",
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreRestApi291EECC1"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreRestApi/Default/{proxy+}/Resource"
+   }
+  },
+  "ApiGwConstructAgentCoreRestApiproxyOPTIONSF7AFFC9F": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApiGwConstructAgentCoreRestApiproxyD535B0C7"
+    },
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreRestApi291EECC1"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreRestApi/Default/{proxy+}/OPTIONS/Resource"
+   }
+  },
+  "ApiGwConstructAgentCoreRestApiproxyANYApiPermissionPipelineStackAwsCdkAgentCoreAgentCoreStackApiGwConstructAgentCoreRestApi6C8C07AAANYproxy46761623": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ApiGwConstructApiGwBufferedRouterLambdaD5007E11",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "ApiGwConstructAgentCoreRestApi291EECC1"
+       },
+       "/",
+       {
+        "Ref": "ApiGwConstructAgentCoreRestApiDeploymentStagev1E2120E78"
+       },
+       "/*/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreRestApi/Default/{proxy+}/ANY/ApiPermission.PipelineStackAwsCdkAgentCoreAgentCoreStackApiGwConstructAgentCoreRestApi6C8C07AA.ANY..{proxy+}"
+   }
+  },
+  "ApiGwConstructAgentCoreRestApiproxyANYApiPermissionTestPipelineStackAwsCdkAgentCoreAgentCoreStackApiGwConstructAgentCoreRestApi6C8C07AAANYproxyA30FCA66": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ApiGwConstructApiGwBufferedRouterLambdaD5007E11",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "ApiGwConstructAgentCoreRestApi291EECC1"
+       },
+       "/test-invoke-stage/*/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreRestApi/Default/{proxy+}/ANY/ApiPermission.Test.PipelineStackAwsCdkAgentCoreAgentCoreStackApiGwConstructAgentCoreRestApi6C8C07AA.ANY..{proxy+}"
+   }
+  },
+  "ApiGwConstructAgentCoreRestApiproxyANY9807BE16": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "ApiGwConstructCognitoRestAuthorizer4B44622A"
+    },
+    "HttpMethod": "ANY",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "ResponseTransferMode": "BUFFERED",
+     "TimeoutInMillis": 90000,
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ApiGwConstructApiGwBufferedRouterLambdaD5007E11",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ApiGwConstructAgentCoreRestApiproxyD535B0C7"
+    },
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreRestApi291EECC1"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreRestApi/Default/{proxy+}/ANY/Resource"
+   }
+  },
+  "ApiGwConstructAgentCoreRestApiANY80FE923F": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "ANY",
+    "Integration": {
+     "Type": "MOCK"
+    },
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "ApiGwConstructAgentCoreRestApi291EECC1",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreRestApi291EECC1"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreRestApi/Default/ANY/Resource"
+   }
+  },
+  "ApiGwConstructCognitoStreamAuthorizer5C30E781": {
+   "Type": "AWS::ApiGateway::Authorizer",
+   "Properties": {
+    "IdentitySource": "method.request.header.Authorization",
+    "Name": "CognitoStreamAuthorizer",
+    "ProviderARNs": [
+     {
+      "Fn::GetAtt": [
+       "AuthConstructStrandsUserPoolCC934CCC",
+       "Arn"
+      ]
+     }
+    ],
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreStreamApi86E0DD33"
+    },
+    "Type": "COGNITO_USER_POOLS"
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/CognitoStreamAuthorizer/Resource"
+   }
+  },
+  "ApiGwConstructApiGwStreamAccessLogGroup7BF33524": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/apigateway/AgentCoreStreamApi-AccessLogs",
+    "RetentionInDays": 7,
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/ApiGwStreamAccessLogGroup/Resource"
+   }
+  },
+  "ApiGwConstructAgentCoreStreamApi86E0DD33": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "Stream API Gateway for Strands Agent Core",
+    "Name": "AgentCoreStreamApi",
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreStreamApi/Resource"
+   }
+  },
+  "ApiGwConstructAgentCoreStreamApiDeployment8DC7BBAB04de939e1b06d5ae8f4de5a1415e98df": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Stream API Gateway for Strands Agent Core",
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreStreamApi86E0DD33"
+    }
+   },
+   "DependsOn": [
+    "ApiGwConstructAgentCoreStreamApiproxyANY825C3352",
+    "ApiGwConstructAgentCoreStreamApiproxyOPTIONS5E5EED64",
+    "ApiGwConstructAgentCoreStreamApiproxy50D03219",
+    "ApiGwConstructAgentCoreStreamApiANYF19EE420",
+    "ApiGwConstructAgentCoreStreamApiOPTIONS668BEC72",
+    "ApiGwConstructCognitoStreamAuthorizer5C30E781"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreStreamApi/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "ApiGwConstructAgentCoreStreamApiDeploymentStagev1A0B17560": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "AccessLogSetting": {
+     "DestinationArn": {
+      "Fn::GetAtt": [
+       "ApiGwConstructApiGwStreamAccessLogGroup7BF33524",
+       "Arn"
+      ]
+     },
+     "Format": "{\"requestId\":\"$context.requestId\",\"ip\":\"$context.identity.sourceIp\",\"user\":\"$context.identity.user\",\"caller\":\"$context.identity.caller\",\"requestTime\":\"$context.requestTime\",\"httpMethod\":\"$context.httpMethod\",\"resourcePath\":\"$context.resourcePath\",\"status\":\"$context.status\",\"protocol\":\"$context.protocol\",\"responseLength\":\"$context.responseLength\"}"
+    },
+    "DeploymentId": {
+     "Ref": "ApiGwConstructAgentCoreStreamApiDeployment8DC7BBAB04de939e1b06d5ae8f4de5a1415e98df"
+    },
+    "MethodSettings": [
+     {
+      "DataTraceEnabled": true,
+      "HttpMethod": "*",
+      "MetricsEnabled": true,
+      "ResourcePath": "/*"
+     }
+    ],
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreStreamApi86E0DD33"
+    },
+    "StageName": "v1",
+    "Tags": [
+     {
+      "Key": "Project",
+      "Value": "AwsCdkAgentCore"
+     }
+    ],
+    "TracingEnabled": true
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreStreamApi/DeploymentStage.v1/Resource"
+   }
+  },
+  "ApiGwConstructAgentCoreStreamApiOPTIONS668BEC72": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "ApiGwConstructAgentCoreStreamApi86E0DD33",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreStreamApi86E0DD33"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreStreamApi/Default/OPTIONS/Resource"
+   }
+  },
+  "ApiGwConstructAgentCoreStreamApiproxy50D03219": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "ApiGwConstructAgentCoreStreamApi86E0DD33",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "{proxy+}",
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreStreamApi86E0DD33"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreStreamApi/Default/{proxy+}/Resource"
+   }
+  },
+  "ApiGwConstructAgentCoreStreamApiproxyOPTIONS5E5EED64": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "ApiGwConstructAgentCoreStreamApiproxy50D03219"
+    },
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreStreamApi86E0DD33"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreStreamApi/Default/{proxy+}/OPTIONS/Resource"
+   }
+  },
+  "ApiGwConstructAgentCoreStreamApiproxyANYApiPermissionPipelineStackAwsCdkAgentCoreAgentCoreStackApiGwConstructAgentCoreStreamApi377CF48EANYproxy7F191D03": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ApiGwConstructApiGwStreamRouterLambda07B7D984",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "ApiGwConstructAgentCoreStreamApi86E0DD33"
+       },
+       "/",
+       {
+        "Ref": "ApiGwConstructAgentCoreStreamApiDeploymentStagev1A0B17560"
+       },
+       "/*/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreStreamApi/Default/{proxy+}/ANY/ApiPermission.PipelineStackAwsCdkAgentCoreAgentCoreStackApiGwConstructAgentCoreStreamApi377CF48E.ANY..{proxy+}"
+   }
+  },
+  "ApiGwConstructAgentCoreStreamApiproxyANYApiPermissionTestPipelineStackAwsCdkAgentCoreAgentCoreStackApiGwConstructAgentCoreStreamApi377CF48EANYproxy915D91D5": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ApiGwConstructApiGwStreamRouterLambda07B7D984",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "ApiGwConstructAgentCoreStreamApi86E0DD33"
+       },
+       "/test-invoke-stage/*/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreStreamApi/Default/{proxy+}/ANY/ApiPermission.Test.PipelineStackAwsCdkAgentCoreAgentCoreStackApiGwConstructAgentCoreStreamApi377CF48E.ANY..{proxy+}"
+   }
+  },
+  "ApiGwConstructAgentCoreStreamApiproxyANY825C3352": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "ApiGwConstructCognitoStreamAuthorizer5C30E781"
+    },
+    "HttpMethod": "ANY",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "ResponseTransferMode": "STREAM",
+     "TimeoutInMillis": 300000,
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2021-11-15/functions/",
+        {
+         "Fn::GetAtt": [
+          "ApiGwConstructApiGwStreamRouterLambda07B7D984",
+          "Arn"
+         ]
+        },
+        "/response-streaming-invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "ApiGwConstructAgentCoreStreamApiproxy50D03219"
+    },
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreStreamApi86E0DD33"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreStreamApi/Default/{proxy+}/ANY/Resource"
+   }
+  },
+  "ApiGwConstructAgentCoreStreamApiANYF19EE420": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "ANY",
+    "Integration": {
+     "Type": "MOCK"
+    },
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "ApiGwConstructAgentCoreStreamApi86E0DD33",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "ApiGwConstructAgentCoreStreamApi86E0DD33"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/ApiGwConstruct/AgentCoreStreamApi/Default/ANY/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+0aXW/bNvC3VI8Do2XJPrA8zXXazmjaGFHaPRhBQZNnmQ3F00jKjifovw8kRVmOPaNt2jVNA7QwdUfyPnh3vDvmKK2Pfj1MD5/QpTlg/PpAimlaZ5aya0KX5l3NV4oWyKdpfUmnEt4eTerEutFrWkBykvyQkKSk2gorUL2EVXJSJ2qNsqvSDbOkIYlBbffPsKKASzwTCxhYq8W0snHWVEgpVN5+aShwQeUYpWCr5CThYKzGVdKQT2YulzilMgOGilO9GikON2CSk0mdCDfudmyubnNTolB2pC5FARfAcAF6lZXAxEww6gg7qjvmPFOOU56cWF3BXuH3iUs5f7GD9Z2MN1dkOFNhuj/NhkjMTVqfYf5CY1VO6kS2w54GNVhQQZDf9jPz3S32Co3aa4ikxZTTdwo5vDfpa//zvFLMbTSpE10pd8gtiVmL6FHlYJgWZaDrIaCsXrXjOVVcgo7GKwrAyrZfBRSoV5n4p7NtTVkw0QGzYgEJ6cSMLlUpHqy4DmMYLE12+rIzSFALoVEVoCIVhry1JVKHf9+6TA9AhF3H8ng490SEB3w4V0TQIq0vUMKkTqgxVQH8qb9jSy0UEyWVA8aw6lQR5rgFA9ZJ1ZCkoIrmwH14Fe2l24etBlrFKyxceZc4jiRiUJ7ULdZayuYjJYWCDpf8kHwAcv++e7EaN5KOT9fGlxTwszFJErGm4E+s9dZHzreQd7OEOwi6HT4KepOBMQLVaaVpb+799Kkvin3Vjy93jDjfJvbjNPB9h/eHLb6vYhzjJIDdmm67S3SYLSrbYM4zSy24BMFs6PWDwZ+N7APe6BF8b5T7hcl6rwwO2RBz/I4aA9akA/dDzHFaP63YNdin1IB32Pb/FQlw12/4j7YFSWhl8RQkWDifvgfmaIY0/xMXTT3Jjf7Jvo5Jx2EhboQLfv3uo2s7muPUo0wapg62SDuqd1gdtdQGvChBlw/t+exJ0K3+UE7Cgt5Rf4wY24uvYssprYczFTtN3m5AF8Kneg0xbA68kqDTOmuHkzqJ0N6hRVCvpvxLKI7LCKA639BC3M7Z5wKYRW08J2/9OHDt5vmWZEOmwDWyaz/lpcKlBJ6Ds18355RammGlmdsNmAZrwi3p2Pbfjmk/6PdiHRce2G1Pc1CWoQZP55Uvhf0FF+rthjCJFZ9pVDate925rlAnG6V5oNHp9lSY0JyNi4perc9hRitpn8KcLgRqlyygFrmICXgs8gfGIBM+Aw/5QETEOn8Byl6G7vRCwBL0gYa/KzDWt5+plLgE/grsHLmJfQbK5t2t7yFh5VijRYZrV5xbW5oDVHIVqgTP8gWiDc4R2wvWlm9Bm8CU+zqOhcJavJAoePDnYom0GrsI8m6s1mBKVAb+BMpBmx6ui6L3k7crkh2f+6UDxsCYISqrUfpbwVnXDpx3iZ6tNYRhroTFtH5jQI8R5aROqnbYc+IZUFtpGEvqDu5Zlj17fTkanGXOv0HOMpGrN2X39jCj0gBJjMjVSA2koMZlqHUCBRWy6/3sj+aRHxIHp1hQoXrsda0wL0FAOyrcj8YaZuLmVrp8hrlQnQEebVIKO3T0hlKAsj16AdBTyi1GaGXnzyUuvaiUFyLsTI1Zom5fZNpFO2CZLjvN4KCyc7eLYVjC2riknFJ2/UbLCJKYY2U7gHsOq8oStQU+4u6pwa7GGhfCGU8v7myK2BBaipxaWNJVWg+DOuMU41hBLf4BPelygeFMrcHkAowdlMKnBn60t9vIoZS4Oi/bMFUnxtK8f1+0XcWNhyzXfLRaMHMLyqmll5oyuAWn3ujPMD8FY4WiPfod6jnqgsbLOEasIWrjLEeKfG57THpvDw4Vde9BffdvQqLzfasgVH1BCeTUC1oEN9rWAy1FF+csFWo9/VYHzbkto3LEb1XWXwH+AKTwR7TmkmTO+vwBRVDM3O6DWd5TvkKO6Bhx8c9nmP2a6YoEtwhB0aN7KVDAtQChLOS6TxB7TteF2c2vUVwdQX59m9x5b6aleAkrl1QI3buTd8/32pojv2jzjZA/GkttZYa9DLZFj6mmBdj1pRIfGF5t7PKxm5BHZf1fyorvoF9zh8cDe1TWfbZuH+LDAjLWeLOKgX5Su7//2irQR1vbtYiwx/nuo+w9z0bmekXmN3Lm/sB26eROyeSX0ex/8vp4ft/I+cUaI/T1GuKb1y4XEyonw8pYLDpX7desEXhrTqyQY8/wvLJlZRty9Mvv6eEBleWcpodP/mgbqT+637YpeNB1BdtpdWgMhhZM2xoMPDfE/f1e+t78uDj6Of3pOD188t4IcdA2BdN28r/y4SmFOisAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "PipelineStack/AwsCdkAgentCore/AgentCoreStack/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "ApiGwConstructAgentCoreRestApiEndpoint896F73C8": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "ApiGwConstructAgentCoreRestApi291EECC1"
+      },
+      ".execute-api.",
+      {
+       "Ref": "AWS::Region"
+      },
+      ".",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "ApiGwConstructAgentCoreRestApiDeploymentStagev1E2120E78"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "ApiGwConstructAgentCoreStreamApiEndpoint4AC2DAD6": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "ApiGwConstructAgentCoreStreamApi86E0DD33"
+      },
+      ".execute-api.",
+      {
+       "Ref": "AWS::Region"
+      },
+      ".",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "ApiGwConstructAgentCoreStreamApiDeploymentStagev1A0B17560"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-3"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-4"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "il-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Equals": [
+      {
+       "Ref": "AWS::Region"
+      },
+      "us-west-2"
+     ]
+    }
+   ]
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

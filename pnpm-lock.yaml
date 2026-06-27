@@ -8,12 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@aws-cdk/aws-bedrock-agentcore-alpha':
-        specifier: 2.259.0-alpha.0
-        version: 2.259.0-alpha.0(@aws-cdk/aws-bedrock-alpha@2.259.0-alpha.0(aws-cdk-lib@2.260.0(constructs@10.6.0))(constructs@10.6.0))(aws-cdk-lib@2.260.0(constructs@10.6.0))(constructs@10.6.0)
-      '@aws-cdk/aws-bedrock-alpha':
-        specifier: 2.259.0-alpha.0
-        version: 2.259.0-alpha.0(aws-cdk-lib@2.260.0(constructs@10.6.0))(constructs@10.6.0)
       '@aws-lambda-powertools/logger':
         specifier: ^2.33.1
         version: 2.33.1(@middy/core@7.7.0)
@@ -115,21 +109,6 @@ packages:
 
   '@aws-cdk/asset-node-proxy-agent-v6@2.1.2':
     resolution: {integrity: sha512-pDiuqH+qY3zM9lhhLjbKJ1tnKOHzQ2V4Wr/3qsxyKeKAkuPMI/BVGvZG1PbrikUw949cGVTfVEt4ETKKYnrj0Q==}
-
-  '@aws-cdk/aws-bedrock-agentcore-alpha@2.259.0-alpha.0':
-    resolution: {integrity: sha512-OPyA5wu+FOrRxl0UtzELSryOsSgfGYBPDNgjIzejYWD69mbAzyEZ3s6NeaZcafFZHFNdCZrrDK7Ww03QQKZL0A==}
-    engines: {node: '>= 20.0.0'}
-    peerDependencies:
-      '@aws-cdk/aws-bedrock-alpha': 2.259.0-alpha.0
-      aws-cdk-lib: ^2.259.0
-      constructs: ^10.5.0
-
-  '@aws-cdk/aws-bedrock-alpha@2.259.0-alpha.0':
-    resolution: {integrity: sha512-2M3rNyNfhPdNNS8NAReMlB9haoF/qUJxZM7+yfMYU/7G+llpCWnPFK7ZlKwhV4P/s+yv+BjSHn76SqN1fO4ejA==}
-    engines: {node: '>= 20.0.0'}
-    peerDependencies:
-      aws-cdk-lib: ^2.259.0
-      constructs: ^10.5.0
 
   '@aws-cdk/cloud-assembly-schema@54.5.0':
     resolution: {integrity: sha512-X37oRfMQYO/wXBBDotbW8msJ6AgrcMio/W6TpDR/9To9TUWld1KtY/jveHpU58nZyLVPTYEhDgFP548w3JJGsQ==}
@@ -1718,17 +1697,6 @@ snapshots:
   '@aws-cdk/asset-awscli-v1@2.2.282': {}
 
   '@aws-cdk/asset-node-proxy-agent-v6@2.1.2': {}
-
-  '@aws-cdk/aws-bedrock-agentcore-alpha@2.259.0-alpha.0(@aws-cdk/aws-bedrock-alpha@2.259.0-alpha.0(aws-cdk-lib@2.260.0(constructs@10.6.0))(constructs@10.6.0))(aws-cdk-lib@2.260.0(constructs@10.6.0))(constructs@10.6.0)':
-    dependencies:
-      '@aws-cdk/aws-bedrock-alpha': 2.259.0-alpha.0(aws-cdk-lib@2.260.0(constructs@10.6.0))(constructs@10.6.0)
-      aws-cdk-lib: 2.260.0(constructs@10.6.0)
-      constructs: 10.6.0
-
-  '@aws-cdk/aws-bedrock-alpha@2.259.0-alpha.0(aws-cdk-lib@2.260.0(constructs@10.6.0))(constructs@10.6.0)':
-    dependencies:
-      aws-cdk-lib: 2.260.0(constructs@10.6.0)
-      constructs: 10.6.0
 
   '@aws-cdk/cloud-assembly-schema@54.5.0': {}
 

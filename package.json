@@ -33,8 +33,6 @@
     "vitest": "^4.1.9"
   },
   "dependencies": {
-    "@aws-cdk/aws-bedrock-agentcore-alpha": "2.259.0-alpha.0",
-    "@aws-cdk/aws-bedrock-alpha": "2.259.0-alpha.0",
     "@aws-lambda-powertools/logger": "^2.33.1",
     "@aws-lambda-powertools/tracer": "^2.33.1",
     "@aws-sdk/client-bedrock-agentcore": "^3.1075.0",
