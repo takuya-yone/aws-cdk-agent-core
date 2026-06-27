@@ -16,8 +16,8 @@ testing does not apply to this feature.
 
 ## Tasks
 
-- [ ] 1. Stage 0 — Capture pre-migration baseline template
-  - [ ] 1.1 Synthesize and preserve the baseline template
+- [x] 1. Stage 0 — Capture pre-migration baseline template
+  - [x] 1.1 Synthesize and preserve the baseline template
     - Run `pnpm cdk synth` on the unmodified codebase to generate templates for every stack
     - Copy each synthesized template from `cdk.out/*.template.json` to a baseline location that
       later synths will not overwrite (e.g. `cdk.out/baseline/` or a temp dir outside `cdk.out`)
