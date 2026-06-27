@@ -1,4 +1,3 @@
-import type * as agentcore from "@aws-cdk/aws-bedrock-agentcore-alpha"
 import {
   aws_apigateway as apigw,
   aws_cloudfront as cloudfront,
@@ -12,6 +11,7 @@ import {
   aws_logs as logs,
   RemovalPolicy,
 } from "aws-cdk-lib"
+import type * as agentcore from "aws-cdk-lib/aws-bedrockagentcore"
 import { Construct } from "constructs"
 import type { ApiGwConfig } from "../../bin/parameter"
 

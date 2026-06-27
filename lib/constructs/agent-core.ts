@@ -1,4 +1,3 @@
-import * as agentcore from "@aws-cdk/aws-bedrock-agentcore-alpha"
 import * as cdk from "aws-cdk-lib"
 import {
   type aws_bedrock,
@@ -6,6 +5,7 @@ import {
   aws_iam as iam,
   aws_secretsmanager as secretsmanager,
 } from "aws-cdk-lib"
+import * as agentcore from "aws-cdk-lib/aws-bedrockagentcore"
 import { Construct } from "constructs"
 import type { AgentCoreConfig } from "../../bin/parameter"
 

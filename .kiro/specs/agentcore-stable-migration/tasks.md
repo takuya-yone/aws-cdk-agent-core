@@ -25,15 +25,15 @@ testing does not apply to this feature.
     - This baseline is the only trustworthy reference once alpha deps are removed
     - _Requirements: 6.1, 6.2_
 
-- [ ] 2. Stage 1 — Swap AgentCore import specifiers
-  - [ ] 2.1 Swap value import in `lib/constructs/agent-core.ts`
+- [x] 2. Stage 1 — Swap AgentCore import specifiers
+  - [x] 2.1 Swap value import in `lib/constructs/agent-core.ts`
     - Replace only the module specifier `@aws-cdk/aws-bedrock-agentcore-alpha` with
       `aws-cdk-lib/aws-bedrockagentcore`
     - Preserve the `import * as agentcore` value-import form and the `agentcore` binding
     - Leave every other token and every non-import line byte-for-byte unchanged
     - _Requirements: 1.1, 1.2, 1.4_
 
-  - [ ] 2.2 Swap type-only import in `lib/constructs/api-gw.ts`
+  - [x] 2.2 Swap type-only import in `lib/constructs/api-gw.ts`
     - Replace only the module specifier `@aws-cdk/aws-bedrock-agentcore-alpha` with
       `aws-cdk-lib/aws-bedrockagentcore`
     - Preserve the `import type * as agentcore` type-only-import form and the `agentcore` binding
