@@ -66,28 +66,28 @@ testing does not apply to this feature.
       make no edits
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.8_
 
-- [ ] 5. Stage 4 — Remove unused alpha dependencies and regenerate lockfile
-  - [ ] 5.1 Confirm no live references to either alpha package
+- [x] 5. Stage 4 — Remove unused alpha dependencies and regenerate lockfile
+  - [x] 5.1 Confirm no live references to either alpha package
     - Search `bin/`, `lib/`, `src/`, `tests/` for live (non-commented) import/require references
       to `@aws-cdk/aws-bedrock-agentcore-alpha` and `@aws-cdk/aws-bedrock-alpha`
     - Proceed to removal only if zero live references exist; otherwise retain the referenced
       package, leave `package.json`/lockfile unchanged, and report the reference
     - _Requirements: 4.1, 4.2, 4.5_
 
-  - [ ] 5.2 Remove alpha entries from `package.json` and regenerate the lockfile
+  - [x] 5.2 Remove alpha entries from `package.json` and regenerate the lockfile
     - Remove `@aws-cdk/aws-bedrock-agentcore-alpha` and `@aws-cdk/aws-bedrock-alpha` from the
       `dependencies` section
     - Retain the existing `aws-cdk-lib` dependency
     - Run `pnpm install` to regenerate `pnpm-lock.yaml`
     - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
-  - [ ] 5.3 Search assertion: zero alpha package keys remain
+  - [x] 5.3 Search assertion: zero alpha package keys remain
     - Assert `pnpm-lock.yaml` contains zero occurrences of either alpha package as a package key
     - Assert no live import/require references to either alpha package remain under
       `bin/`, `lib/`, `src/`, `tests/`
     - _Requirements: 4.3_
 
-- [ ] 6. Checkpoint — Source and dependency edits complete
+- [x] 6. Checkpoint — Source and dependency edits complete
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 7. Stage 5 — Verify toolchain (single-execution checks)
