@@ -32,21 +32,21 @@ export class AgentCoreConstruct extends Construct {
       expirationDuration: cdk.Duration.days(7),
       memoryStrategies: [
         // agentcore.MemoryStrategy.usingSummarization({
-        //   name: "SummarizationStrategy",
+        //   strategyName: "SummarizationStrategy",
         //   namespaces: [
         //     "/strategies/summary/actors/{actorId}/sessions/{sessionId}",
         //   ],
         // }),
         // agentcore.MemoryStrategy.usingSemantic({
-        //   name: "SemanticStrategy",
+        //   strategyName: "SemanticStrategy",
         //   namespaces: ["/strategies/semantic/actors/{actorId}"],
         // }),
         // agentcore.MemoryStrategy.usingUserPreference({
-        //   name: "UserPreferenceStrategy",
+        //   strategyName: "UserPreferenceStrategy",
         //   namespaces: ["/strategies/preference/actors/{actorId}"],
         // }),
         // agentcore.MemoryStrategy.usingEpisodic({
-        //   name: "EpisodicStrategy",
+        //   strategyName: "EpisodicStrategy",
         //   namespaces: [
         //     "/strategies/episodic/actors/{actorId}/session/{sessionId}",
         //   ],

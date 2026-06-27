@@ -40,13 +40,13 @@ testing does not apply to this feature.
     - Leave every other token and every non-import line byte-for-byte unchanged
     - _Requirements: 1.1, 1.2, 1.4_
 
-  - [ ]* 2.3 Search assertion: zero alpha AgentCore specifier occurrences
+  - [x] 2.3 Search assertion: zero alpha AgentCore specifier occurrences
     - Run a repository-wide search for `@aws-cdk/aws-bedrock-agentcore-alpha` across all source files
     - Assert zero occurrences remain after the swap
     - _Requirements: 1.3_
 
-- [ ] 3. Stage 2 — Rename MemoryStrategy `name` → `strategyName`
-  - [ ] 3.1 Rename the key in all four commented-out MemoryStrategy configs
+- [x] 3. Stage 2 — Rename MemoryStrategy `name` → `strategyName`
+  - [x] 3.1 Rename the key in all four commented-out MemoryStrategy configs
     - In `lib/constructs/agent-core.ts`, rename `name:` to `strategyName:` in the
       `usingSummarization`, `usingSemantic`, `usingUserPreference`, and `usingEpisodic` configs
     - Preserve each assigned string value and its quoting byte-for-byte
