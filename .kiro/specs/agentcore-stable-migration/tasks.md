@@ -90,14 +90,14 @@ testing does not apply to this feature.
 - [x] 6. Checkpoint — Source and dependency edits complete
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 7. Stage 5 — Verify toolchain (single-execution checks)
-  - [ ] 7.1 Run build and synth checks
+- [x] 7. Stage 5 — Verify toolchain (single-execution checks)
+  - [x] 7.1 Run build and synth checks
     - Run `pnpm run build` (`tsc --noEmit`); require exit 0 with zero type errors
     - Run `pnpm cdk synth`; require exit 0 and a template produced for every defined stack
     - If either fails due to the migration, correct and re-run until exit 0
     - _Requirements: 1.5, 4.6, 5.1, 5.2, 5.3, 5.5, 6.5_
 
-  - [ ] 7.2 Run Biome check
+  - [x] 7.2 Run Biome check
     - Run `pnpm biome:dry`; require exit 0 with zero errors and zero warnings across
       `bin/ lib/ src/ tests/`
     - If it fails, apply `pnpm biome:fix` or hand-correct, then re-run
