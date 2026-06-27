@@ -1,5 +1,5 @@
-import type * as agentcore from "@aws-cdk/aws-bedrock-agentcore-alpha"
 import {
+  type aws_bedrockagentcore as agentcore,
   aws_apigateway as apigw,
   aws_cloudfront as cloudfront,
   aws_cloudfront_origins as cloudfront_origins,
