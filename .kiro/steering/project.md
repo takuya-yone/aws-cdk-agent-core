@@ -13,7 +13,7 @@ AWS CDK TypeScript プロジェクト。Amazon Bedrock AgentCore Runtime 上で 
 - Lambda: TypeScript (Hono ベースの API ルーター) — `src/lambda/` 配下
 - LLM: Amazon Nova Pro / Nova Lite
 - パッケージ管理: pnpm (TypeScript) / uv (Python)
-- Lint/Format: Biome (TypeScript) / Ruff (Python)
+- Lint/Format: oxlint + oxfmt (TypeScript) / Ruff (Python)
 - テスト: Vitest (TypeScript) / pytest (Python)
 - Node.js 24.x / Python 3.14
 
@@ -31,8 +31,8 @@ pnpm cdk diff         # デプロイ済みスタックとの差分確認
 ### Lint・Format
 
 ```bash
-pnpm biome:fix        # TypeScript フォーマット/リント修正 (bin/ lib/ src/ tests/)
-pnpm biome:dry        # TypeScript チェックのみ
+pnpm lint:fix         # TypeScript フォーマット/リント修正 (bin/ lib/ src/ tests/)
+pnpm lint:dry         # TypeScript チェックのみ
 pnpm ruff:fix         # Python フォーマット/リント修正 (src/ tools/ tests/)
 pnpm ruff:dry         # Python チェックのみ
 ```
@@ -53,4 +53,4 @@ cd src/agent && uv sync && source .venv/bin/activate && python main.py  # AgentC
 
 ## pre-commit フック
 
-`pnpm biome:dry` と `pnpm ruff:dry` が pre-commit で実行される。コード変更後はこれらが通ることを確認すること。
+`pnpm lint:dry` と `pnpm ruff:dry` が pre-commit で実行される。コード変更後はこれらが通ることを確認すること。

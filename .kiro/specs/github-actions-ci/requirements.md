@@ -7,7 +7,7 @@ GitHub Actions CI ワークフローを構成し、プルリクエストおよ�
 ## Glossary
 
 - **CI_Workflow**: GitHub Actions 上で実行される CI ワークフロー全体を指す
-- **Lint_Job**: Biome (TypeScript) および Ruff (Python) による静的解析・フォーマットチェックを実行するジョブ
+- **Lint_Job**: oxlint + oxfmt (TypeScript) および Ruff (Python) による静的解析・フォーマットチェックを実行するジョブ
 - **Test_Job**: Vitest (TypeScript) および pytest (Python) によるテスト実行ジョブ
 - **Build_Job**: TypeScript の型チェック (`tsc --noEmit`) を実行するジョブ
 - **Synth_Job**: AWS CDK の CloudFormation テンプレート生成 (`pnpm cdk synth`) を実行するジョブ
@@ -36,8 +36,8 @@ GitHub Actions CI ワークフローを構成し、プルリクエストおよ�
 
 1. THE Lint_Job SHALL install Node.js 24.x and pnpm 10.33.2 on the Runner.
 2. THE Lint_Job SHALL install npm dependencies using `pnpm install --frozen-lockfile`.
-3. THE Lint_Job SHALL execute `pnpm biome:dry` to check TypeScript lint and format compliance.
-4. IF `pnpm biome:dry` returns a non-zero exit code, THEN THE Lint_Job SHALL fail the CI_Workflow.
+3. THE Lint_Job SHALL execute `pnpm lint:dry` to check TypeScript lint and format compliance.
+4. IF `pnpm lint:dry` returns a non-zero exit code, THEN THE Lint_Job SHALL fail the CI_Workflow.
 
 ### Requirement 3: Python Lint・フォーマットチェック
 

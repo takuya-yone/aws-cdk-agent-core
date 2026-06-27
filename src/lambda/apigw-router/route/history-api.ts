@@ -2,6 +2,7 @@ import type { RouteHandler } from "@hono/zod-openapi"
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi"
 import type { APIGatewayProxyEvent } from "aws-lambda"
 import type { ApiGatewayRequestContext } from "hono/aws-lambda"
+
 import { LogModel } from "../schema"
 import { getActorIdFromEvent, logger } from "../utils"
 

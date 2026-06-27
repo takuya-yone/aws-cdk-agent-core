@@ -81,7 +81,7 @@ CloudFront + API Gateway + AgentCore Runtime 上で動作する AI エージェ�
 - Embedding: Amazon Titan Embed Text V2
 - Runtime: Node.js 24.x / Python 3.14
 - パッケージ管理: pnpm (TypeScript) / uv (Python)
-- Lint/Format: Biome (TypeScript) / Ruff (Python)
+- Lint/Format: oxlint + oxfmt (TypeScript) / Ruff (Python)
 - テスト: Vitest (TypeScript) / pytest (Python)
 
 ## セットアップ
@@ -123,7 +123,7 @@ pnpm cdk deploy
 | コマンド | 説明 |
 |---|---|
 | `pnpm dev` | Lambda プロキシ ローカル起動（Port:3000） |
-| `pnpm biome:fix` | TypeScript フォーマット/リント適用 |
+| `pnpm lint:fix` | TypeScript フォーマット/リント適用 (oxlint + oxfmt) |
 | `pnpm ruff:fix` | Python フォーマット/リント適用 |
 | `pnpm pytest` | Python テスト実行 |
 

@@ -1,5 +1,6 @@
 import * as cdk from "aws-cdk-lib/core"
 import type { Construct } from "constructs"
+
 import type { StackParameters } from "../../bin/parameter"
 import {
   AgentCoreConstruct,

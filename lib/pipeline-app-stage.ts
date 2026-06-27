@@ -1,5 +1,6 @@
 import * as cdk from "aws-cdk-lib"
 import type { Construct } from "constructs"
+
 import { defaultStackParameters } from "../bin/parameter"
 import { AgentCoreStack, SampleStack } from "./stack"
 

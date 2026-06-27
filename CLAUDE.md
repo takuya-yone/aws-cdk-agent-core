@@ -19,8 +19,8 @@ pnpm cdk diff               # Compare deployed vs current state
 
 ### Lint & Format
 ```bash
-pnpm run biome:fix           # Fix TypeScript with Biome (bin/ lib/ src/ tests/)
-pnpm run biome:dry           # Check TypeScript without writing
+pnpm run lint:fix            # Fix TypeScript with oxlint + oxfmt (bin/ lib/ src/ tests/)
+pnpm run lint:dry            # Check TypeScript without writing
 pnpm run ruff:fix            # Fix Python with Ruff (src/ tools/ tests/)
 pnpm run ruff:dry            # Check Python without writing
 ```
@@ -100,5 +100,5 @@ All configuration is centralized in `bin/parameter.ts` via the `StackParameters`
 
 ## Code Style
 
-- **TypeScript**: Biome with double quotes, semicolons as-needed, 2-space indent, recommended lint rules
+- **TypeScript**: oxlint (correctness rules) + oxfmt with double quotes, semicolons as-needed, 2-space indent, import sorting
 - **Python**: Ruff targeting Python 3.14 with pyflakes, pycodestyle, isort, pyupgrade, pep8-naming rules (E501 ignored)
