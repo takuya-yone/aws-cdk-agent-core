@@ -100,10 +100,22 @@ dependency of the AgentCore alpha package, and its imports are already commented
 
 **User Story:** As a developer, I want the migration to be behavior-preserving, so that the deployed infrastructure is unchanged apart from the intended module move.
 
+#### Known accepted delta (stable-module default)
+
+The stable AgentCore module (`aws-cdk-lib/aws-bedrockagentcore`) adds a confused-deputy
+protection `Condition` block (an `aws:SourceAccount` `StringEquals` plus an `aws:SourceArn`
+`ArnLike`) to the `AssumeRolePolicyDocument` trust statement of the AgentCore Memory service
+role (scoped to `...:memory/AgentCoreMemory*`) and the Runtime execution role (scoped to
+`...:runtime/StrandsAgentRuntime*`). The alpha baseline did not emit these conditions. This is an
+intentional security improvement shipped by AWS in the stabilized module, not a side effect of
+the project's source edits. This delta — plus the benign `CDKMetadata.Analytics` hash change
+caused by the module-path move — is explicitly ACCEPTED and is the only permitted difference
+between the post-Migration template and the Stage 0 baseline.
+
 #### Acceptance Criteria
 
 1. WHEN `pnpm cdk synth` is executed after the Migration, THE synthesized CloudFormation template SHALL contain the AgentCore Memory and Runtime resources with the same logical IDs, resource types, and resource properties (including the Memory `expirationDuration` of 7 days, all Runtime environment variable keys and values, and all attached IAM managed policies and inline grant statements) as the baseline template synthesized immediately before the Migration.
-2. WHEN the post-Migration synthesized template is compared against the pre-Migration baseline template, THE comparison SHALL report zero added, removed, or modified resources, resource properties, or IAM policy statements.
+2. WHEN the post-Migration synthesized template is compared against the pre-Migration baseline template, THE comparison SHALL report zero added, removed, or modified resources, resource properties, or IAM policy statements, EXCEPT for the accepted delta described above (the stable-module confused-deputy trust-policy `Condition` additions on the Memory service role and Runtime execution role, and the benign `CDKMetadata.Analytics` hash change).
 3. THE Migration SHALL modify only import specifiers, renamed member references, and dependency declarations within `lib/constructs/agent-core.ts` and `lib/constructs/api-gw.ts`, and SHALL NOT change any resource name, environment variable key or value, duration value, or IAM grant statement in those two files.
-4. IF the post-Migration synthesized template differs from the pre-Migration baseline template in any resource, resource property, or IAM policy statement, THEN THE Migration SHALL be treated as failed, the differing changes SHALL be reverted, and the detected difference SHALL be reported to the developer.
+4. IF the post-Migration synthesized template differs from the pre-Migration baseline template in any resource, resource property, or IAM policy statement OTHER THAN the accepted delta described above, THEN THE Migration SHALL be treated as failed, the differing changes SHALL be reverted, and the detected difference SHALL be reported to the developer.
 5. WHEN `pnpm run build` is executed after the Migration, THE TypeScript type check SHALL complete with zero errors.

@@ -103,8 +103,8 @@ testing does not apply to this feature.
     - If it fails, apply `pnpm biome:fix` or hand-correct, then re-run
     - _Requirements: 5.4_
 
-- [ ] 8. Stage 6 — Verify template equivalence against baseline
-  - [ ] 8.1 Diff post-migration templates against the Stage 0 baseline
+- [x] 8. Stage 6 — Verify template equivalence against baseline
+  - [x] 8.1 Diff post-migration templates against the Stage 0 baseline
     - Perform a JSON deep-equal (or `cdk diff` template-to-template) of each post-migration
       template against its Stage 0 baseline
     - Require zero added, removed, or modified resources, resource properties, or IAM policy
@@ -113,19 +113,19 @@ testing does not apply to this feature.
       and report the difference
     - _Requirements: 6.1, 6.2, 6.4_
 
-  - [ ] 8.2 Focused equivalence assertions on AgentCore resources
+  - [x] 8.2 Focused equivalence assertions on AgentCore resources
     - Assert the Memory resource retains `expirationDuration` of 7 days
     - Assert the Runtime resource retains every environment variable key and value
     - Assert all attached managed policies and inline IAM grant statements are unchanged
     - _Requirements: 6.1, 6.3_
 
-  - [ ] 8.3 Edit-scope verification on the two source files
+  - [x] 8.3 Edit-scope verification on the two source files
     - Inspect the per-file diff for `agent-core.ts` and `api-gw.ts` to confirm only import
       specifiers and the four commented `name`→`strategyName` keys changed
     - Confirm the four MemoryStrategy configs remain commented out
     - _Requirements: 1.4, 2.2, 2.3, 2.4, 6.3_
 
-- [ ] 9. Final checkpoint — Migration accepted
+- [x] 9. Final checkpoint — Migration accepted
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
