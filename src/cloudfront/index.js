@@ -1,4 +1,4 @@
-// biome-ignore lint/correctness/noUnusedVariables: for handler
+// oxlint-disable-next-line no-unused-vars -- entrypoint invoked by CloudFront
 async function handler(event) {
   var request = event.request
   var uri = request.uri

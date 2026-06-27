@@ -18,7 +18,7 @@
     - `actions/setup-python@v6` with `python-version: "3.14"` and `allow-prereleases: true`
     - `pnpm install --frozen-lockfile`
     - `uv sync`
-    - `pnpm biome:dry` (Biome TypeScript lint)
+    - `pnpm lint:dry` (oxlint + oxfmt TypeScript lint/format)
     - `pnpm ruff:dry` (Ruff Python lint)
   - _Requirements: 1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 2.4, 3.1, 3.2, 3.3, 7.1, 7.2, 7.3_
 

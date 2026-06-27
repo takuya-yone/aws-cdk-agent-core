@@ -8,7 +8,7 @@ GitHub Actions CI ワークフローを `.github/workflows/ci.yml` に定義し�
 
 1. **単一ワークフローファイル**: 4 ジョブを 1 つの `ci.yml` に集約。管理が容易で、PR ステータスチェックの設定もシンプルになる。
 2. **ジョブ間依存なし**: 全ジョブを並列実行し、フィードバック時間を最短化。あるジョブの失敗が他ジョブをブロックしない。
-3. **Lint ジョブに TypeScript + Python を統合**: Biome と Ruff は両方とも軽量な静的解析であり、別ジョブに分割するオーバーヘッド (Runner 起動時間) の方が大きい。
+3. **Lint ジョブに TypeScript + Python を統合**: oxlint/oxfmt と Ruff は両方とも軽量な静的解析であり、別ジョブに分割するオーバーヘッド (Runner 起動時間) の方が大きい。
 4. **Test ジョブに Vitest + pytest を統合**: 同様の理由で 1 ジョブに統合。両テストスイートとも実行時間が短い。
 5. **pnpm/action-setup の built-in キャッシュ**: `pnpm/action-setup` は `actions/setup-node` の `cache: 'pnpm'` と連携し、pnpm store を自動キャッシュする。
 6. **astral-sh/setup-uv の built-in キャッシュ**: `astral-sh/setup-uv` は `uv.lock` ベースのキャッシュを自動管理する。
@@ -29,7 +29,7 @@ flowchart TD
     L --> L2[Setup pnpm + Node.js]
     L --> L3[Setup uv + Python]
     L --> L4[pnpm install]
-    L --> L5[pnpm biome:dry]
+    L --> L5[pnpm lint:dry]
     L --> L6[pnpm ruff:dry]
 
     T --> T1[Checkout]
@@ -54,7 +54,7 @@ flowchart TD
 
 | Job   | Node.js | pnpm   | Python | uv  | Commands                              |
 |-------|---------|--------|--------|-----|---------------------------------------|
-| Lint  | 24.x   | 10.33.2| 3.14   | ✅  | `pnpm biome:dry`, `pnpm ruff:dry`    |
+| Lint  | 24.x   | 10.33.2| 3.14   | ✅  | `pnpm lint:dry`, `pnpm ruff:dry`    |
 | Test  | 24.x   | 10.33.2| 3.14   | ✅  | `pnpm run test`, `pnpm run pytest`    |
 | Build | 24.x   | 10.33.2| —      | —   | `pnpm run build`                      |
 | Synth | 24.x   | 10.33.2| —      | —   | `pnpm cdk synth`                      |
@@ -115,8 +115,8 @@ lint:
         allow-prereleases: true
     - run: pnpm install --frozen-lockfile
     - run: uv sync
-    - name: Biome (TypeScript)
-      run: pnpm biome:dry
+    - name: oxlint + oxfmt (TypeScript)
+      run: pnpm lint:dry
     - name: Ruff (Python)
       run: pnpm ruff:dry
 ```
@@ -225,7 +225,7 @@ ci.yml
 | Scenario | Behavior |
 |----------|----------|
 | `pnpm install --frozen-lockfile` 失敗 | ロックファイルと `package.json` の不整合。ジョブ失敗。開発者はローカルで `pnpm install` を実行してロックファイルを更新する必要がある。 |
-| `pnpm biome:dry` 失敗 | TypeScript のフォーマット/リント違反。開発者は `pnpm biome:fix` で修正。 |
+| `pnpm lint:dry` 失敗 | TypeScript のフォーマット/リント違反。開発者は `pnpm lint:fix` で修正。 |
 | `pnpm ruff:dry` 失敗 | Python のフォーマット/リント違反。開発者は `pnpm ruff:fix` で修正。 |
 | `pnpm run test` 失敗 | Vitest テスト失敗。テスト出力で失敗箇所を確認。 |
 | `pnpm run pytest` 失敗 | pytest テスト失敗。テスト出力で失敗箇所を確認。 |

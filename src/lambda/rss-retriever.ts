@@ -4,7 +4,6 @@ import { captureLambdaHandler } from "@aws-lambda-powertools/tracer/middleware"
 import middy from "@middy/core"
 import * as dynamoose from "dynamoose"
 import Parser from "rss-parser"
-
 import { z } from "zod"
 
 const tracer = new Tracer({})

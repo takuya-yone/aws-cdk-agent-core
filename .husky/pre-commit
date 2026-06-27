@@ -1,2 +1,2 @@
-pnpm biome:dry
+pnpm lint:dry
 pnpm ruff:dry

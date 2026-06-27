@@ -4,6 +4,7 @@ import {
   RemovalPolicy,
 } from "aws-cdk-lib"
 import { Construct } from "constructs"
+
 import type { CognitoClientConfig } from "../../bin/parameter"
 
 type AuthConstructProps = {

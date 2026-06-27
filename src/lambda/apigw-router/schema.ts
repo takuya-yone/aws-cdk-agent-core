@@ -1,5 +1,6 @@
 import { z } from "@hono/zod-openapi"
 import * as dynamoose from "dynamoose"
+
 import { SERVER_ENV } from "./env"
 export const InputSchema = z.object({
   prompt: z.string().min(1, "Prompt is required"),

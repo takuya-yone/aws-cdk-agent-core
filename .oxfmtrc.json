@@ -1,0 +1,14 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "semi": false,
+  "printWidth": 80,
+  "sortImports": true,
+  "ignorePatterns": [
+    "cdk.out",
+    "coverage",
+    "node_modules",
+    "**/*.d.ts",
+    "src/agent/**",
+    "**/*.toml"
+  ]
+}

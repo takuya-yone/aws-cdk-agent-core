@@ -12,6 +12,7 @@ import {
   ShellStep,
 } from "aws-cdk-lib/pipelines"
 import type { Construct } from "constructs"
+
 import type { StackParameters } from "../bin/parameter"
 import { StackStage } from "./pipeline-app-stage"
 
