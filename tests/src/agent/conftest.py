@@ -16,6 +16,7 @@ os.environ.setdefault("MEMORY_ID", "test-memory-id")
 os.environ.setdefault("BEDROCK_KB_ID", "test-kb-id")
 os.environ.setdefault("BEDROCK_ESTATE_KB_ID", "test-estate-kb-id")
 os.environ.setdefault("LOG_TABLE_NAME", "test-log-table")
+os.environ.setdefault("TAGOSAKU_MODEL_ID", "test-tagosaku-model-id")
 
 # Mock sub_agents module to avoid AWS credential requirements at import time
 sys.modules["sub_agents"] = MagicMock()
