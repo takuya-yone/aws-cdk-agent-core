@@ -1,11 +1,11 @@
 import * as cdk from "aws-cdk-lib"
 import {
+  aws_bedrockagentcore as agentcore,
   type aws_bedrock,
   type aws_dynamodb as dynamodb,
   aws_iam as iam,
   aws_secretsmanager as secretsmanager,
 } from "aws-cdk-lib"
-import * as agentcore from "aws-cdk-lib/aws-bedrockagentcore"
 import { Construct } from "constructs"
 import type { AgentCoreConfig } from "../../bin/parameter"
 
