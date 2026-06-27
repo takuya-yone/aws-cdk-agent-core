@@ -54,8 +54,8 @@ testing does not apply to this feature.
     - Leave all four configurations in their commented-out state
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
 
-- [ ] 4. Stage 3 — Guard pass for remaining PR #37876 renames
-  - [ ] 4.1 Search the codebase for remaining renamed members/types (expected zero matches)
+- [x] 4. Stage 3 — Guard pass for remaining PR #37876 renames
+  - [x] 4.1 Search the codebase for remaining renamed members/types (expected zero matches)
     - Search for `IGateway.name`, `IGatewayTarget.name`, `BrowserCustom.name`,
       `CodeInterpreterCustom.name`, `MemoryStrategyCommonProps.name`
     - Search for `ApiKeyCredentialProviderProps`, `ApiKeyCredentialProviderResourceProps`
@@ -81,7 +81,7 @@ testing does not apply to this feature.
     - Run `pnpm install` to regenerate `pnpm-lock.yaml`
     - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
-  - [ ]* 5.3 Search assertion: zero alpha package keys remain
+  - [ ] 5.3 Search assertion: zero alpha package keys remain
     - Assert `pnpm-lock.yaml` contains zero occurrences of either alpha package as a package key
     - Assert no live import/require references to either alpha package remain under
       `bin/`, `lib/`, `src/`, `tests/`
@@ -113,13 +113,13 @@ testing does not apply to this feature.
       and report the difference
     - _Requirements: 6.1, 6.2, 6.4_
 
-  - [ ]* 8.2 Focused equivalence assertions on AgentCore resources
+  - [ ] 8.2 Focused equivalence assertions on AgentCore resources
     - Assert the Memory resource retains `expirationDuration` of 7 days
     - Assert the Runtime resource retains every environment variable key and value
     - Assert all attached managed policies and inline IAM grant statements are unchanged
     - _Requirements: 6.1, 6.3_
 
-  - [ ]* 8.3 Edit-scope verification on the two source files
+  - [ ] 8.3 Edit-scope verification on the two source files
     - Inspect the per-file diff for `agent-core.ts` and `api-gw.ts` to confirm only import
       specifiers and the four commented `name`→`strategyName` keys changed
     - Confirm the four MemoryStrategy configs remain commented out
