@@ -22,3 +22,14 @@ updates:
           - "*"
     commit-message:
       prefix: "[uv] "
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    target-branch: "main"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "[github-actions] "
