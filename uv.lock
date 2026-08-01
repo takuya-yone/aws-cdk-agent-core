@@ -165,9 +165,9 @@ dev = [
 requires-dist = [
     { name = "aws-lambda-powertools", specifier = ">=3.24.0" },
     { name = "aws-opentelemetry-distro", specifier = ">=0.15.0" },
-    { name = "bedrock-agentcore", specifier = ">=1.3.2" },
-    { name = "fastapi", specifier = ">=0.133.0" },
-    { name = "feedparser", specifier = ">=6.0.12" },
+    { name = "bedrock-agentcore", specifier = ">=1.19.0" },
+    { name = "fastapi", specifier = ">=0.141.0" },
+    { name = "feedparser", specifier = ">=6.0.13" },
     { name = "geopy", specifier = ">=2.4.1" },
     { name = "nanoid", specifier = ">=2.0.0" },
     { name = "pydantic", specifier = ">=2.12.5" },
@@ -176,10 +176,10 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.2.1" },
     { name = "requests", specifier = ">=2.32.5" },
     { name = "sse-starlette", specifier = ">=3.2.0" },
-    { name = "strands-agents", specifier = ">=1.27.0" },
+    { name = "strands-agents", specifier = ">=1.50.2" },
     { name = "strands-agents-tools", specifier = ">=0.2.21" },
     { name = "tavily", specifier = ">=1.1.0" },
-    { name = "uvicorn", specifier = ">=0.41.0" },
+    { name = "uvicorn", specifier = ">=0.52.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -303,7 +303,7 @@ wheels = [
 
 [[package]]
 name = "bedrock-agentcore"
-version = "1.18.1"
+version = "1.19.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "boto3" },
@@ -315,9 +315,9 @@ dependencies = [
     { name = "uvicorn" },
     { name = "websockets" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/88/e8/8149bb168ef3825884685eb98ef868f5bb5f796e4ea58eb98e8df3248937/bedrock_agentcore-1.18.1.tar.gz", hash = "sha256:ed4aa8822e39aa5846b9d68d1461afee19f2f795c1f6d71a61bc650ecc00ee31", size = 1030729, upload-time = "2026-07-17T19:55:21.354Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a3/69/81559c8d1a3a07be17d28e4f8c46fec782c4046a34815079c02287550368/bedrock_agentcore-1.19.0.tar.gz", hash = "sha256:02b3d9854a34deba8cea1a40c29d4ad3ef9dbf35c4e97878eccdfb7ae8254f76", size = 1031295, upload-time = "2026-07-28T19:49:00.044Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/45/fe/26cc0a66920035d2740c062bd46df252b15708b7723e13ccae0ab7b334db/bedrock_agentcore-1.18.1-py3-none-any.whl", hash = "sha256:6d8001f09cdfca0a20650ea691426149f521037d8d56917057fc191c00801086", size = 450684, upload-time = "2026-07-17T19:55:19.334Z" },
+    { url = "https://files.pythonhosted.org/packages/69/53/1ff62282f8766cba5a58614f60f75e64edd08a267c36e6ab3ad7533bbf6c/bedrock_agentcore-1.19.0-py3-none-any.whl", hash = "sha256:a4deaa63db1e01a7090c3b84f7815545f5433242b00aa28925e58e2d375588dc", size = 451436, upload-time = "2026-07-28T19:48:58.04Z" },
 ]
 
 [[package]]
@@ -599,7 +599,7 @@ wheels = [
 
 [[package]]
 name = "fastapi"
-version = "0.140.0"
+version = "0.141.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-doc" },
@@ -608,21 +608,30 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "typing-inspection" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/0d/fb/fd7671137d9fa3df1d93a2f5111eb982709201724b29f211e4beb2d58688/fastapi-0.140.0.tar.gz", hash = "sha256:f338951b82fd74ca8f843163aec43ea1a1ce84d515415a50fa98fa25572a5544", size = 420968, upload-time = "2026-07-24T21:16:41.187Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ac/7e/26bdd4f5a81891adf233354b6f4e7977563cc16e0f94b3f33405873c9278/fastapi-0.141.0.tar.gz", hash = "sha256:cae32222bdc8b2805c4d3deb4e024b381ea2a6f2de7febfe3a9a73a9c29c2e5e", size = 425532, upload-time = "2026-07-29T14:47:57.249Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/eb/76/6d9e25ad88da9d3ff744bcdbec4736e38c2288611d43f673a5d9bfa27c07/fastapi-0.140.0-py3-none-any.whl", hash = "sha256:e951c0a0d9540bf5d9a2a9e078fd415da2ab7e312d435139e7d9e2e7fe9f0b23", size = 130863, upload-time = "2026-07-24T21:16:42.89Z" },
+    { url = "https://files.pythonhosted.org/packages/84/85/eefb536e451ebeb7ad9045e62a0c17c68d7caa52211174da034e683956d1/fastapi-0.141.0-py3-none-any.whl", hash = "sha256:5567705c791fa33202dabd1860df1d1650a7b1bf373378198d7b0675c9574618", size = 131808, upload-time = "2026-07-29T14:47:59.076Z" },
 ]
 
 [[package]]
 name = "feedparser"
-version = "6.0.12"
+version = "6.0.13"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "sgmllib3k" },
+    { name = "feedparser-sgmllib" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/dc/79/db7edb5e77d6dfbc54d7d9df72828be4318275b2e580549ff45a962f6461/feedparser-6.0.12.tar.gz", hash = "sha256:64f76ce90ae3e8ef5d1ede0f8d3b50ce26bcce71dd8ae5e82b1cd2d4a5f94228", size = 286579, upload-time = "2025-09-10T13:33:59.486Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ba/4d/5b2ec743bf789655efda6a75a482522568f65594579864e406425b78870f/feedparser-6.0.13.tar.gz", hash = "sha256:ceba9cd98a0a4bfc17e24e8ea47e649f194fbf881d417fd5bd0af2927a03c5c9", size = 286155, upload-time = "2026-07-28T12:42:20.402Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4e/eb/c96d64137e29ae17d83ad2552470bafe3a7a915e85434d9942077d7fd011/feedparser-6.0.12-py3-none-any.whl", hash = "sha256:6bbff10f5a52662c00a2e3f86a38928c37c48f77b3c511aedcd51de933549324", size = 81480, upload-time = "2025-09-10T13:33:58.022Z" },
+    { url = "https://files.pythonhosted.org/packages/df/6b/402c049864f7e1181e603b37b36690409ce5fd014417bf234724dbb95c87/feedparser-6.0.13-py3-none-any.whl", hash = "sha256:ff00fcd62a1bba943ad6dadb7e3139bc3e2d9e027859343283112d605e794e52", size = 80666, upload-time = "2026-07-28T12:42:19.169Z" },
+]
+
+[[package]]
+name = "feedparser-sgmllib"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c8/1b/dd83b36c2c260307fa0322be855a20a8ef8a52e54ee8c215773ba1a19186/feedparser_sgmllib-1.0.0.tar.gz", hash = "sha256:f73861ca2f6bb2798b2499fbab62d34bd27fd13379704a38ed616c67eb0a76a6", size = 9431, upload-time = "2026-07-27T12:40:47.649Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/91/57/a2a8e39270d8742b21e5a030b809573e35ab57400487f98bfcb6cca766ad/feedparser_sgmllib-1.0.0-py3-none-any.whl", hash = "sha256:d0d5daf29b3f315396d4d5a65b5fe28862d1bc4ea37dec826ccbf1021034a959", size = 10012, upload-time = "2026-07-27T12:40:46.451Z" },
 ]
 
 [[package]]
@@ -2362,12 +2371,6 @@ wheels = [
 ]
 
 [[package]]
-name = "sgmllib3k"
-version = "1.0.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/9e/bd/3704a8c3e0942d711c1299ebf7b9091930adae6675d7c8f476a7ce48653c/sgmllib3k-1.0.0.tar.gz", hash = "sha256:7868fb1c8bfa764c1ac563d3cf369c381d1325d36124933a726f29fcdaa812e9", size = 5750, upload-time = "2010-08-24T14:33:52.445Z" }
-
-[[package]]
 name = "six"
 version = "1.17.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2433,7 +2436,7 @@ wheels = [
 
 [[package]]
 name = "strands-agents"
-version = "1.50.1"
+version = "1.50.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "boto3" },
@@ -2450,9 +2453,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "watchdog" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b8/8d/49292aa95a380cc8e23013d35b890989064c710888a9422f4eac86041787/strands_agents-1.50.1.tar.gz", hash = "sha256:1c3dadc583a9219e25e8cf4942546544c73ae826d588223ea92c7ce9b1bcc45a", size = 1224179, upload-time = "2026-07-24T21:40:02.601Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d0/7a/b5e20f5ee859c71e451e2e06de8767aab73d850018167c436e3a96446caf/strands_agents-1.50.2.tar.gz", hash = "sha256:7b45c41593e41f22383962a233b6616360b8c3686ae8b902059b6a6fab3deacf", size = 1224067, upload-time = "2026-07-27T20:38:48.238Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/72/7c/1fa3979b54b8c7c3abeb17ad53d7035e6957b83ab7b5555ee11d884f47e4/strands_agents-1.50.1-py3-none-any.whl", hash = "sha256:fa8ad193d6aa4bc0bed2a43d85e9446cd4c22336f6c1c89638d55289faccfe4e", size = 641138, upload-time = "2026-07-24T21:40:00.853Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/d6/2fd27147f53c45e546c0c542c6ea4a24b93c1f3908dcbad164624e5ddfa6/strands_agents-1.50.2-py3-none-any.whl", hash = "sha256:39c6b755e579e0b631ea01af78a0a201019320670b87adcf0b5c8dd1e5a2cef8", size = 638411, upload-time = "2026-07-27T20:38:46.12Z" },
 ]
 
 [[package]]
@@ -2555,15 +2558,15 @@ wheels = [
 
 [[package]]
 name = "uvicorn"
-version = "0.51.0"
+version = "0.52.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "h11" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a2/65/b7c6c443ccc58678c91e1e973bbe2a878591538655d6e1d47f24ba1c51f3/uvicorn-0.51.0.tar.gz", hash = "sha256:f6f4b69b657c312f516dd2d268ab9ae6f254b11e4bac504f37b2ab58b24dd0b0", size = 94412, upload-time = "2026-07-08T10:59:05.962Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/05/c8/2d307868453a4bca6e64fa3581d122ae0748a0869c53f159339def179c7c/uvicorn-0.52.0.tar.gz", hash = "sha256:ca8876ad6c1983f394157c168b39d52f6dd56dabf5602fa0982751cffc2293ae", size = 97504, upload-time = "2026-07-29T08:45:34.065Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/45/ec/dbb7e5a6b91f86bfb9eb7d2988a2730907b6a729875b949c7f022e8b88fa/uvicorn-0.51.0-py3-none-any.whl", hash = "sha256:5d38af6cd620f2ae3849fb44fd4879e0890aa1febe8d47eb355fb45d93fe6a5b", size = 73219, upload-time = "2026-07-08T10:59:04.44Z" },
+    { url = "https://files.pythonhosted.org/packages/39/e6/b5c0630ace9757232aec07112be8146b812787db52141ff9d50674aa7634/uvicorn-0.52.0-py3-none-any.whl", hash = "sha256:3d887809810b89ed33501bcf0a9aba469b06ecd608158efce04bd6b48d8c9b08", size = 79058, upload-time = "2026-07-29T08:45:32.492Z" },
 ]
 
 [[package]]
