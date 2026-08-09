@@ -6,8 +6,10 @@ import {
   aws_logs as logs,
   RemovalPolicy,
   aws_scheduler as scheduler,
+  aws_stepfunctions as sfn,
   TimeZone,
   aws_scheduler_targets as targets,
+  aws_stepfunctions_tasks as tasks,
 } from "aws-cdk-lib"
 import { Construct } from "constructs"
 
@@ -19,6 +21,7 @@ export class RssRetrieverConstruct extends Construct {
   constructor(scope: Construct, id: string, props: RssRetrieverConstructProps) {
     super(scope, id)
 
+    // Create the Lambda function that retrieves the RSS feed and stores it in DynamoDB
     const rssFeedRetrieverLambdaName = "RssFeedRetrieverLambda"
     const rssFeedRetrieverLambda = new lambda_nodejs.NodejsFunction(
       this,
@@ -49,6 +52,51 @@ export class RssRetrieverConstruct extends Construct {
     )
     props.rssFeedTable.grantReadWriteData(rssFeedRetrieverLambda)
 
+    // Step Functions Success/Fail States
+    const failState = new sfn.Fail(this, "RssFeedRetrieverFail", {})
+    const successState = new sfn.Succeed(this, "RssFeedRetrieverSuccess", {})
+
+    // Step Functions LambdaInvoke Task
+    const rssFeedRetrieverLambdaInvoke = new tasks.LambdaInvoke(
+      this,
+      "RssFeedRetrieverLambda",
+      {
+        lambdaFunction: rssFeedRetrieverLambda,
+        outputPath: "$.Payload",
+      },
+    )
+
+    // Step Functions Definition
+    const rssFeedRetrieverDefinition = rssFeedRetrieverLambdaInvoke
+      .addCatch(failState)
+      .next(successState)
+
+    // Step Functions State Machine
+    const rssFeedRetrieverStateMachineName = "RssFeedRetrieverStateMachine"
+    const rssFeedRetrieverStateMachine = new sfn.StateMachine(
+      this,
+      "RssFeedRetrieverSfn",
+      {
+        tracingEnabled: true,
+        stateMachineName: rssFeedRetrieverStateMachineName,
+        logs: {
+          destination: new logs.LogGroup(
+            this,
+            `RssFeedRetrieverStateMachine-log-group`,
+            {
+              logGroupName: rssFeedRetrieverStateMachineName,
+              retention: logs.RetentionDays.ONE_YEAR,
+              removalPolicy: RemovalPolicy.DESTROY,
+            },
+          ),
+          level: sfn.LogLevel.ALL,
+        },
+        definitionBody: sfn.DefinitionBody.fromChainable(
+          rssFeedRetrieverDefinition,
+        ),
+      },
+    )
+
     const _rssFeedRetrieverSchedule = new scheduler.Schedule(
       this,
       "RssFeedRetrieverSchedule",
@@ -63,7 +111,10 @@ export class RssRetrieverConstruct extends Construct {
           timeZone: TimeZone.ASIA_TOKYO,
         }),
         timeWindow: scheduler.TimeWindow.off(),
-        target: new targets.LambdaInvoke(rssFeedRetrieverLambda),
+        target: new targets.StepFunctionsStartExecution(
+          rssFeedRetrieverStateMachine,
+          { retryAttempts: 0 },
+        ),
       },
     )
   }
