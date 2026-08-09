@@ -59,7 +59,7 @@ export class RssRetrieverConstruct extends Construct {
     // Step Functions LambdaInvoke Task
     const rssFeedRetrieverLambdaInvoke = new tasks.LambdaInvoke(
       this,
-      "RssFeedRetrieverLambda",
+      "RssFeedRetrieverLambdaInvoke",
       {
         lambdaFunction: rssFeedRetrieverLambda,
         outputPath: "$.Payload",
