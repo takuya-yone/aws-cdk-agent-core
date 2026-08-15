@@ -5,21 +5,21 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
-    "aws-lambda-powertools>=3.24.0",
+    "aws-lambda-powertools>=3.34.0",
     "aws-opentelemetry-distro>=0.15.0",
-    "bedrock-agentcore>=1.20.0",
+    "bedrock-agentcore>=1.21.0",
     "fastapi>=0.141.1",
     "feedparser>=6.0.14",
     "geopy>=2.4.1",
     "nanoid>=2.0.0",
     "pydantic>=2.12.5",
-    "pydantic-settings>=2.12.1",
+    "pydantic-settings>=2.15.0",
     "pynamodb>=6.1.0",
     "python-dotenv>=1.2.1",
     "requests>=2.32.5",
     "sse-starlette>=3.4.8",
-    "strands-agents>=1.50.2",
-    "strands-agents-tools>=0.2.21",
+    "strands-agents>=1.51.0",
+    "strands-agents-tools>=0.8.6",
     "tavily>=1.1.0",
     "uvicorn>=0.52.1",
 ]
@@ -29,7 +29,7 @@ dev = [
     "pytest>=9.0.2",
     "pytest-cov>=7.0.0",
     "pytest-xdist>=3.8.0",
-    "ruff>=0.16.1",
+    "ruff>=0.16.2",
 ]
 
 [tool.pytest.ini_options]
