@@ -19,10 +19,10 @@
     "pytest": "uv run python -m pytest tests --cov"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.9",
+    "@biomejs/biome": "2.5.10",
     "@hono/node-server": "^2.1.1",
     "@types/aws-lambda": "^8.10.162",
-    "@types/node": "^26.2.0",
+    "@types/node": "^26.3.0",
     "@vitest/coverage-v8": "4.1.11",
     "aws-cdk": "2.1138.0",
     "esbuild": "^0.28.2",
@@ -35,7 +35,7 @@
   "dependencies": {
     "@aws-lambda-powertools/logger": "^2.35.0",
     "@aws-lambda-powertools/tracer": "^2.35.0",
-    "@aws-sdk/client-bedrock-agentcore": "^3.1115.0",
+    "@aws-sdk/client-bedrock-agentcore": "^3.1118.0",
     "@dotenvx/dotenvx": "^2.21.0",
     "@hono/standard-validator": "^0.4.0",
     "@hono/swagger-ui": "^0.6.1",
@@ -43,10 +43,10 @@
     "@middy/core": "^7.8.0",
     "aws-cdk-lib": "^2.266.0",
     "aws-lambda": "^1.0.7",
-    "cdk-ecr-deployment": "^4.2.52",
+    "cdk-ecr-deployment": "^4.2.57",
     "constructs": "^10.8.1",
     "dynamoose": "^4.2.0",
-    "hono": "^4.13.3",
+    "hono": "^4.13.5",
     "nanoid": "^6.0.1",
     "rss-parser": "^3.13.0",
     "zod": "^4.4.3"
