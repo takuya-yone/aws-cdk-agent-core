@@ -17,6 +17,14 @@ AWS CDK TypeScript プロジェクト。Amazon Bedrock AgentCore Runtime 上で 
 - テスト: Vitest (TypeScript) / pytest (Python)
 - Node.js 24.x / Python 3.14
 
+## Python 依存関係の管理
+
+ルートの `pyproject.toml` / `uv.lock` が唯一の管理場所。`src/agent/` 配下に `pyproject.toml` は置かない。
+
+- 依存追加は必ずルートで `uv add <pkg>`（`src/agent` で実行しないこと）
+- そのため AgentCore イメージの Docker ビルドコンテキストは**リポジトリルート**で、Dockerfile は `file: "src/agent/Dockerfile"` として指定する（`lib/constructs/agent-core.ts`）。除外設定はルートの `.dockerignore`
+- イメージ内は venv が `/app/.venv`、WORKDIR が `/app/src/agent`。`from models import ...` 形式のフラット import を維持するため
+
 ## コマンド
 
 ### ビルド・デプロイ
@@ -48,7 +56,7 @@ pnpm run pytest       # pytest + coverage (Python)
 
 ```bash
 pnpm run dev          # Lambda プロキシ ローカル起動 (Port:3000, .env 必要)
-cd src/agent && uv sync && source .venv/bin/activate && python main.py  # AgentCore ローカル (Port:8080)
+uv sync && cd src/agent && uv run python main.py  # AgentCore ローカル (Port:8080)
 ```
 
 ## pre-commit フック

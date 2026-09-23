@@ -1,0 +1,52 @@
+# Build context for src/agent/Dockerfile is the repository root.
+# Only pyproject.toml, uv.lock and src/agent/ are needed in the image,
+# so everything else is excluded here (this also shrinks the CDK asset staging).
+
+# Node.js / CDK
+node_modules
+cdk.out
+.cdk.staging
+pnpm-lock.yaml
+
+# Python virtualenvs and caches
+.venv
+**/.venv
+**/__pycache__
+.pytest_cache
+.ruff_cache
+.coverage
+
+# Secrets and local env files
+.env*
+**/.env*
+
+# VCS and tooling
+.git
+.gitignore
+.github
+.husky
+.claude
+.kiro
+.vscode
+.mcp.json
+.node-version
+.npmignore
+.python-version
+pnpm-workspace.yaml
+
+# Docs (excluded so that editing them does not rebuild the image)
+*.md
+
+# Sources not used by the agent runtime
+bin
+lib
+tests
+tools
+docs
+src/lambda
+src/cloudfront
+biome.json
+cdk.json
+tsconfig.json
+vitest.config.ts
+package.json

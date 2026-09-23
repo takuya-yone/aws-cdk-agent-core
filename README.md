@@ -129,11 +129,12 @@ pnpm cdk deploy
 
 ### AgentCore ローカル起動（Port:8080）
 
+Python の依存関係はリポジトリルートの `pyproject.toml` / `uv.lock` で一元管理しています。`src/agent` 配下に `pyproject.toml` はありません。
+
 ```bash
+uv sync                     # ルートで実行（.venv はリポジトリルートに作成される）
 cd src/agent
-uv sync
-source .venv/bin/activate
-python main.py
+uv run python main.py
 ```
 
 ## Cognito 操作
