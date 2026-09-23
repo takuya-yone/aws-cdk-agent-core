@@ -94,6 +94,8 @@ The agent uses a **main-agent → sub-agent delegation** pattern:
 
 The agent container (`src/agent/Dockerfile`) runs on Alpine + uv, instrumented with OpenTelemetry, exposed on port 8080. **Must be ARM64** for Agent Core Runtime compatibility.
 
+Python dependencies are declared **only** in the root `pyproject.toml` / `uv.lock` (there is no `pyproject.toml` under `src/agent/`). Because of that, the Docker build context is the **repository root** with `file: "src/agent/Dockerfile"`, and exclusions live in the root `.dockerignore`. Inside the image the venv is at `/app/.venv` while the working directory is `/app/src/agent`, which keeps the flat imports (`from models import ...`) working.
+
 ### Stack Parameters
 
 All configuration is centralized in `bin/parameter.ts` via the `StackParameters` interface, including GitHub repo config, Slack notifications, Cognito OAuth settings, API Gateway config (stage name, timeouts, history limits), and Agent Core config (model IDs, knowledge base result counts).

@@ -23,7 +23,7 @@ jobs:
           python-version: "3.14"
           allow-prereleases: true
       - run: pnpm install --frozen-lockfile
-      - run: uv sync
+      - run: uv sync --locked
       - name: Biome (TypeScript)
         run: pnpm biome:dry
       - name: Ruff (Python)
@@ -45,7 +45,7 @@ jobs:
           python-version: "3.14"
           allow-prereleases: true
       - run: pnpm install --frozen-lockfile
-      - run: uv sync
+      - run: uv sync --locked
       - name: Vitest (TypeScript)
         run: pnpm run test
       - name: pytest (Python)

@@ -60,8 +60,12 @@ export class AgentCoreConstruct extends Construct {
     // Runtimeの作成
     this.runtime = new agentcore.Runtime(this, "StrandsAgentRuntime", {
       runtimeName: "StrandsAgentRuntime",
-      agentRuntimeArtifact:
-        agentcore.AgentRuntimeArtifact.fromAsset("src/agent"),
+      // ビルドコンテキストはリポジトリルート
+      // (pyproject.toml / uv.lock をルートで一元管理しているため)
+      // 除外対象はルートの .dockerignore で定義
+      agentRuntimeArtifact: agentcore.AgentRuntimeArtifact.fromAsset(".", {
+        file: "src/agent/Dockerfile",
+      }),
       description: "StrandsAgentRuntime",
       environmentVariables: {
         AWS_DEFAULT_REGION: cdk.Stack.of(this).region,
