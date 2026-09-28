@@ -3,6 +3,7 @@ from agent_tools import (
     get_aws_rss_feed,
     get_estate_info,
     get_frontend_best_practices,
+    get_reinvent2026_info,
     get_weather,
     goverment_mcp_client,
     # real_estate_mcp_client,
@@ -82,7 +83,16 @@ estate_agent = Agent(
         "You are an agent that provides information about real estate. Use the get_estate_info tool to fetch real estate information based on user queries. Datasource is formatted as Markdown Table. The 'Data ID' field in referenced Markdown Table must be included. Answer in Japanese."
     ),
     tools=[get_estate_info],
-    # tools=[real_estate_mcp_client],
+)
+
+
+reinvent2026_agent = Agent(
+    name="reinvent2026_agent",
+    model=model,
+    system_prompt=(
+        "You are an agent that provides information about Reinvent 2026. Use the get_reinvent2026_info tool to fetch Reinvent 2026 information based on user queries. Datasource is formatted as Markdown Table. The 'Data ID' field in referenced Markdown Table must be included. Answer in Japanese."
+    ),
+    tools=[get_reinvent2026_info],
 )
 
 

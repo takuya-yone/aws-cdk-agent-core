@@ -10,6 +10,7 @@ from settings import (
     aws_rss_settings,
     estate_knowledge_base_settings,
     knowledge_base_settings,
+    reinvent2026_knowledge_base_settings,
     tagosaku_agent_settings,
     tavily_settings,
 )
@@ -238,6 +239,46 @@ def get_estate_info(query: str) -> dict:
             "text": text,
             "citations_count": len(citations),
             "tool": "get_estate_info",
+        },
+    )
+    return text
+
+
+@tool
+def get_reinvent2026_info(query: str) -> dict:
+    """Provide information about Reinvent 2026 based on user queries.
+    Args:
+        query: The query string related to Reinvent 2026 information
+    Returns:
+        The retrieval results as a dictionary
+    """
+    logger.info(
+        f"Fetching Reinvent 2026 information for query: {query}",
+        extra={"query": query, "tool": "get_reinvent2026_info"},
+    )
+    response = kb_client.retrieve_and_generate(
+        input={"text": query},
+        retrieveAndGenerateConfiguration={
+            "type": "KNOWLEDGE_BASE",
+            "knowledgeBaseConfiguration": {
+                "knowledgeBaseId": reinvent2026_knowledge_base_settings.bedrock_reinvent2026_kb_id,  # ナレッジベースID
+                "modelArn": reinvent2026_knowledge_base_settings.kb_model_id,  # 回答を行うモデルのARN（詳細は補足に記載）
+                "retrievalConfiguration": {
+                    "vectorSearchConfiguration": {
+                        "numberOfResults": reinvent2026_knowledge_base_settings.reinvent2026_kb_result_nums,  # ナレッジベースから取得する関連情報の数
+                    }
+                },
+            },
+        },
+    )
+    text = response["output"]["text"]
+    citations = response["citations"]
+    logger.info(
+        f"Retrieved {len(citations)} citations from knowledge base",
+        extra={
+            "text": text,
+            "citations_count": len(citations),
+            "tool": "get_reinvent2026_info",
         },
     )
     return text

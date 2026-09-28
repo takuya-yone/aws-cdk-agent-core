@@ -66,6 +66,14 @@ class EstateKnowledgeBaseSettings(BaseSettings):
     estate_kb_result_nums: int = 5
 
 
+class Reinvent2026KnowledgeBaseSettings(BaseSettings):
+    model_id: str
+    kb_model_id: str
+    bedrock_kb_id: str
+    bedrock_reinvent2026_kb_id: str
+    reinvent2026_kb_result_nums: int = 5
+
+
 class LogSettings(BaseSettings):
     log_table_name: str
 
@@ -76,5 +84,6 @@ aws_rss_settings = AwsRssSettings()
 memory_settings = AgentCoreMemorySettings()
 knowledge_base_settings = KnowledgeBaseSettings()
 estate_knowledge_base_settings = EstateKnowledgeBaseSettings()
+reinvent2026_knowledge_base_settings = Reinvent2026KnowledgeBaseSettings()
 log_settings = LogSettings()
 tagosaku_agent_settings = TagosakuAgentSettings()
