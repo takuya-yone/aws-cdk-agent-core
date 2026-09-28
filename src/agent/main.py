@@ -318,6 +318,7 @@ async def entrypoint(invocation_id: str, payload: InvocationRequestModel):
             call_aws_access_agent,
             call_estate_agent,
             call_tagosaku_agent,
+            call_reinvent2026_agent,
             # call_goverment_data_agent,
         ],
         system_prompt="""
