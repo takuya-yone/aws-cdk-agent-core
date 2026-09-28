@@ -9,6 +9,7 @@ import {
   DatastoreConstruct,
   EstateKnowledgeBaseConstruct,
   KnowledgeBaseConstruct,
+  Reinvent2026KnowledgeBaseConstruct,
   RssRetrieverConstruct,
 } from "../constructs"
 
@@ -39,6 +40,12 @@ export class AgentCoreStack extends cdk.Stack {
       "EstateKnowledgeBaseConstruct",
     )
 
+    const reinvent2026KnowledgeBaseConstruct =
+      new Reinvent2026KnowledgeBaseConstruct(
+        this,
+        "Reinvent2026KnowledgeBaseConstruct",
+      )
+
     const agentCoreConstruct = new AgentCoreConstruct(
       this,
       "AgentCoreConstruct",
@@ -46,6 +53,8 @@ export class AgentCoreStack extends cdk.Stack {
         agentCoreConfig: props.agentCoreConfig,
         knowledgeBase: knowledgeBaseConstruct.knowledgeBase,
         estateKnowledgeBase: estateKnowledgeBaseConstruct.knowledgeBase,
+        reinvent2026KnowledgeBase:
+          reinvent2026KnowledgeBaseConstruct.knowledgeBase,
         agentCoreLogTable: datastoreConstruct.agentCoreLogTable,
       },
     )

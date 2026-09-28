@@ -13,6 +13,7 @@ export type AgentCoreConstructProps = {
   agentCoreConfig: AgentCoreConfig
   knowledgeBase: aws_bedrock.CfnKnowledgeBase
   estateKnowledgeBase: aws_bedrock.CfnKnowledgeBase
+  reinvent2026KnowledgeBase: aws_bedrock.CfnKnowledgeBase
   agentCoreLogTable: dynamodb.TableV2
 }
 export class AgentCoreConstruct extends Construct {
@@ -73,6 +74,7 @@ export class AgentCoreConstruct extends Construct {
         MEMORY_ID: memory.memoryId,
         BEDROCK_KB_ID: props.knowledgeBase.ref,
         BEDROCK_ESTATE_KB_ID: props.estateKnowledgeBase.ref,
+        BEDROCK_REINVENT2026_KB_ID: props.reinvent2026KnowledgeBase.ref,
         LOG_TABLE_NAME: props.agentCoreLogTable.tableName,
         KB_RESULT_NUMS: props.agentCoreConfig.kbResultNums.toString(),
         ESTATE_KB_RESULT_NUMS:
@@ -86,6 +88,7 @@ export class AgentCoreConstruct extends Construct {
       resources: [
         props.knowledgeBase.attrKnowledgeBaseArn,
         props.estateKnowledgeBase.attrKnowledgeBaseArn,
+        props.reinvent2026KnowledgeBase.attrKnowledgeBaseArn,
       ],
     })
 
