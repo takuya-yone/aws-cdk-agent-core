@@ -1,9 +1,5 @@
 import * as cdk from "aws-cdk-lib"
-import {
-  aws_bedrockagentcore as agentcore,
-  aws_iam as iam,
-  aws_lambda as lambda,
-} from "aws-cdk-lib"
+import { aws_bedrockagentcore as agentcore, aws_iam as iam } from "aws-cdk-lib"
 import { Construct } from "constructs"
 
 export class AgentCoreGwConstruct extends Construct {
@@ -11,17 +7,6 @@ export class AgentCoreGwConstruct extends Construct {
 
   constructor(scope: Construct, id: string) {
     super(scope, id)
-
-    // ツール本体の Lambda
-    const toolFn = new lambda.Function(this, "ToolFn", {
-      runtime: lambda.Runtime.PYTHON_3_13,
-      handler: "index.handler",
-      logRetention: 7, // Retain logs for 7 days
-      code: lambda.Code.fromInline(
-        `def handler(event, context):
-    return {"message": f"hello {event.get('name', 'world')}"}`,
-      ),
-    })
 
     this.gateway = new agentcore.Gateway(this, `StockAgentCoreGateway`, {
       gatewayName: `StockAgentCoreGateway`,
@@ -64,27 +49,5 @@ export class AgentCoreGwConstruct extends Construct {
         ],
       },
     )
-
-    this.gateway.addLambdaTarget("HelloTarget", {
-      gatewayTargetName: "hello-tool",
-      description: "Say hello",
-      lambdaFunction: toolFn,
-      toolSchema: agentcore.ToolSchema.fromInline([
-        {
-          name: "say_hello",
-          description: "Greets the given name",
-          inputSchema: {
-            type: agentcore.SchemaDefinitionType.OBJECT,
-            properties: {
-              name: {
-                type: agentcore.SchemaDefinitionType.STRING,
-                description: "Name to greet",
-              },
-            },
-            required: ["name"],
-          },
-        },
-      ]),
-    })
   }
 }
