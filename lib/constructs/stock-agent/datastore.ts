@@ -14,10 +14,6 @@ export class StockDatastoreConstruct extends Construct {
         name: "ActorId",
         type: dynamodb.AttributeType.STRING,
       },
-      sortKey: {
-        name: "Timestamp",
-        type: dynamodb.AttributeType.STRING,
-      },
       timeToLiveAttribute: "ExpireAt",
       billing: dynamodb.Billing.onDemand(),
       removalPolicy: RemovalPolicy.DESTROY,
@@ -56,7 +52,7 @@ export class StockDatastoreConstruct extends Construct {
         removalPolicy: RemovalPolicy.DESTROY,
         globalSecondaryIndexes: [
           {
-            indexName: "ActorId-index",
+            indexName: "actor-id-index",
             partitionKey: {
               name: "ActorId",
               type: dynamodb.AttributeType.STRING,
