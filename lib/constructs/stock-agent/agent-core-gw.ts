@@ -1,9 +1,9 @@
-import * as cdk from "aws-cdk-lib"
 import {
   aws_bedrockagentcore as agentcore,
-  aws_iam as iam,
-  aws_lambda as lambda,
+  aws_lambda as lambda,aws_iam as iam
 } from "aws-cdk-lib"
+
+import * as cdk from "aws-cdk-lib"
 import { Construct } from "constructs"
 
 export class AgentCoreGwConstruct extends Construct {
@@ -11,6 +11,7 @@ export class AgentCoreGwConstruct extends Construct {
 
   constructor(scope: Construct, id: string) {
     super(scope, id)
+
 
     // ツール本体の Lambda
     const toolFn = new lambda.Function(this, "ToolFn", {
@@ -34,11 +35,9 @@ export class AgentCoreGwConstruct extends Construct {
         sid: "InvokeWebSearch",
         actions: ["bedrock-agentcore:InvokeWebSearch"],
         // サービス所有の ARN（アカウント ID の位置は "aws"）
-        resources: [
-          `arn:aws:bedrock-agentcore:${cdk.Stack.of(this).region}:aws:tool/web-search.v1`,
-        ],
-      }),
-    )
+        resources: [`arn:aws:bedrock-agentcore:${cdk.Stack.of(this).region}:aws:tool/web-search.v1`],
+      })
+    );
 
     const _webSearchTarget = new agentcore.CfnGatewayTarget(
       this,
@@ -64,6 +63,7 @@ export class AgentCoreGwConstruct extends Construct {
         ],
       },
     )
+
 
     this.gateway.addLambdaTarget("HelloTarget", {
       gatewayTargetName: "hello-tool",
