@@ -32,6 +32,7 @@ type ModelIdType =
   | "openai.gpt-oss-120b-1:0"
   | "openai.gpt-oss-20b-1:0"
   | "global.anthropic.claude-sonnet-4-6"
+  | "global.moonshotai.kimi-k3"
 
 export type AgentCoreConfig = {
   modelId: ModelIdType
@@ -82,9 +83,9 @@ export const defaultStackParameters: StackParameters = {
     historyItemLimit: 30,
   },
   agentCoreConfig: {
-    modelId: "apac.amazon.nova-pro-v1:0",
+    modelId: "global.moonshotai.kimi-k3",
     kbModelId: "global.amazon.nova-2-lite-v1:0",
-    tagosakuModelId: "global.anthropic.claude-sonnet-4-6",
+    tagosakuModelId: "global.moonshotai.kimi-k3",
     kbResultNums: 10,
     estateKbResultNums: 10,
   },
