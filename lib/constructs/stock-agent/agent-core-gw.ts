@@ -1,8 +1,9 @@
+import * as cdk from "aws-cdk-lib"
 import {
   aws_bedrockagentcore as agentcore,
+  aws_iam as iam,
   aws_lambda as lambda,
 } from "aws-cdk-lib"
-
 import { Construct } from "constructs"
 
 export class AgentCoreGwConstruct extends Construct {
@@ -10,30 +11,6 @@ export class AgentCoreGwConstruct extends Construct {
 
   constructor(scope: Construct, id: string) {
     super(scope, id)
-
-    // const gatewayRole = new iam.Role(this, 'GatewayRole', {
-    //   assumedBy: new iam.ServicePrincipal('bedrock-agentcore.amazonaws.com', {
-    //     conditions: {
-    //       StringEquals: { 'aws:SourceAccount': ``},
-    //       ArnLike: {
-    //         'aws:SourceArn': `arn:aws:bedrock-agentcore:${props.env.region}:${props.env.account}:gateway/*`,
-    //       },
-    //     },
-    //   }),
-    // })
-
-    // gatewayRole.addToPolicy(
-    //   new iam.PolicyStatement({
-    //     actions: ['bedrock-agentcore:InvokeGateway'],
-    //     resources: [`arn:aws:bedrock-agentcore:${props.env.region}:${props.env.account}:gateway/*`],
-    //   }),
-    // )
-    // gatewayRole.addToPolicy(
-    //   new iam.PolicyStatement({
-    //     actions: ['bedrock-agentcore:InvokeWebSearch'],
-    //     resources: [`arn:aws:bedrock-agentcore:${props.env.region}:aws:tool/web-search.v1`],
-    //   }),
-    // )
 
     // ツール本体の Lambda
     const toolFn = new lambda.Function(this, "ToolFn", {
@@ -51,6 +28,17 @@ export class AgentCoreGwConstruct extends Construct {
       authorizerConfiguration: agentcore.GatewayAuthorizer.usingAwsIam(),
       // role: gatewayRole,
     })
+    // Web Search 用の権限をゲートウェイのサービスロールに追加
+    this.gateway.role.addToPrincipalPolicy(
+      new iam.PolicyStatement({
+        sid: "InvokeWebSearch",
+        actions: ["bedrock-agentcore:InvokeWebSearch"],
+        // サービス所有の ARN（アカウント ID の位置は "aws"）
+        resources: [
+          `arn:aws:bedrock-agentcore:${cdk.Stack.of(this).region}:aws:tool/web-search.v1`,
+        ],
+      }),
+    )
 
     const _webSearchTarget = new agentcore.CfnGatewayTarget(
       this,
