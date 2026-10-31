@@ -7,7 +7,7 @@ import {
   aws_secretsmanager as secretsmanager,
 } from "aws-cdk-lib"
 import { Construct } from "constructs"
-import type { AgentCoreConfig } from "../../bin/parameter"
+import type { AgentCoreConfig } from "../../../bin/parameter"
 
 export type AgentCoreConstructProps = {
   agentCoreConfig: AgentCoreConfig

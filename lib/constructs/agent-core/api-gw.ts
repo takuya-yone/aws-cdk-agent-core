@@ -13,7 +13,7 @@ import {
   RemovalPolicy,
 } from "aws-cdk-lib"
 import { Construct } from "constructs"
-import type { ApiGwConfig } from "../../bin/parameter"
+import type { ApiGwConfig } from "../../../bin/parameter"
 
 type ApiGwConstructProps = {
   runtime: agentcore.Runtime
