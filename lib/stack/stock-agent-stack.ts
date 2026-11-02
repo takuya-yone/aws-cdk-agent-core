@@ -1,20 +1,38 @@
 import * as cdk from "aws-cdk-lib/core"
 import type { Construct } from "constructs"
 import type { StackParameters } from "../../bin/parameter"
-import { AgentCoreGwConstruct, StockDatastoreConstruct } from "../constructs"
+import {
+  AgentCoreGwConstruct,
+  AgentCoreRuntimeConstruct,
+  StockDatastoreConstruct,
+} from "../constructs"
 
 export class StockAgentStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: StackParameters) {
     super(scope, id, props)
 
-    const _stockDatastoreConstruct = new StockDatastoreConstruct(
+    const stockDatastoreConstruct = new StockDatastoreConstruct(
       this,
       "StockDatastoreConstruct",
     )
 
-    const _agentCoreGwConstruct = new AgentCoreGwConstruct(
+    const agentCoreGwConstruct = new AgentCoreGwConstruct(
       this,
       "AgentCoreGwConstruct",
+    )
+
+    const _agentCoreRuntimeConstruct = new AgentCoreRuntimeConstruct(
+      this,
+      "AgentCoreRuntimeConstruct",
+      {
+        gateway: agentCoreGwConstruct.gateway,
+        dynamodb: {
+          fxBalanceTable: stockDatastoreConstruct.fxBalanceTable,
+          fxBalanceHistoryTable: stockDatastoreConstruct.fxBalanceHistoryTable,
+          fxOrderHistoryTable: stockDatastoreConstruct.fxOrderHistoryTable,
+        },
+        fxOrderSummaryBucket: stockDatastoreConstruct.fxOrderSummaryBucket,
+      },
     )
   }
 }
