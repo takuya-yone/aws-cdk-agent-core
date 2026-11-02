@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-AWS CDK TypeScript project that deploys a Bedrock Agent Core Runtime running a Strands-based AI agent. The codebase has two layers: TypeScript CDK infrastructure (`lib/`) and a Python agent runtime (`src/agent/`).
+AWS CDK TypeScript project that deploys a Bedrock Agent Core Runtime running a Strands-based AI agent. The codebase has two layers: TypeScript CDK infrastructure (`lib/`) and a Python agent runtime (`src/sandbox_agent/`).
 
 ## Commands
 
@@ -66,7 +66,7 @@ bin/aws-cdk-agent-core.ts
 
 **PipelineStack** (`lib/pipeline-stack.ts`) uses GitHub source (`takuya-yone/aws-cdk-agent-core`, `main` branch) with ARM64 CodeBuild. Includes SNS + Slack notifications for pipeline success/failure.
 
-**AgentCoreConstruct** (`lib/constructs/agent-core.ts`) is the core construct. It packages the Python agent from `src/agent/` as an `AgentRuntimeArtifact`, creates a Bedrock Agent Core `Runtime`, sets up `CrossRegionInferenceProfile` entries, creates a Secrets Manager secret for Tavily API key, and creates an AgentCore `Memory` resource with built-in strategies.
+**AgentCoreConstruct** (`lib/constructs/agent-core.ts`) is the core construct. It packages the Python agent from `src/sandbox_agent/` as an `AgentRuntimeArtifact`, creates a Bedrock Agent Core `Runtime`, sets up `CrossRegionInferenceProfile` entries, creates a Secrets Manager secret for Tavily API key, and creates an AgentCore `Memory` resource with built-in strategies.
 
 **ApiGwConstruct** (`lib/constructs/api-gw.ts`) creates **two** REST API Gateways with Cognito authorizers:
 - **Buffered API** (`AgentCoreRestApi`) — standard request/response, used for `/api*` (except invoke)
@@ -83,7 +83,7 @@ Hono OpenAPI app with routes:
 
 Includes Swagger UI at `/api/doc` and OpenAPI spec at `/api/specification`. Local dev runs via `tsx watch` with `@hono/node-server`.
 
-### Agent Runtime Layer (Python — `src/agent/`)
+### Agent Runtime Layer (Python — `src/sandbox_agent/`)
 
 The agent uses a **main-agent → sub-agent delegation** pattern:
 
@@ -92,7 +92,7 @@ The agent uses a **main-agent → sub-agent delegation** pattern:
 - `agent_tools.py`: Implements `get_weather`, `get_aws_rss_feed` (feedparser), and Tavily `MCPClient`.
 - `settings.py`: Pydantic `BaseSettings` for model config, API keys (Secrets Manager in prod, `.env` when `IS_LOCAL=True`), and AgentCore memory ID.
 
-The agent container (`src/agent/Dockerfile`) runs on Alpine + uv, instrumented with OpenTelemetry, exposed on port 8080. **Must be ARM64** for Agent Core Runtime compatibility.
+The agent container (`src/sandbox_agent/Dockerfile`) runs on Alpine + uv, instrumented with OpenTelemetry, exposed on port 8080. **Must be ARM64** for Agent Core Runtime compatibility.
 
 ### Stack Parameters
 

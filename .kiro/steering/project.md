@@ -9,7 +9,7 @@ AWS CDK TypeScript プロジェクト。Amazon Bedrock AgentCore Runtime 上で 
 ## 技術スタック
 
 - IaC: AWS CDK (TypeScript) — `lib/` 配下
-- Agent Runtime: Strands Agents SDK (Python) + FastAPI — `src/agent/` 配下
+- Agent Runtime: Strands Agents SDK (Python) + FastAPI — `src/sandbox_agent/` 配下
 - Lambda: TypeScript (Hono ベースの API ルーター) — `src/lambda/` 配下
 - LLM: Amazon Nova Pro / Nova Lite
 - パッケージ管理: pnpm (TypeScript) / uv (Python)
@@ -48,7 +48,7 @@ pnpm run pytest       # pytest + coverage (Python)
 
 ```bash
 pnpm run dev          # Lambda プロキシ ローカル起動 (Port:3000, .env 必要)
-cd src/agent && uv sync && source .venv/bin/activate && python main.py  # AgentCore ローカル (Port:8080)
+cd src/sandbox_agent && uv sync && source .venv/bin/activate && python main.py  # AgentCore ローカル (Port:8080)
 ```
 
 ## pre-commit フック

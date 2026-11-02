@@ -62,7 +62,7 @@ export class AgentCoreConstruct extends Construct {
     this.runtime = new agentcore.Runtime(this, "StrandsAgentRuntime", {
       runtimeName: "StrandsAgentRuntime",
       agentRuntimeArtifact:
-        agentcore.AgentRuntimeArtifact.fromAsset("src/agent"),
+        agentcore.AgentRuntimeArtifact.fromAsset("src/sandbox_agent"),
       description: "StrandsAgentRuntime",
       environmentVariables: {
         AWS_DEFAULT_REGION: cdk.Stack.of(this).region,

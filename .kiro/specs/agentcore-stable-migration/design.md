@@ -38,7 +38,7 @@ In scope:
 Out of scope:
 - Any change to resource names, environment variables, durations, or IAM grants.
 - Enabling any of the currently commented-out `MemoryStrategy` configurations.
-- Any change to Python (`src/agent/`) code or other constructs.
+- Any change to Python (`src/sandbox_agent/`) code or other constructs.
 
 ### Key Research Findings
 

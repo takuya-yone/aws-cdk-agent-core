@@ -130,7 +130,7 @@ pnpm cdk deploy
 ### AgentCore ローカル起動（Port:8080）
 
 ```bash
-cd src/agent
+cd src/sandbox_agent
 uv sync
 source .venv/bin/activate
 python main.py
