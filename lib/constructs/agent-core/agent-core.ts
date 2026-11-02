@@ -64,7 +64,7 @@ export class AgentCoreConstruct extends Construct {
       agentRuntimeArtifact:
         agentcore.AgentRuntimeArtifact.fromAsset("src/sandbox_agent"),
       description: "StrandsAgentRuntime",
-      tracingEnabled: false,
+      tracingEnabled: true,
       platformVersion: agentcore.PlatformVersion.V2,
 
       environmentVariables: {
