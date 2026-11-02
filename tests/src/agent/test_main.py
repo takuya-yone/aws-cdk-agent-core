@@ -7,7 +7,7 @@ from strands.telemetry.metrics import (
     Trace,
 )
 
-from src.agent.main import parse_event_message, parse_result_message
+from src.sandbox_agent.main import parse_event_message, parse_result_message
 
 
 def test_parse_result_message():
