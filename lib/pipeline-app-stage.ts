@@ -24,7 +24,7 @@ export class StackStage extends cdk.Stage {
     )
 
     // const sampleStack1 = new SampleStack(this, "SampleStack1")
-    // const sampleStack2 = new SampleStack(this, "SampleStack2")
+    // const sampleStack2 = new S
     // const sampleStack3 = new SampleStack(this, "SampleStack3")
 
     cdk.Tags.of(agentCoreStack).add("Project", "AwsCdkAgentCore")
