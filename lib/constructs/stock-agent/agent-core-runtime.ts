@@ -2,6 +2,8 @@ import * as cdk from "aws-cdk-lib"
 import {
   aws_bedrockagentcore as agentcore,
   type aws_dynamodb as dynamodb,
+  aws_logs as logs,
+  RemovalPolicy,
   type aws_s3 as s3,
 } from "aws-cdk-lib"
 import { Construct } from "constructs"
@@ -26,6 +28,12 @@ export class AgentCoreRuntimeConstruct extends Construct {
   ) {
     super(scope, id)
 
+    const logGroup = new logs.LogGroup(this, "StockAgentRuntimeLogGroup", {
+      logGroupName: "StockAgentRuntimeLogGroup",
+      retention: logs.RetentionDays.ONE_MONTH,
+      removalPolicy: RemovalPolicy.DESTROY,
+    })
+
     if (!props.gateway.gatewayUrl) {
       throw new Error("Gateway is required")
     }
@@ -37,6 +45,12 @@ export class AgentCoreRuntimeConstruct extends Construct {
         agentcore.AgentRuntimeArtifact.fromAsset("src/stock_agent"),
       description: "StockAgentRuntime",
       tracingEnabled: false,
+      loggingConfigs: [
+        {
+          logType: agentcore.LogType.APPLICATION_LOGS,
+          destination: agentcore.LoggingDestination.cloudWatchLogs(logGroup),
+        },
+      ],
       platformVersion: agentcore.PlatformVersion.V2,
       environmentVariables: {
         AWS_DEFAULT_REGION: cdk.Stack.of(this).region,

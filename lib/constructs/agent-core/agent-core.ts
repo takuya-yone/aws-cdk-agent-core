@@ -4,6 +4,8 @@ import {
   type aws_bedrock,
   type aws_dynamodb as dynamodb,
   aws_iam as iam,
+  aws_logs as logs,
+  RemovalPolicy,
   aws_secretsmanager as secretsmanager,
 } from "aws-cdk-lib"
 import { Construct } from "constructs"
@@ -58,6 +60,12 @@ export class AgentCoreConstruct extends Construct {
       ],
     })
 
+    const logGroup = new logs.LogGroup(this, "StrandsAgentRuntimeLogGroup", {
+      logGroupName: "StrandsAgentRuntimeLogGroup",
+      retention: logs.RetentionDays.ONE_MONTH,
+      removalPolicy: RemovalPolicy.DESTROY,
+    })
+
     // Runtimeの作成
     this.runtime = new agentcore.Runtime(this, "StrandsAgentRuntime", {
       runtimeName: "StrandsAgentRuntime",
@@ -65,8 +73,13 @@ export class AgentCoreConstruct extends Construct {
         agentcore.AgentRuntimeArtifact.fromAsset("src/sandbox_agent"),
       description: "StrandsAgentRuntime",
       tracingEnabled: false,
+      loggingConfigs: [
+        {
+          logType: agentcore.LogType.APPLICATION_LOGS,
+          destination: agentcore.LoggingDestination.cloudWatchLogs(logGroup),
+        },
+      ],
       platformVersion: agentcore.PlatformVersion.V2,
-
       environmentVariables: {
         AWS_DEFAULT_REGION: cdk.Stack.of(this).region,
         POWERTOOLS_SERVICE_NAME: "StrandsAgentRuntime",
