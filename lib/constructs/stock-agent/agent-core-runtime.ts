@@ -36,6 +36,8 @@ export class AgentCoreRuntimeConstruct extends Construct {
       agentRuntimeArtifact:
         agentcore.AgentRuntimeArtifact.fromAsset("src/sandbox_agent"),
       description: "StockAgentRuntime",
+      tracingEnabled: true,
+      platformVersion: agentcore.PlatformVersion.V2,
       environmentVariables: {
         AWS_DEFAULT_REGION: cdk.Stack.of(this).region,
         POWERTOOLS_SERVICE_NAME: "StockAgentRuntime",
