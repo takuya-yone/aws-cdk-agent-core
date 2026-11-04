@@ -40,6 +40,7 @@ target-version = "py314"
 
 lint.ignore = [
     "E501",  # line too long
+    "F403",  # star import
 ]
 
 lint.select = [
