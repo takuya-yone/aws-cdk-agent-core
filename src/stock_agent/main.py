@@ -53,10 +53,7 @@ main_agent = Agent(
 @app.entrypoint
 async def agent_invocation(payload: InvocationRequestModel):
     """Handler for agent invocation"""
-    user_message = payload.get(
-        "prompt",
-        "良さそうな通貨があれば注文を入れて。利益最大化を目指して積極的に取引して。過去の取引履歴も参考にすること",
-    )
+    user_message = payload.prompt
     stream = main_agent.stream_async(user_message)
     async for event in stream:
         print(event)

@@ -78,3 +78,7 @@ class OrderResponse(BaseModel):
 
 class FxBalanceRequest(BaseModel):
     actor_id: str
+
+
+class InvocationRequestModel(BaseModel):
+    prompt: str
