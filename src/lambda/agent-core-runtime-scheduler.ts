@@ -20,7 +20,7 @@ const getRequiredEnv = (key: string): string => {
 }
 
 const ENV = {
-  AGENT_RUNTIME_ARN: getRequiredEnv("AGENT_RUNTIME_ARN"),
+  AGENT_CORE_RUNTIME_ARN: getRequiredEnv("AGENT_CORE_RUNTIME_ARN"),
 }
 
 const _agentCoreClient = new BedrockAgentCoreClient({})
@@ -30,7 +30,7 @@ const invokeCommandFactory = ({ prompt }: { prompt: string }) => {
     prompt,
   })
   return new InvokeAgentRuntimeCommand({
-    agentRuntimeArn: ENV.AGENT_RUNTIME_ARN,
+    agentRuntimeArn: ENV.AGENT_CORE_RUNTIME_ARN,
     payload: new TextEncoder().encode(
       JSON.stringify({
         prompt: prompt,
