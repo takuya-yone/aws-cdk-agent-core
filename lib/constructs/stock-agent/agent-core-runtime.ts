@@ -2,6 +2,7 @@ import * as cdk from "aws-cdk-lib"
 import {
   aws_bedrockagentcore as agentcore,
   type aws_dynamodb as dynamodb,
+  aws_iam as iam,
   aws_logs as logs,
   RemovalPolicy,
   type aws_s3 as s3,
@@ -66,6 +67,9 @@ export class AgentCoreRuntimeConstruct extends Construct {
     })
 
     // Runtimeへの権限付与
+    this.runtime.role.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonBedrockLimitedAccess"),
+    )
     props.gateway.grantInvoke(this.runtime)
     props.dynamodb.fxBalanceTable.grantReadWriteData(this.runtime)
     props.dynamodb.fxBalanceHistoryTable.grantReadWriteData(this.runtime)
