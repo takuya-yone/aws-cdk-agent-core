@@ -53,8 +53,8 @@ main_agent = Agent(
 @app.entrypoint
 async def agent_invocation(payload: InvocationRequestModel):
     """Handler for agent invocation"""
-    user_message = payload.prompt
-    stream = main_agent.stream_async(user_message)
+    input_model = InvocationRequestModel(**payload)
+    stream = main_agent.stream_async(input_model.prompt)
     async for event in stream:
         print(event)
         yield (event)
