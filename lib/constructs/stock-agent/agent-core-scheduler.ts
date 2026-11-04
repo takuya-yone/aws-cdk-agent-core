@@ -25,7 +25,7 @@ export class AgentCoreSchedulerConstruct extends Construct {
 
     // Agent Core Runtime Scheduler Lambda
     const agentCoreRuntimeSchedulerLambdaName =
-      "AgentCoreRuntimeSchedulerLambda"
+      "StockAgentCoreRuntimeSchedulerLambda"
     const agentCoreRuntimeSchedulerLambda = new lambda_nodejs.NodejsFunction(
       this,
       agentCoreRuntimeSchedulerLambdaName,
@@ -40,7 +40,7 @@ export class AgentCoreSchedulerConstruct extends Construct {
         tracing: lambda.Tracing.ACTIVE,
         logGroup: new logs.LogGroup(
           this,
-          "AgentCoreRuntimeSchedulerLambdaLogGroup",
+          "StockAgentCoreRuntimeSchedulerLambdaLogGroup",
           {
             logGroupName: `/aws/lambda/${agentCoreRuntimeSchedulerLambdaName}`,
             retention: logs.RetentionDays.ONE_WEEK,
@@ -59,9 +59,9 @@ export class AgentCoreSchedulerConstruct extends Construct {
     // Agent Core Runtime Scheduler
     const _agentCoreRuntimeScheduler = new scheduler.Schedule(
       this,
-      "AgentCoreRuntimeScheduler",
+      "StockAgentCoreRuntimeScheduler",
       {
-        scheduleName: "AgentCoreRuntimeScheduler",
+        scheduleName: "StockAgentCoreRuntimeScheduler",
         schedule: scheduler.ScheduleExpression.cron({
           minute: "0",
           hour: "9",
@@ -71,11 +71,7 @@ export class AgentCoreSchedulerConstruct extends Construct {
           timeZone: TimeZone.ASIA_TOKYO,
         }),
         timeWindow: scheduler.TimeWindow.off(),
-        target: new targets.LambdaInvoke(agentCoreRuntimeSchedulerLambda, {
-          input: scheduler.ScheduleTargetInput.fromObject({
-            prompt: "hello",
-          }),
-        }),
+        target: new targets.LambdaInvoke(agentCoreRuntimeSchedulerLambda),
       },
     )
   }
