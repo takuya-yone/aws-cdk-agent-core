@@ -7,6 +7,7 @@ import {
 } from "@aws-sdk/client-bedrock-agentcore"
 import middy from "@middy/core"
 import type { ScheduledEvent } from "aws-lambda"
+import { z } from "zod"
 
 const tracer = new Tracer({})
 const logger = new Logger({})
@@ -23,7 +24,13 @@ const ENV = {
   AGENT_CORE_RUNTIME_ARN: getRequiredEnv("AGENT_CORE_RUNTIME_ARN"),
 }
 
-const _agentCoreClient = new BedrockAgentCoreClient({})
+const inputEventZodSchema = z.object({
+  detail: z.object({
+    prompt: z.string(),
+  }),
+})
+
+const agentCoreClient = new BedrockAgentCoreClient({})
 
 const invokeCommandFactory = ({ prompt }: { prompt: string }) => {
   logger.info("Creating InvokeAgentRuntimeCommand with inputs", {
@@ -43,11 +50,13 @@ const invokeCommandFactory = ({ prompt }: { prompt: string }) => {
 
 export const lambdaHandler = async (event: ScheduledEvent) => {
   logger.info("Received event", { event })
+  const parsedEvent = inputEventZodSchema.parse(event)
   const _invokeCommand = invokeCommandFactory({
-    prompt: "aaaaa",
+    prompt: parsedEvent.detail.prompt,
   })
 
-  //   const runtimeResponse = await agentCoreClient.send(invokeCommand)
+  const runtimeResponse = await agentCoreClient.send(_invokeCommand)
+  return runtimeResponse
 }
 
 export const handler = middy(lambdaHandler).use(captureLambdaHandler(tracer))
