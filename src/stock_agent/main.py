@@ -56,7 +56,7 @@ async def agent_invocation(payload: InvocationRequestModel):
     input_model = InvocationRequestModel(**payload)
     stream = main_agent.stream_async(input_model.prompt)
     async for event in stream:
-        print(event)
+        # print(event)
         yield (event)
 
 

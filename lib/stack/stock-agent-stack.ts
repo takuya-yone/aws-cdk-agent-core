@@ -4,6 +4,7 @@ import type { StackParameters } from "../../bin/parameter"
 import {
   AgentCoreGwConstruct,
   AgentCoreRuntimeConstruct,
+  AgentCoreSchedulerConstruct,
   StockDatastoreConstruct,
 } from "../constructs"
 
@@ -32,6 +33,14 @@ export class StockAgentStack extends cdk.Stack {
           fxOrderHistoryTable: stockDatastoreConstruct.fxOrderHistoryTable,
         },
         fxOrderSummaryBucket: stockDatastoreConstruct.fxOrderSummaryBucket,
+      },
+    )
+
+    const _agentCoreSchedulerConstruct = new AgentCoreSchedulerConstruct(
+      this,
+      "AgentCoreSchedulerConstruct",
+      {
+        runtime: _agentCoreRuntimeConstruct.runtime,
       },
     )
   }
