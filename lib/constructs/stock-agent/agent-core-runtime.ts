@@ -6,6 +6,7 @@ import {
   aws_logs as logs,
   RemovalPolicy,
   type aws_s3 as s3,
+  aws_sns as sns,
 } from "aws-cdk-lib"
 import { Construct } from "constructs"
 
@@ -29,6 +30,13 @@ export class AgentCoreRuntimeConstruct extends Construct {
   ) {
     super(scope, id)
 
+    // ユーザー通知用SNSトピック
+    const userNotificationTopic = new sns.Topic(this, "UserNotificationTopic", {
+      topicName: "UserNotificationTopic",
+      displayName: "User Notification Topic",
+    })
+
+    // ロググループの作成
     const logGroup = new logs.LogGroup(this, "StockAgentRuntimeLogGroup", {
       logGroupName: "StockAgentRuntimeLogGroup",
       retention: logs.RetentionDays.ONE_MONTH,
@@ -63,6 +71,7 @@ export class AgentCoreRuntimeConstruct extends Construct {
         FX_ORDER_HISTORY_TABLE_NAME:
           props.dynamodb.fxOrderHistoryTable.tableName,
         FX_ORDER_SUMMARY_BUCKET_NAME: props.fxOrderSummaryBucket.bucketName,
+        USER_NOTIFICATION_TOPIC_ARN: userNotificationTopic.topicArn,
       },
     })
 
@@ -75,5 +84,6 @@ export class AgentCoreRuntimeConstruct extends Construct {
     props.dynamodb.fxBalanceHistoryTable.grantReadWriteData(this.runtime)
     props.dynamodb.fxOrderHistoryTable.grantReadWriteData(this.runtime)
     props.fxOrderSummaryBucket.grantReadWrite(this.runtime)
+    userNotificationTopic.grantPublish(this.runtime)
   }
 }

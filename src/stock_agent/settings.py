@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     fx_balance_table_name: str = Field()
     fx_order_history_table_name: str = Field()
     fx_order_summary_bucket_name: str = Field()
+    user_notification_topic_arn: str = Field()
 
 
 settings = Settings()
