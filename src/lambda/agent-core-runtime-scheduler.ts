@@ -50,18 +50,15 @@ export const lambdaHandler = async (event: ScheduledEvent) => {
 
   const runtimeResponse = await agentCoreClient.send(invokeCommand)
 
-  // response はストリームのため、文字列に変換してから返す（そのままだとJSON化できない）
-  const body = (await runtimeResponse.response?.transformToString()) ?? ""
-  logger.info("Agent Core Runtime response", {
+  // 起動できた時点で完了を待たずに終了する（レスポンスボディは読まない）
+  logger.info("Agent Core Runtime invoked", {
     runtimeSessionId: runtimeResponse.runtimeSessionId,
     statusCode: runtimeResponse.statusCode,
-    body,
   })
 
   return {
     runtimeSessionId: runtimeResponse.runtimeSessionId,
     statusCode: runtimeResponse.statusCode,
-    body,
   }
 }
 
