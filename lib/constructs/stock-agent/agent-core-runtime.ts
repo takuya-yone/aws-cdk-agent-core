@@ -31,10 +31,14 @@ export class AgentCoreRuntimeConstruct extends Construct {
     super(scope, id)
 
     // ユーザー通知用SNSトピック
-    const userNotificationTopic = new sns.Topic(this, "UserNotificationTopic", {
-      topicName: "UserNotificationTopic",
-      displayName: "User Notification Topic",
-    })
+    const userNotificationTopic = new sns.Topic(
+      this,
+      "StockAgentUserNotificationTopic",
+      {
+        topicName: "StockAgentUserNotificationTopic",
+        displayName: "StockAgent User Notification Topic",
+      },
+    )
 
     // ロググループの作成
     const logGroup = new logs.LogGroup(this, "StockAgentRuntimeLogGroup", {

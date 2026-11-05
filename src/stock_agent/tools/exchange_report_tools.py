@@ -1,6 +1,7 @@
 import boto3
 from db.balance_db import OrderHistoryModel
 from logger import logger
+from settings import settings
 from strands import tool
 
 
@@ -19,7 +20,7 @@ def put_exchange_report_to_s3(
         "Uploading exchange report to S3 for transaction ID: %s", transaction_id
     )
     s3_client = boto3.client("s3")
-    bucket_name = "fx-order-summary-bucket"
+    bucket_name = settings.fx_order_summary_bucket_name
     s3_client.upload_file(file_path, bucket_name, f"{transaction_id}.md")
 
 
@@ -45,3 +46,23 @@ def put_exchange_report_to_dynamodb(
     logger.info("Order summary: %s", order_summary)
     order_history.OrderSummary = order_summary
     order_history.save()
+
+
+@tool
+def send_email(
+    message: str,
+):
+    """Send an email notification via SNS.
+
+    Args:
+        message (str): The message to be published.
+    """
+    logger.info(
+        "Publishing message to SNS topic: %s", settings.user_notification_topic_arn
+    )
+    sns_client = boto3.client("sns")
+    sns_client.publish(
+        TopicArn=settings.user_notification_topic_arn,
+        Subject="StockAgent Notification",
+        Message=message,
+    )

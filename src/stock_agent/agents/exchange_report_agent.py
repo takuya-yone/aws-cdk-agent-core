@@ -1,9 +1,7 @@
 from schemas import StrandsLlmModelEnum
 from strands import Agent
-from strands_tools import file_write
-from tools.exchange_report_tools import (
-    put_exchange_report_to_dynamodb,
-)
+from strands.vended_tools import make_write
+from tools.exchange_report_tools import put_exchange_report_to_dynamodb, send_email
 
 exchange_report_system_prompt = """
 You are an expert currency exchange report agent.
@@ -11,9 +9,10 @@ Based on the provided information, briefly summarize the thought process behind 
 Create report in Japanese.
 Name the file with the transaction ID included in the input.
 Put the report to DynamoDB after generating it.
+Send an transaction summary email notification after updating DynamoDB using the send_email tool.
 """
 
-exchange_report_agent_tools = [file_write, put_exchange_report_to_dynamodb]
+exchange_report_agent_tools = [make_write, put_exchange_report_to_dynamodb, send_email]
 
 exchange_report_agent = Agent(
     name="strands-exchange-report-agent",
