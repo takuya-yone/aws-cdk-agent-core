@@ -49,7 +49,20 @@ export const lambdaHandler = async (event: ScheduledEvent) => {
   })
 
   const runtimeResponse = await agentCoreClient.send(invokeCommand)
-  return runtimeResponse
+
+  // response はストリームのため、文字列に変換してから返す（そのままだとJSON化できない）
+  const body = (await runtimeResponse.response?.transformToString()) ?? ""
+  logger.info("Agent Core Runtime response", {
+    runtimeSessionId: runtimeResponse.runtimeSessionId,
+    statusCode: runtimeResponse.statusCode,
+    body,
+  })
+
+  return {
+    runtimeSessionId: runtimeResponse.runtimeSessionId,
+    statusCode: runtimeResponse.statusCode,
+    body,
+  }
 }
 
 export const handler = middy(lambdaHandler).use(captureLambdaHandler(tracer))
