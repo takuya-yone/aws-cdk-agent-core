@@ -44,7 +44,8 @@ const invokeCommandFactory = ({ prompt }: { prompt: string }) => {
 export const lambdaHandler = async (event: ScheduledEvent) => {
   logger.info("Received event", { event })
   const invokeCommand = invokeCommandFactory({
-    prompt: "hello",
+    prompt:
+      "良さそうな通貨があれば注文を入れて。利益最大化を目指して積極的に取引して。過去の取引履歴も参考にすること",
   })
 
   const runtimeResponse = await agentCoreClient.send(invokeCommand)
