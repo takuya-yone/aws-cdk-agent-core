@@ -56,6 +56,9 @@ export class AgentCoreSchedulerConstruct extends Construct {
       },
     )
 
+    // Agent Core RuntimeへのInvoke権限を付与
+    props.runtime.grantInvoke(agentCoreRuntimeSchedulerLambda)
+
     // Agent Core Runtime Scheduler
     const _agentCoreRuntimeScheduler = new scheduler.Schedule(
       this,
