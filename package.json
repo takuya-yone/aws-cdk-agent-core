@@ -19,7 +19,7 @@
     "pytest": "uv run python -m pytest tests --cov"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.4",
+    "@biomejs/biome": "2.6.5",
     "@hono/node-server": "^2.1.6",
     "@types/aws-lambda": "^8.10.164",
     "@types/node": "^26.6.6",
@@ -43,7 +43,7 @@
     "@middy/core": "^7.9.2",
     "aws-cdk-lib": "^2.275.0",
     "aws-lambda": "^1.0.7",
-    "cdk-ecr-deployment": "^4.2.80",
+    "cdk-ecr-deployment": "^4.2.84",
     "constructs": "^10.8.1",
     "dynamoose": "^4.2.0",
     "hono": "^4.13.16",
