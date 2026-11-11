@@ -1,6 +1,6 @@
 from schemas import StrandsLlmModelEnum
 from strands import Agent
-from strands_tools import file_write
+from strands.vended_tools import make_write
 
 report_system_prompt = """
 You are an expert stock market report agent.
@@ -10,7 +10,7 @@ Create a Markdown file under the '''reports''' directory.
 Create report in Japanese.
 """
 
-report_agent_tools = [file_write]
+report_agent_tools = [make_write]
 
 report_agent = Agent(
     name="strands-stock-report-agent",

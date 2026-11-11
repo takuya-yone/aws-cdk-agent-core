@@ -15,4 +15,9 @@ settings = Settings()
 
 
 # 環境変数から設定を読み込む場合
-# export AGENT_CORE_GATEWAY_URL="https://aaaaa"
+# export AGENT_CORE_GATEWAY_URL="https://stockagentcoregateway-xxxxxxx.gateway.bedrock-agentcore.ap-northeast-1.amazonaws.com/mcp"
+# export FX_BALANCE_HISTORY_TABLE_NAME="FxBalanceHistoryTable"
+# export FX_BALANCE_TABLE_NAME="FxBalanceTable"
+# export FX_ORDER_HISTORY_TABLE_NAME="FxOrderHistoryTable"
+# export FX_ORDER_SUMMARY_BUCKET_NAME="fx-order-summary-bucket"
+# export USER_NOTIFICATION_TOPIC_ARN="arn:aws:sns:ap-northeast-1:123456789012:StockAgentUserNotificationTopic"

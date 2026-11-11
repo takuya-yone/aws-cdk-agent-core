@@ -22,8 +22,6 @@ Provide stock information in response to user requests.
 Perform a web search if necessary.
 Always provide the most up-to-date information.
 Answer in Japanese.
-
-After responding, please use file_write to create a concise report in Markdown format.
 """
 
 search_agent = Agent(
