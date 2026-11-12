@@ -1,4 +1,6 @@
 from agent_tools import (
+    aws_api_mcp_client,
+    current_time,
     generate_tagosaku_text,
     get_aws_rss_feed,
     get_estate_info,
@@ -11,8 +13,6 @@ from agent_tools import (
 )
 from settings import model_settings
 from strands import Agent
-from strands_tools import use_aws
-from strands_tools.current_time import current_time
 
 model = model_settings.get_model()
 
@@ -100,7 +100,7 @@ aws_access_agent = Agent(
     name="aws_access_agent",
     model=model,
     system_prompt=(
-        "You are an agent that provides guidance on AWS access and usage. Use the use_aws tool to provide guidance. If no region is specified, please target ap-northeast-1. If an error occurs, please terminate the process without retrying. Answer in Japanese."
+        "You are an agent that provides guidance on AWS access and usage. Use the call_aws tool to execute AWS CLI commands, and the suggest_aws_commands tool when you are unsure which command to use. If no region is specified, please target ap-northeast-1. If an error occurs, please terminate the process without retrying. Answer in Japanese."
     ),
-    tools=[use_aws],
+    tools=[aws_api_mcp_client],
 )

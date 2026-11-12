@@ -1,9 +1,14 @@
 import json
+import os
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import boto3
 import feedparser
 import requests
 from geopy.geocoders import Nominatim
+from mcp import StdioServerParameters
+from mcp.client.stdio import stdio_client
 from mcp.client.streamable_http import streamable_http_client
 from models import RssItem
 from settings import (
@@ -36,6 +41,24 @@ goverment_mcp_client = MCPClient(
 real_estate_mcp_client = MCPClient(
     lambda: streamable_http_client(
         "https://mcp.n-3.ai/mcp?tools=get-time,reinfolib-real-estate-price,reinfolib-city-list"
+    )
+)
+
+# AWS API MCP Server (strands_tools.use_aws の後継)。
+# aws-api-mcp-server を uvx で分離実行し、call_aws / suggest_aws_commands を提供する。
+# 認証情報は AgentCore タスクロール等、環境変数経由で子プロセスに引き継ぐ。
+# READ_OPERATIONS_ONLY=true で読み取り専用に制限（AWS環境調査用途のため）。
+aws_api_mcp_client = MCPClient(
+    lambda: stdio_client(
+        StdioServerParameters(
+            command="uvx",
+            args=["awslabs.aws-api-mcp-server@1.6.0"],
+            env={
+                **os.environ,
+                "AWS_REGION": "ap-northeast-1",
+                "READ_OPERATIONS_ONLY": "true",
+            },
+        )
     )
 )
 
@@ -112,6 +135,21 @@ def get_aws_rss_feed(
     )
 
     return result_items
+
+
+@tool
+def current_time(timezone: str = "Asia/Tokyo") -> str:
+    """Get the current time in ISO 8601 format for a specified timezone.
+
+    (strands_tools.current_time の後継。v0.9.0 で削除されたため自前実装に置き換え)
+
+    Args:
+        timezone: IANA timezone name (default: "Asia/Tokyo")
+
+    Returns:
+        The current time as an ISO 8601 formatted string
+    """
+    return datetime.now(ZoneInfo(timezone)).isoformat()
 
 
 @tool

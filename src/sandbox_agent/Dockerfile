@@ -9,6 +9,10 @@ WORKDIR /app
 # install uv
 RUN pip install uv
 
+# Pre-install the AWS API MCP Server (use_aws の後継) into the uv cache
+# so that `uvx awslabs.aws-api-mcp-server@1.6.0` starts without a runtime download
+RUN uv tool install awslabs.aws-api-mcp-server
+
 # Copy application code
 COPY . .
 

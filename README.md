@@ -57,7 +57,7 @@ CloudFront + API Gateway + AgentCore Runtime 上で動作する AI エージェ�
 | aws_rss_agent | AWS最新ニュース取得 | RSS フィード解析 |
 | react_agent | フロントエンド ベストプラクティス | Bedrock Knowledge Base |
 | estate_agent | 不動産情報検索 | Bedrock Knowledge Base（不動産） |
-| aws_access_agent | AWS環境調査 | strands-tools use_aws |
+| aws_access_agent | AWS環境調査 | AWS API MCP Server (aws-api-mcp-server) |
 
 ### AWSリソース
 
