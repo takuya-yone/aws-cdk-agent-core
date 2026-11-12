@@ -44,6 +44,21 @@ real_estate_mcp_client = MCPClient(
     )
 )
 
+
+def _mcp_subprocess_env() -> dict[str, str]:
+    """stdio MCP サーバー子プロセス用の環境変数を返す。
+
+    親プロセスは `opentelemetry-instrument` 配下で動くため、OTEL_* と PYTHONPATH
+    (ADOT の sitecustomize を指す) が設定されている。これらを別 venv の子プロセスに
+    引き継ぐと、xray プロパゲーター未インストールで起動時にクラッシュするため除外する。
+    """
+    return {
+        k: v
+        for k, v in os.environ.items()
+        if not k.startswith("OTEL_") and k != "PYTHONPATH"
+    }
+
+
 # AWS API MCP Server (strands_tools.use_aws の後継)。
 # aws-api-mcp-server を uvx で分離実行し、call_aws / suggest_aws_commands を提供する。
 # 認証情報は AgentCore タスクロール等、環境変数経由で子プロセスに引き継ぐ。
@@ -54,7 +69,7 @@ aws_api_mcp_client = MCPClient(
             command="uvx",
             args=["awslabs.aws-api-mcp-server@1.6.0"],
             env={
-                **os.environ,
+                **_mcp_subprocess_env(),
                 "AWS_REGION": "ap-northeast-1",
                 "READ_OPERATIONS_ONLY": "true",
             },
