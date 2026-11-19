@@ -75,6 +75,7 @@ export class AgentCoreSchedulerConstruct extends Construct {
         }),
         timeWindow: scheduler.TimeWindow.off(),
         target: new targets.LambdaInvoke(agentCoreRuntimeSchedulerLambda),
+        enabled: false,
       },
     )
   }
